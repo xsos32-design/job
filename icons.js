@@ -9,7 +9,7 @@ var css='.lic{width:1em;height:1em;display:inline-block;vertical-align:-.14em;fl
 var st=document.createElement('style');st.textContent=css;
 (document.head||document.documentElement).insertBefore(st,(document.head||document.documentElement).firstChild);
 var buf=document.createElement('div');
-function svg(p){buf.innerHTML='<svg class="lic ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">'+p+'</svg>';return buf.firstChild;}
+function svg(p){buf.innerHTML='<svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">'+p+'</svg>';return buf.firstChild;}
 function fix(n){
  var t=n.nodeValue;RE.lastIndex=0;if(!RE.test(t))return;RE.lastIndex=0;
  var p=n.parentNode;if(!p||SKIP.test(p.nodeName)||p.closest&&p.closest('svg'))return;
