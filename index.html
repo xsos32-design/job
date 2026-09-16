@@ -96,7 +96,7 @@ details.fx ol{padding-left:20px}
 <header><span class="logo">陶</span><div>
 <div class="h-title">SA晚班 · 工作執掌</div>
 <div class="h-sub">點別 → 機位 → 符號 → 職掌／規則</div></div></header>
-<div class="stamp">最後更新：2026-09-16 · v3.1</div>
+<div class="stamp">最後更新：2026-09-16 · v3.2</div>
 <nav class="crumbs" id="crumbs"></nav><div id="backwrap"></div><div id="view"></div>
 </div>
 <script>
@@ -161,12 +161,51 @@ function fldTbl(h1,rows){let t='<table class="rtbl"><tr><th class="rcat">'+h1+'<
 function formHTML(n){let h='<div class="note-title">'+esc(n.title||n.label)+'</div>';if(n.svg&&FORMSVG[n.svg])h+=sec("🖼️","單據示意圖",'<div class="fsvg">'+FORMSVG[n.svg]+'</div><div class="fsvg-cap">'+esc(n.svgcap||"橘色字＝要手寫的內容")+'</div>');if(n.svgset)h+=sec("🖼️","步驟簡圖",n.svgset.map(k=>'<div class="fsvg">'+FORMSVG[k]+'</div>').join('<div style="height:10px"></div>'));if(n.intro)h+='<div class="note-meta">'+esc(n.intro)+'</div>';if(n.fields)h+=sec("📋","欄位填寫",fldTbl("欄位",n.fields));if(n.intro2)h+=sec("✍️","填寫方式",'<div class="rrule">'+esc(n.intro2)+'</div>');if(n.cases)h+=sec("🔀","情況",fldTbl("情況",n.cases));if(n.procs)h+=sec("🔢","操作流程",grpTbl("項目","步驟",n.procs.map(x=>({cat:x.h,items:x.items}))));if(n.steps)h+=sec("✍️","空白處寫上",numTbl("項目",n.steps));if(n.notes)h+=sec("⚠️","提醒","<ul>"+n.notes.map(x=>"<li>"+esc(x)+"</li>").join("")+"</ul>");return h;}
 function grpTbl(h1,h2,groups){let t='<table class="rtbl"><tr><th class="rcat">'+h1+'</th><th>'+h2+'</th></tr>';groups.forEach(g=>{g.items.forEach((it,gi)=>{t+='<tr>'+(gi===0?'<td class="rcat" rowspan="'+g.items.length+'">'+esc(g.cat)+'</td>':'')+'<td class="rrule">'+esc(it)+'</td></tr>';});});return t+'</table>';}
 function timeTbl(arr){let t='<table class="rtbl"><tr><th class="tcat">時段</th><th>內容</th></tr>';var re=/^(\d{1,2}:\d{2}(?:[-~]\d{1,2}:\d{2})?)\s*([\s\S]*)$/;arr.forEach(v=>{var ind=v.startsWith("　");var s=v.trim();var m=s.match(re);var tm=m?m[1]:"";var ct=m?m[2]:s;t+='<tr><td class="tcat">'+esc(tm)+'</td><td class="rrule"'+(ind?' style="padding-left:18px;color:var(--sub)"':'')+'>'+esc(ct)+'</td></tr>';});return t+'</table>';}
+function wrapCJK(t,n){var out=[],cur="";for(var i=0;i<t.length;i++){cur+=t[i];var w=0;for(var j=0;j<cur.length;j++){w+=cur.charCodeAt(j)>255?1:0.55;}if(w>=n){out.push(cur);cur="";}}if(cur)out.push(cur);return out;}
+function timeSVG(arr){
+ var RE=/^(\d{1,2}:\d{2}(?:\s*[-~]\s*\d{1,2}:\d{2})?)\s*([\s\S]*)$/;
+ var rows=[],notes=[],cur=null;
+ arr.forEach(function(x){var raw=String(x);
+  if(/^　/.test(raw)&&cur){cur.subs.push(raw.replace(/^　+/,""));return;}
+  var t=raw.trim(),m=t.match(RE);
+  if(m&&m[1]){cur={t:m[1],d:m[2]||"",subs:[]};rows.push(cur);}
+  else{notes.push(t);cur=null;}});
+ if(!rows.length)return "";
+ var y=34,items=[];
+ rows.forEach(function(r){
+  var ls=r.d?wrapCJK(r.d,22):[];
+  var subs=[];r.subs.forEach(function(sx){wrapCJK(sx,24).forEach(function(l,i){subs.push(i?"　"+l:l);});});
+  items.push({t:r.t,ls:ls,subs:subs,y:y});
+  y+=12+Math.max(ls.length,1)*12+subs.length*11+(subs.length?4:0);
+ });
+ var lineEnd=items[items.length-1].y;
+ var ny=y+(notes.length?10:0),nls=[];
+ notes.forEach(function(t){wrapCJK(t,26).forEach(function(l){nls.push({l:l,y:ny});ny+=12;});});
+ var H=ny+12;
+ var h='<svg viewBox="0 0 300 '+H+'" role="img" aria-label="時段流程"><rect x="4" y="4" width="292" height="'+(H-8)+'" rx="4" fill="#F5F1E6" stroke="#C9C2B0"/>';
+ h+='<text x="150" y="21" font-size="10" font-weight="700" text-anchor="middle" fill="#1A1A1A">時段流程</text>';
+ h+='<line x1="74" y1="30" x2="74" y2="'+lineEnd+'" stroke="#C9BFA6" stroke-width="2"/>';
+ items.forEach(function(it){
+  h+='<circle cx="74" cy="'+it.y+'" r="4.5" fill="#B03A1E"/>';
+  h+='<text x="66" y="'+(it.y+3)+'" font-size="8.5" font-weight="700" text-anchor="end" fill="#B03A1E">'+esc(it.t)+'</text>';
+  it.ls.forEach(function(l,k){h+='<text x="86" y="'+(it.y+3+k*12)+'" font-size="8.5" fill="#1A1A1A">'+esc(l)+'</text>';});
+  var base=it.y+3+Math.max(it.ls.length,1)*12;
+  it.subs.forEach(function(l,k){h+='<text x="90" y="'+(base+k*11)+'" font-size="8" fill="#5E5044">'+esc(l)+'</text>';});
+ });
+ if(nls.length){h+='<line x1="16" y1="'+(y+2)+'" x2="284" y2="'+(y+2)+'" stroke="#C9BFA6" stroke-dasharray="3 3"/>';
+  nls.forEach(function(n){h+='<text x="18" y="'+n.y+'" font-size="8" fill="#7A6A55">'+esc(n.l)+'</text>';});}
+ return h+'</svg>';
+}
 function sec(ic,t,b){return '<div class="sec"><div class="sec-h"><span>'+ic+'</span><span class="t">'+t+'</span><span class="rule"></span></div>'+b+'</div>'}
 function leafHTML(c){
  let h='<div class="badges"><span class="b-sym">'+esc(c.sym)+'</span><span class="b-pos">'+((c.pos==="外場"||c.pos==="L9")?esc(c.pos):"POS "+esc(c.pos))+'</span></div>';
- h+=sec("📋","工作職掌",c.tasks.length?numTbl("工作項目",c.tasks):'<div class="none">本符號無固定職掌項目</div>');
+ var CY=/每週|雙數月|單數月|每月|盤點：|屆期/;
+ var dly=c.tasks.filter(function(x){return !CY.test(x)}),cyc=c.tasks.filter(function(x){return CY.test(x)});
+ h+=sec("📋","每日工作",dly.length?numTbl("工作項目",dly):'<div class="none">本符號無固定每日項目</div>');
+ if(cyc.length)h+=sec("🗓️","週期性工作",numTbl("工作項目",cyc));
  if(c.timing.length){
-  h+=sec("🕐","時段 / 站位",timeTbl(c.timing));
+  var sv=timeSVG(c.timing);
+  h+=sec("🕐","時段 / 站位",sv?'<div class="fsvg">'+sv+'</div><div class="fsvg-cap">紅點＝時間點；虛線下為不分時段的提醒</div>':timeTbl(c.timing));
  }
  if(c.proc&&c.proc.length){h+=sec("💰","帳後",numTbl("步驟",c.proc))}
 var grp=c.ruleKeys.map(k=>({cat:RULES[k].title.replace("規則",""),items:RULES[k].items}));if(c.pos!=="外場"&&c.pos!=="L9"){CASHIER.forEach(g=>grp.push(g));}var rt='<table class="rtbl"><tr><th>分類</th><th>規則</th></tr>';grp.forEach(g=>{g.items.forEach((it,gi)=>{rt+='<tr>'+(gi===0?'<td class="rcat" rowspan="'+g.items.length+'">'+esc(g.cat)+'</td>':'')+'<td class="rrule">'+esc(it)+'</td></tr>';});});rt+='</table>';h+=sec("📜","規則",rt);
