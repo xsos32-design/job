@@ -21,6 +21,19 @@ nav.crumbs{display:flex;flex-wrap:wrap;align-items:center;gap:4px;font-size:13px
 .back{display:inline-flex;align-items:center;gap:4px;margin-bottom:14px;background:none;border:1px solid var(--line);border-radius:20px;padding:6px 14px;font-size:13px;color:var(--ink);cursor:pointer;font-weight:600}
 .lead{font-size:13px;color:var(--sub);margin-bottom:8px;font-weight:600}
 .cards{display:grid;gap:10px}
+.cards.g2{grid-template-columns:repeat(2,1fr);gap:8px}
+.cards.g2 .opt{flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:3px;padding:13px 12px;min-height:74px}
+.cards.g2 .opt .arr{display:none}
+.cards.g2 .opt .lbl{font-size:14.5px;line-height:1.35}
+.cards.g2 .opt .osub{font-size:11px;margin-top:0}
+.opt.store{padding:18px;background:linear-gradient(180deg,var(--card),var(--inkSoft))}
+.opt.store .lbl{font-size:20px;letter-spacing:.5px}
+.opt.store .osub{font-size:12.5px}
+.opt.sub9{background:var(--paper);border-style:dashed}
+.opt.sub9 .lbl{font-size:15px}
+.opt:active{transform:scale(.985)}
+.grp-wrap{margin-top:18px}
+.grp-wrap:first-of-type{margin-top:6px}
 .opt{display:flex;align-items:center;justify-content:space-between;width:100%;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;cursor:pointer;text-align:left;color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.4);font:inherit}
 .opt .lbl{font-size:16px;font-weight:700}
 .opt .osub{display:block;font-size:12px;color:var(--sub);margin-top:2px}
@@ -47,7 +60,8 @@ li{font-size:14px;line-height:1.7;margin-bottom:5px}
 .cover-sum{background:var(--sealSoft);border-radius:10px;padding:10px 12px;margin:14px 0;font-weight:700;font-size:13.5px;color:var(--seal)}
 .chip-clr{background:none;border:1px solid var(--seal);color:var(--seal);border-radius:14px;padding:2px 10px;font-size:12px;cursor:pointer;margin-left:6px;font-family:inherit}
 .cover-hint{color:var(--sub);font-size:13px;margin-top:12px}
-.grp-hdr{font-size:12px;font-weight:800;color:var(--sub);letter-spacing:2px;margin:16px 0 2px;padding-bottom:4px;border-bottom:1px solid var(--line)}
+.grp-hdr{display:flex;align-items:center;gap:8px;font-size:11.5px;font-weight:800;color:var(--sub);letter-spacing:2px;margin:0 0 8px}
+.grp-hdr::after{content:"";flex:1;height:1px;background:var(--line)}
 .grp-hdr:first-child{margin-top:0}
 .home-remind{background:var(--sealSoft);border:1px solid #4A2E29;border-radius:12px;padding:12px 14px;margin-bottom:14px;color:var(--seal);font-weight:700;font-size:13.5px;line-height:1.6}
 .note-title{background:var(--sealSoft);color:var(--seal);font-weight:800;font-size:15px;padding:8px 14px;border-radius:8px;margin-bottom:8px;display:inline-block}
@@ -82,7 +96,7 @@ details.fx ol{padding-left:20px}
 <header><span class="logo">陶</span><div>
 <div class="h-title">SA晚班 · 工作執掌</div>
 <div class="h-sub">點別 → 機位 → 符號 → 職掌／規則</div></div></header>
-<div class="stamp">最後更新：2026-09-16 · v2.9</div>
+<div class="stamp">最後更新：2026-09-16 · v3.0</div>
 <nav class="crumbs" id="crumbs"></nav><div id="backwrap"></div><div id="view"></div>
 </div>
 <script>
@@ -118,12 +132,29 @@ function render(){
  window.scrollTo(0,0);
 }
 function branchHTML(n){
- const lead=n.label===TREE.label?"選擇點別":esc(n.label)+" — 請選擇";
+ const home=n.label===TREE.label;
  let h='';
- if(n.label===TREE.label&&typeof HOME_REMINDERS!=="undefined"&&HOME_REMINDERS.length){h+='<div class="home-remind">'+HOME_REMINDERS.map(x=>"📌 "+esc(x)).join("<br>")+'</div>';}
- h+='<div class="lead">'+lead+'</div><div class="cards">';
- n.children.forEach(c=>{if(c.header){h+='<div class="grp-hdr">'+esc(c.header)+'</div>';return;}h+='<button class="opt'+((c.news||c.form||c.cover||c.doc||c.alist||c.flist||c.fxlist)?' news':'')+'" onclick="go(\''+c.id+'\')"><span><span class="lbl">'+esc(c.label)+'</span>'+(c.sub?'<span class="osub">'+esc(c.sub)+'</span>':"")+'</span><span class="arr">›</span></button>'});
- return h+'</div>';
+ if(home&&typeof HOME_REMINDERS!=="undefined"&&HOME_REMINDERS.length){h+='<div class="home-remind">'+HOME_REMINDERS.map(x=>"📌 "+esc(x)).join("<br>")+'</div>';}
+ if(!home)h+='<div class="lead">'+esc(n.label)+' — 請選擇</div>';
+ const G2=["常用表單","快速查詢"];
+ let secs=[{hd:null,items:[]}];
+ n.children.forEach(c=>{ if(c.header){secs.push({hd:c.header,items:[]});} else {secs[secs.length-1].items.push(c);} });
+ secs.forEach(sec=>{
+  if(!sec.items.length)return;
+  const two=G2.indexOf(sec.hd)>=0;
+  h+='<div class="grp-wrap">';
+  if(sec.hd)h+='<div class="grp-hdr">'+esc(sec.hd)+'</div>';
+  h+='<div class="cards'+(two?" g2":"")+'">';
+  sec.items.forEach(c=>{
+   const special=(c.news||c.form||c.cover||c.doc||c.alist||c.flist||c.fxlist);
+   const isStore=!!(c.children&&c.children.length);
+   const isL9=/L9/.test(c.label||"");
+   const cls="opt"+(special&&!two?" news":"")+(isStore?" store":"")+(isL9?" sub9":"");
+   h+='<button class="'+cls+'" onclick="go(\''+c.id+'\')"><span><span class="lbl">'+esc(c.label)+'</span>'+(c.sub?'<span class="osub">'+esc(c.sub)+'</span>':"")+'</span><span class="arr">›</span></button>';
+  });
+  h+='</div></div>';
+ });
+ return h;
 }
 function numTbl(head,arr){let t='<table class="rtbl"><tr><th class="rnum">#</th><th>'+head+'</th></tr>';arr.forEach((x,i)=>{t+='<tr><td class="rnum">'+(i+1)+'</td><td class="rrule">'+esc(x)+'</td></tr>';});return t+'</table>';}
 function fldTbl(h1,rows){let t='<table class="rtbl"><tr><th class="rcat">'+h1+'</th><th>填寫</th></tr>';rows.forEach(r=>{t+='<tr><td class="rcat">'+esc(r[0])+'</td><td class="rrule">'+esc(r[1])+'</td></tr>';});return t+'</table>';}
