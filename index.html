@@ -103,7 +103,15 @@ details.fx ol{padding-left:20px}
 .rtbl th{background:var(--inkSoft);border:1px solid var(--line);padding:6px;font-weight:700}
 .rtbl td{border:1px solid var(--line);padding:8px 9px;vertical-align:top}
 .rtbl tr:nth-child(even) td{background:rgba(255,255,255,.022)}
-.rtbl .rcat{background:var(--sealSoft);color:var(--seal);font-weight:800;text-align:center;white-space:nowrap;width:72px;font-size:12.5px;padding:7px 4px}
+.rtbl .rcat{background:var(--sealSoft);color:var(--seal);font-weight:800;text-align:center;width:76px;max-width:96px;font-size:12.5px;padding:7px 5px;line-height:1.45;word-break:break-word}
+.glist{border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-top:2px}
+.gblk{counter-reset:gi}
+.gblk+.gblk{border-top:1px solid var(--line)}
+.gcat{background:var(--sealSoft);color:var(--seal);font-weight:800;font-size:12.5px;letter-spacing:.6px;padding:8px 11px;line-height:1.5}
+.gitem{counter-increment:gi;position:relative;padding:9px 12px 9px 32px;line-height:1.7;font-size:13px;border-top:1px solid var(--line)}
+.gitem::before{content:counter(gi);position:absolute;left:11px;top:9px;min-width:14px;color:var(--seal);font-weight:800;font-size:11px;opacity:.85}
+.glist.plain .gitem{padding-left:12px}
+.glist.plain .gitem::before{content:"";display:none}
 .rtbl .rrule{line-height:1.65;text-align:left}
 .rtbl .tcat{color:var(--gold);font-weight:700;white-space:nowrap;text-align:left;background:transparent;width:94px}
 .fsvg{background:#F5F1E6;border-radius:8px;overflow:hidden;line-height:0}
@@ -115,7 +123,7 @@ details.fx ol{padding-left:20px}
 <header><span class="logo">韋</span><div>
 <div class="h-title">SA晚班 · 工作執掌</div>
 <div class="h-sub">點別 → 機位 → 符號 → 職掌／規則</div></div></header>
-<div class="stamp">最後更新：2026-09-18 · v4.1</div>
+<div class="stamp">最後更新：2026-09-19 · v4.2</div>
 <nav class="crumbs" id="crumbs"></nav><div id="backwrap"></div><div id="view"></div>
 </div>
 <script src="art.js"></script>
@@ -181,7 +189,7 @@ function branchHTML(n){
 function numTbl(head,arr){let t='<table class="rtbl"><tr><th class="rnum">#</th><th>'+head+'</th></tr>';arr.forEach((x,i)=>{t+='<tr><td class="rnum">'+(i+1)+'</td><td class="rrule">'+esc(x)+'</td></tr>';});return t+'</table>';}
 function fldTbl(h1,rows){let t='<table class="rtbl"><tr><th class="rcat">'+h1+'</th><th>填寫</th></tr>';rows.forEach(r=>{t+='<tr><td class="rcat">'+esc(r[0])+'</td><td class="rrule">'+esc(r[1])+'</td></tr>';});return t+'</table>';}
 function formHTML(n){let h='<div class="note-title">'+esc(n.title||n.label)+'</div>';if(n.svg&&FORMSVG[n.svg])h+=sec("🖼️",n.svgtitle||"單據示意圖",'<div class="fsvg">'+FORMSVG[n.svg]+'</div><div class="fsvg-cap">'+esc(n.svgcap||"橘色字＝要手寫的內容")+'</div>');if(n.svgset)h+=sec("🖼️","步驟簡圖",n.svgset.map(k=>'<div class="fsvg">'+FORMSVG[k]+'</div>').join('<div style="height:10px"></div>'));if(n.intro)h+='<div class="note-meta">'+esc(n.intro)+'</div>';if(n.fields)h+=sec("📋","欄位填寫",fldTbl("欄位",n.fields));if(n.intro2)h+=sec("✍️","填寫方式",'<div class="rrule">'+esc(n.intro2)+'</div>');if(n.cases)h+=sec("🔀","情況",fldTbl("情況",n.cases));if(n.procs)h+=sec("🔢","操作流程",grpTbl("項目","步驟",n.procs.map(x=>({cat:x.h,items:x.items}))));if(n.steps)h+=sec("✍️","空白處寫上",numTbl("項目",n.steps));if(n.notes)h+=sec("⚠️","提醒","<ul>"+n.notes.map(x=>"<li>"+esc(x)+"</li>").join("")+"</ul>");return h;}
-function grpTbl(h1,h2,groups){let t='<table class="rtbl"><tr><th class="rcat">'+h1+'</th><th>'+h2+'</th></tr>';groups.forEach(g=>{g.items.forEach((it,gi)=>{t+='<tr>'+(gi===0?'<td class="rcat" rowspan="'+g.items.length+'">'+esc(g.cat)+'</td>':'')+'<td class="rrule">'+esc(it)+'</td></tr>';});});return t+'</table>';}
+function grpTbl(h1,h2,groups,plain){let t='<div class="glist'+(plain?' plain':'')+'">';groups.forEach(g=>{t+='<div class="gblk"><div class="gcat">'+esc(g.cat)+'</div>';g.items.forEach(it=>{t+='<div class="gitem">'+esc(it)+'</div>';});t+='</div>';});return t+'</div>';}
 function timeTbl(arr){let t='<table class="rtbl"><tr><th class="tcat">時段</th><th>內容</th></tr>';var re=/^(\d{1,2}:\d{2}(?:[-~]\d{1,2}:\d{2})?)\s*([\s\S]*)$/;arr.forEach(v=>{var ind=v.startsWith("　");var s=v.trim();var m=s.match(re);var tm=m?m[1]:"";var ct=m?m[2]:s;t+='<tr><td class="tcat">'+esc(tm)+'</td><td class="rrule"'+(ind?' style="padding-left:18px;color:var(--sub)"':'')+'>'+esc(ct)+'</td></tr>';});return t+'</table>';}
 function wrapCJK(t,n){var out=[],cur="";for(var i=0;i<t.length;i++){cur+=t[i];var w=0;for(var j=0;j<cur.length;j++){w+=cur.charCodeAt(j)>255?1:0.55;}if(w>=n){out.push(cur);cur="";}}if(cur)out.push(cur);return out;}
 function timeSVG(arr){
@@ -238,7 +246,7 @@ function leafHTML(c){
   h+=sec("🕐","時段 / 站位",sv?'<div class="fsvg">'+sv+'</div><div class="fsvg-cap">紅點＝時間點；虛線下為不分時段的提醒</div>':timeTbl(c.timing));
  }
  if(c.proc&&c.proc.length){h+=sec("💰","帳後",numTbl("步驟",c.proc))}
-var grp=c.ruleKeys.map(k=>({cat:RULES[k].title.replace("規則",""),items:RULES[k].items}));if(c.pos!=="外場"&&c.pos!=="L9"){CASHIER.forEach(g=>grp.push(g));}var rt='<table class="rtbl"><tr><th>分類</th><th>規則</th></tr>';grp.forEach(g=>{g.items.forEach((it,gi)=>{rt+='<tr>'+(gi===0?'<td class="rcat" rowspan="'+g.items.length+'">'+esc(g.cat)+'</td>':'')+'<td class="rrule">'+esc(it)+'</td></tr>';});});rt+='</table>';h+=sec("📜","規則",rt);
+var grp=c.ruleKeys.map(k=>({cat:RULES[k].title.replace("規則",""),items:RULES[k].items}));if(c.pos!=="外場"&&c.pos!=="L9"){CASHIER.forEach(g=>grp.push(g));}var rt=grpTbl("分類","規則",grp);h+=sec("📜","規則",rt);
 if(c.pos!=="外場"&&c.pos!=="L9"){h+='<details class="fx"><summary>💱 外幣收受</summary><div class="fxbody"><div class="fxnote">＊ '+esc(FX.note)+'</div>'+numTbl("步驟",FX.steps)+'</div></details>';h+='<details class="fx"><summary>🗑️ 作廢代號</summary><div class="fxbody">'+numTbl("作廢原因",VOID)+'</div></details>';var cg=[{cat:"通則",items:CURRENCY.general}].concat(CURRENCY.items.map(it=>({cat:it[0],items:it[1]})));h+='<details class="fx"><summary>🚫 不收幣別／版本</summary><div class="fxbody">'+grpTbl("幣別","內容",cg)+'</div></details>';var ct='<table class="rtbl" style="font-size:12px"><tr><th>卡別</th><th>碼數</th><th>開頭</th><th>防偽</th></tr>'+CARD.types.map(t=>'<tr><td class="rcat">'+esc(t[0])+'</td><td class="rrule">'+esc(t[1])+'</td><td class="rrule">'+esc(t[2])+'</td><td class="rrule">'+esc(t[3])+'</td></tr>').join("")+'</table>';var cgrp=[{cat:"銀聯卡",items:CARD.unionpay},{cat:"收授規範",items:CARD.rules},{cat:"可疑處理",items:CARD.suspect},{cat:"感應／其他",items:CARD.sense}];h+='<details class="fx"><summary>💳 信用卡</summary><div class="fxbody">'+ct+grpTbl("分類","內容",cgrp)+'</div></details>';h+='<details class="fx"><summary>🧾 旅行支票 T/C</summary><div class="fxbody">'+numTbl("注意事項",TC)+'</div></details>';h+='<details class="fx"><summary>📅 屆期抄寫</summary><div class="fxbody">'+grpTbl("分類","內容",EXPIRY.map(s=>({cat:s.h,items:s.items})))+'</div></details>';h+='<details class="fx"><summary>📦 盤點作業</summary><div class="fxbody">'+grpTbl("分類","內容",STOCK.map(s=>({cat:s.h,items:s.items})))+'</div></details>';}
  return h;
 }
