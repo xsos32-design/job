@@ -17,7 +17,7 @@
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{margin:0;background:var(--paper);color:var(--ink);font-family:system-ui,-apple-system,"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}
 .wrap{max-width:480px;margin:0 auto;padding:0 16px 48px}
-header{padding:26px 0 6px;display:flex;align-items:center;gap:10px}
+header{padding:22px 0 4px;display:flex;align-items:center;gap:10px}
 .logo{width:34px;height:34px;border-radius:8px;background:var(--seal);color:#fff;display:grid;place-items:center;font-weight:800;font-size:15px}
 .h-title{font-size:17px;font-weight:800;letter-spacing:.5px}
 .h-sub{font-size:12px;color:var(--sub)}
@@ -31,6 +31,8 @@ nav.crumbs{display:flex;flex-wrap:wrap;align-items:center;gap:4px;font-size:13px
 .cards{display:grid;gap:10px}
 .cards.g2{grid-template-columns:repeat(2,1fr);gap:8px}
 .cards.g2 .opt{flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:3px;padding:13px 12px;min-height:74px}
+.cards:not(.g2) .opt{flex-direction:row;align-items:center;justify-content:flex-start;gap:0;min-height:0;padding:12px 13px}
+.cards:not(.g2) .opt .arr{display:flex;margin-left:8px}
 .cards.g2 .opt .arr{display:none}
 .cards.g2 .opt .lbl{font-size:14.5px;line-height:1.35}
 .cards.g2 .opt .osub{font-size:11px;margin-top:0}
@@ -50,7 +52,7 @@ nav.crumbs{display:flex;flex-wrap:wrap;align-items:center;gap:4px;font-size:13px
 .badges{display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap}
 .b-sym{background:var(--sealSoft);color:var(--seal);font-weight:800;font-size:16px;padding:6px 14px;border-radius:8px}
 .b-pos{background:var(--inkSoft);color:var(--sub);font-weight:700;font-size:12.5px;padding:6px 12px;border-radius:8px;letter-spacing:.5px}
-.sec{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:15px 16px;margin-bottom:12px;box-shadow:0 1px 2px rgba(0,0,0,.25)}
+.sec{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:15px 15px 16px;margin-bottom:13px;box-shadow:0 1px 2px rgba(0,0,0,.25)}
 .sec-h{display:flex;align-items:center;gap:7px;margin-bottom:10px;padding-left:8px;border-left:3px solid var(--seal);border-radius:2px}
 .sec-h .t{font-weight:800;font-size:14px;letter-spacing:1px}
 .sec-h .rule{flex:1;height:1px;background:var(--line);margin-left:4px}
@@ -104,7 +106,15 @@ details.fx ol{padding-left:20px}
 .rtbl td{border:1px solid var(--line);padding:8px 9px;vertical-align:top}
 .rtbl tr:nth-child(even) td{background:rgba(255,255,255,.022)}
 .rtbl .rcat{background:var(--sealSoft);color:var(--seal);font-weight:800;text-align:center;width:76px;max-width:96px;font-size:12.5px;padding:7px 5px;line-height:1.45;word-break:break-word}
-.glist{border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-top:2px}
+.glist,.nlist{border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-top:2px;background:rgba(255,255,255,.012)}
+.nlist{counter-reset:ni}
+.nitem{counter-increment:ni;position:relative;padding:9px 12px 9px 32px;line-height:1.72;font-size:13px}
+.nitem+.nitem{border-top:1px solid var(--line)}
+.nitem::before{content:counter(ni);position:absolute;left:11px;top:9px;min-width:14px;color:var(--gold);font-weight:800;font-size:11px;opacity:.9}
+.opt .obadge{flex:none;width:30px;height:30px;border-radius:9px;background:var(--inkSoft);border:1px solid var(--line);color:var(--gold);font-weight:800;font-size:14px;display:grid;place-items:center;margin-right:11px;letter-spacing:0}
+.opt .otx{flex:1;min-width:0}
+.opt .arr svg{width:17px;height:17px;display:block}
+.opt .arr{color:var(--sub);display:flex;align-items:center}
 .gblk{counter-reset:gi}
 .gblk+.gblk{border-top:1px solid var(--line)}
 .gcat{background:var(--sealSoft);color:var(--seal);font-weight:800;font-size:12.5px;letter-spacing:.6px;padding:8px 11px;line-height:1.5}
@@ -115,6 +125,7 @@ details.fx ol{padding-left:20px}
 .rtbl .rrule{line-height:1.65;text-align:left}
 .rtbl .tcat{color:var(--gold);font-weight:700;white-space:nowrap;text-align:left;background:transparent;width:94px}
 .fsvg{background:#F5F1E6;border-radius:8px;overflow:hidden;line-height:0}
+.fsvg.tl{background:transparent;border-radius:12px}
 .fsvg svg{width:100%;height:auto;display:block}
 .fsvg-cap{font-size:11.5px;color:var(--sub);padding-top:6px}
 .rtbl .rnum{background:var(--sealSoft);color:var(--seal);font-weight:800;text-align:center;width:34px}
@@ -123,7 +134,7 @@ details.fx ol{padding-left:20px}
 <header><span class="logo">韋</span><div>
 <div class="h-title">SA晚班 · 工作執掌</div>
 <div class="h-sub">點別 → 機位 → 符號 → 職掌／規則</div></div></header>
-<div class="stamp">最後更新：2026-09-19 · v4.2</div>
+<div class="stamp">最後更新：2026-09-21 · v5.0</div>
 <nav class="crumbs" id="crumbs"></nav><div id="backwrap"></div><div id="view"></div>
 </div>
 <script src="art.js"></script>
@@ -161,6 +172,7 @@ function render(){
  var A=window.JOBART||{}; if(A[__aid]){$("view").insertAdjacentHTML("afterbegin",'<div class="art">'+A[__aid]+'</div>');}
  window.scrollTo(0,0);
 }
+var ARROW='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>';
 function branchHTML(n){
  const home=n.label===TREE.label;
  let h='';
@@ -177,16 +189,20 @@ function branchHTML(n){
   h+='<div class="cards'+(two?" g2":"")+'">';
   sec.items.forEach(c=>{
    const special=(c.news||c.form||c.cover||c.doc||c.alist||c.flist||c.fxlist);
-   const isStore=!!(c.children&&c.children.length);
+   const isStore2=home&&!!(c.children&&c.children.length);const isStore=isStore2;
    const isL9=/L9/.test(c.label||"");
    const cls="opt"+(special&&!two?" news":"")+(isStore?" store":"")+(isL9?" sub9":"");
-   h+='<button class="'+cls+'" onclick="go(\''+c.id+'\')"><span><span class="lbl">'+esc(c.label)+'</span>'+(c.sub?'<span class="osub">'+esc(c.sub)+'</span>':"")+'</span><span class="arr">›</span></button>';
+   var lb=c.label||"",bg="",ti=lb,sb=c.sub||"";
+   if(!isStore2){var ps=lb.split(/\s*[·・]\s*/),m0=ps[0].match(/^(\d+)\s*號$/);
+    if(m0){bg='<span class="obadge">'+m0[1]+'</span>';
+     if(ps.length>=3){ti=ps.slice(2).join(" · ");sb=sb||ps[1];}else{ti=ps.slice(1).join(" · ");}}}
+   h+='<button class="'+cls+'" onclick="go(\''+c.id+'\')">'+bg+'<span class="otx"><span class="lbl">'+esc(ti)+'</span>'+(sb?'<span class="osub">'+esc(sb)+'</span>':"")+'</span><span class="arr">'+ARROW+'</span></button>';
   });
   h+='</div></div>';
  });
  return h;
 }
-function numTbl(head,arr){let t='<table class="rtbl"><tr><th class="rnum">#</th><th>'+head+'</th></tr>';arr.forEach((x,i)=>{t+='<tr><td class="rnum">'+(i+1)+'</td><td class="rrule">'+esc(x)+'</td></tr>';});return t+'</table>';}
+function numTbl(head,arr){let t='<div class="nlist">';arr.forEach(x=>{t+='<div class="nitem">'+esc(x)+'</div>';});return t+'</div>';}
 function fldTbl(h1,rows){let t='<table class="rtbl"><tr><th class="rcat">'+h1+'</th><th>填寫</th></tr>';rows.forEach(r=>{t+='<tr><td class="rcat">'+esc(r[0])+'</td><td class="rrule">'+esc(r[1])+'</td></tr>';});return t+'</table>';}
 function formHTML(n){let h='<div class="note-title">'+esc(n.title||n.label)+'</div>';if(n.svg&&FORMSVG[n.svg])h+=sec("🖼️",n.svgtitle||"單據示意圖",'<div class="fsvg">'+FORMSVG[n.svg]+'</div><div class="fsvg-cap">'+esc(n.svgcap||"橘色字＝要手寫的內容")+'</div>');if(n.svgset)h+=sec("🖼️","步驟簡圖",n.svgset.map(k=>'<div class="fsvg">'+FORMSVG[k]+'</div>').join('<div style="height:10px"></div>'));if(n.intro)h+='<div class="note-meta">'+esc(n.intro)+'</div>';if(n.fields)h+=sec("📋","欄位填寫",fldTbl("欄位",n.fields));if(n.intro2)h+=sec("✍️","填寫方式",'<div class="rrule">'+esc(n.intro2)+'</div>');if(n.cases)h+=sec("🔀","情況",fldTbl("情況",n.cases));if(n.procs)h+=sec("🔢","操作流程",grpTbl("項目","步驟",n.procs.map(x=>({cat:x.h,items:x.items}))));if(n.steps)h+=sec("✍️","空白處寫上",numTbl("項目",n.steps));if(n.notes)h+=sec("⚠️","提醒","<ul>"+n.notes.map(x=>"<li>"+esc(x)+"</li>").join("")+"</ul>");return h;}
 function grpTbl(h1,h2,groups,plain){let t='<div class="glist'+(plain?' plain':'')+'">';groups.forEach(g=>{t+='<div class="gblk"><div class="gcat">'+esc(g.cat)+'</div>';g.items.forEach(it=>{t+='<div class="gitem">'+esc(it)+'</div>';});t+='</div>';});return t+'</div>';}
@@ -198,7 +214,7 @@ function timeSVG(arr){
  arr.forEach(function(x){var raw=String(x);
   if(/^　/.test(raw)&&cur){cur.subs.push(raw.replace(/^　+/,""));return;}
   var t=raw.trim(),m=t.match(RE);
-  if(m&&m[1]){cur={t:m[1],d:m[2]||"",subs:[]};rows.push(cur);}
+  if(m&&m[1]){var lab=m[1],rest=m[2]||"",pm=rest.match(/^(前後|以前|之前|前|起|過後)\s*/);if(pm){lab=lab+" "+pm[1];rest=rest.slice(pm[0].length);}cur={t:lab,d:rest,subs:[]};rows.push(cur);}
   else{notes.push(t);cur=null;}});
  if(!rows.length)return "";
  if(rows.length>1){var mins=function(x){var p=x.match(/^(\d{1,2}):(\d{2})/);return p?(+p[1])*60+(+p[2]):0;};
@@ -216,18 +232,18 @@ function timeSVG(arr){
  var ny=y+(notes.length?10:0),nls=[];
  notes.forEach(function(t){wrapCJK(t,26).forEach(function(l){nls.push({l:l,y:ny});ny+=12;});});
  var H=ny+12;
- var h='<svg viewBox="0 0 300 '+H+'" role="img" aria-label="時段流程"><rect x="4" y="4" width="292" height="'+(H-8)+'" rx="4" fill="#F5F1E6" stroke="#C9C2B0"/>';
- h+='<text x="150" y="21" font-size="10" font-weight="700" text-anchor="middle" fill="#1A1A1A">時段流程</text>';
- h+='<line x1="74" y1="30" x2="74" y2="'+lineEnd+'" stroke="#C9BFA6" stroke-width="2"/>';
+ var h='<svg viewBox="0 0 300 '+H+'" role="img" aria-label="時段流程"><rect x="4" y="4" width="292" height="'+(H-8)+'" rx="10" fill="#12161C" stroke="#2A323D"/>';
+ h+='<text x="150" y="21" font-size="9.5" font-weight="700" letter-spacing="2" text-anchor="middle" fill="#94A0AE">時 段 流 程</text>';
+ h+='<line x1="74" y1="30" x2="74" y2="'+lineEnd+'" stroke="#333C49" stroke-width="1.6"/>';
  items.forEach(function(it){
-  h+='<circle cx="74" cy="'+it.y+'" r="4.5" fill="#B03A1E"/>';
-  h+='<text x="66" y="'+(it.y+3)+'" font-size="8.5" font-weight="700" text-anchor="end" fill="#B03A1E">'+esc(it.t)+'</text>';
-  it.ls.forEach(function(l,k){h+='<text x="86" y="'+(it.y+3+k*12)+'" font-size="8.5" fill="#1A1A1A">'+esc(l)+'</text>';});
+  h+='<circle cx="74" cy="'+it.y+'" r="5.5" fill="#1A1F27" stroke="#EE6C56" stroke-width="2"/>';
+  h+='<text x="64" y="'+(it.y+3)+'" font-size="8.5" font-weight="700" text-anchor="end" fill="#DDB566">'+esc(it.t)+'</text>';
+  it.ls.forEach(function(l,k){h+='<text x="87" y="'+(it.y+3+k*12)+'" font-size="8.5" fill="#EAEDF0">'+esc(l)+'</text>';});
   var base=it.y+3+Math.max(it.ls.length,1)*12;
-  it.subs.forEach(function(l,k){h+='<text x="90" y="'+(base+k*11)+'" font-size="8" fill="#5E5044">'+esc(l)+'</text>';});
+  it.subs.forEach(function(l,k){h+='<text x="91" y="'+(base+k*11)+'" font-size="8" fill="#94A0AE">'+esc(l)+'</text>';});
  });
- if(nls.length){h+='<line x1="16" y1="'+(y+2)+'" x2="284" y2="'+(y+2)+'" stroke="#C9BFA6" stroke-dasharray="3 3"/>';
-  nls.forEach(function(n){h+='<text x="18" y="'+n.y+'" font-size="8" fill="#7A6A55">'+esc(n.l)+'</text>';});}
+ if(nls.length){h+='<line x1="16" y1="'+(y+2)+'" x2="284" y2="'+(y+2)+'" stroke="#2F3845" stroke-dasharray="3 3"/>';
+  nls.forEach(function(n){h+='<text x="18" y="'+n.y+'" font-size="8" fill="#94A0AE">'+esc(n.l)+'</text>';});}
  return h+'</svg>';
 }
 var ICO={"📢":"<path d=\"M11 6a13 13 0 0 0 8.4-2.8A1 1 0 0 1 21 4v12a1 1 0 0 1-1.6.8A13 13 0 0 0 11 14H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z\"/> <path d=\"M6 14a12 12 0 0 0 2.4 7.2 2 2 0 0 0 3.2-2.4A8 8 0 0 1 10 14\"/> <path d=\"M8 6v8\"/>","💳":"<rect width=\"20\" height=\"14\" x=\"2\" y=\"5\" rx=\"2\"/> <line x1=\"2\" x2=\"22\" y1=\"10\" y2=\"10\"/> <path d=\"M6 14h2\"/>","🪪":"<path d=\"M16 2v2\"/> <path d=\"M7 21v-2a2 2 0 012-2h6a2 2 0 012 2v2\"/> <path d=\"M8 2v2\"/> <circle cx=\"12\" cy=\"10\" r=\"3\"/> <rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"2\"/>","🧮":"<path d=\"M12 3v18\"/> <rect width=\"18\" height=\"18\" x=\"3\" y=\"3\" rx=\"2\"/> <path d=\"M3 9h18\"/> <path d=\"M3 15h18\"/>","🧾":"<path d=\"M12 17V7\"/> <path d=\"M16 8h-6a2 2 0 0 0 0 4h4a2 2 0 0 1 0 4H8\"/> <path d=\"M4 3a1 1 0 0 1 1-1 1.3 1.3 0 0 1 .7.2l.933.6a1.3 1.3 0 0 0 1.4 0l.934-.6a1.3 1.3 0 0 1 1.4 0l.933.6a1.3 1.3 0 0 0 1.4 0l.933-.6a1.3 1.3 0 0 1 1.4 0l.934.6a1.3 1.3 0 0 0 1.4 0l.933-.6A1.3 1.3 0 0 1 19 2a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1 1.3 1.3 0 0 1-.7-.2l-.933-.6a1.3 1.3 0 0 0-1.4 0l-.934.6a1.3 1.3 0 0 1-1.4 0l-.933-.6a1.3 1.3 0 0 0-1.4 0l-.933.6a1.3 1.3 0 0 1-1.4 0l-.934-.6a1.3 1.3 0 0 0-1.4 0l-.933.6a1.3 1.3 0 0 1-.7.2 1 1 0 0 1-1-1z\"/>","💵":"<rect width=\"20\" height=\"12\" x=\"2\" y=\"6\" rx=\"2\"/> <circle cx=\"12\" cy=\"12\" r=\"2\"/> <path d=\"M6 12h.01M18 12h.01\"/>","📝":"<path d=\"M12.659 22H18a2 2 0 0 0 2-2V8a2.4 2.4 0 0 0-.706-1.706l-3.588-3.588A2.4 2.4 0 0 0 14 2H6a2 2 0 0 0-2 2v9.34\"/> <path d=\"M14 2v5a1 1 0 0 0 1 1h5\"/> <path d=\"M10.378 12.622a1 1 0 0 1 3 3.003L8.36 20.637a2 2 0 0 1-.854.506l-2.867.837a.5.5 0 0 1-.62-.62l.836-2.869a2 2 0 0 1 .506-.853z\"/>","🔰":"<circle cx=\"12\" cy=\"12\" r=\"10\"/> <path d=\"m16.24 7.76-1.804 5.411a2 2 0 0 1-1.265 1.265L7.76 16.24l1.804-5.411a2 2 0 0 1 1.265-1.265z\"/>","🎯":"<circle cx=\"12\" cy=\"12\" r=\"10\"/> <circle cx=\"12\" cy=\"12\" r=\"6\"/> <circle cx=\"12\" cy=\"12\" r=\"2\"/>","⭐":"<path d=\"M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z\"/>","✈":"<path d=\"M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z\"/>","🛫":"<path d=\"M2 22h20\"/> <path d=\"M6.36 17.4 4 17l-2-4 1.1-.55a2 2 0 0 1 1.8 0l.17.1a2 2 0 0 0 1.8 0L8 12 5 6l.9-.45a2 2 0 0 1 2.09.2l4.02 3a2 2 0 0 0 2.1.2l4.19-2.06a2.41 2.41 0 0 1 1.73-.17L21 7a1.4 1.4 0 0 1 .87 1.99l-.38.76c-.23.46-.6.84-1.07 1.08L7.58 17.2a2 2 0 0 1-1.22.18Z\"/>","📄":"<path d=\"M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z\"/> <path d=\"M14 2v5a1 1 0 0 0 1 1h5\"/> <path d=\"M10 9H8\"/> <path d=\"M16 13H8\"/> <path d=\"M16 17H8\"/>","🏠":"<path d=\"M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8\"/> <path d=\"M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z\"/>","📌":"<path d=\"M12 17v5\"/> <path d=\"M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z\"/>","🖼":"<rect width=\"18\" height=\"18\" x=\"3\" y=\"3\" rx=\"2\" ry=\"2\"/> <circle cx=\"9\" cy=\"9\" r=\"2\"/> <path d=\"m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21\"/>","📋":"<rect width=\"8\" height=\"4\" x=\"8\" y=\"2\" rx=\"1\" ry=\"1\"/> <path d=\"M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2\"/> <path d=\"M12 11h4\"/> <path d=\"M12 16h4\"/> <path d=\"M8 11h.01\"/> <path d=\"M8 16h.01\"/>","✍":"<path d=\"M13 21h8\"/> <path d=\"M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z\"/>","🔀":"<path d=\"m18 14 4 4-4 4\"/> <path d=\"m18 2 4 4-4 4\"/> <path d=\"M2 18h1.973a4 4 0 0 0 3.3-1.7l5.454-8.6a4 4 0 0 1 3.3-1.7H22\"/> <path d=\"M2 6h1.972a4 4 0 0 1 3.6 2.2\"/> <path d=\"M22 18h-6.041a4 4 0 0 1-3.3-1.8l-.359-.45\"/>","🔢":"<path d=\"M11 5h10\"/> <path d=\"M11 12h10\"/> <path d=\"M11 19h10\"/> <path d=\"M4 4h1v5\"/> <path d=\"M4 9h2\"/> <path d=\"M6.5 20H3.4c0-1 2.6-1.925 2.6-3.5a1.5 1.5 0 0 0-2.6-1.02\"/>","⚠":"<path d=\"m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3\"/> <path d=\"M12 9v4\"/> <path d=\"M12 17h.01\"/>","🗓":"<path d=\"M8 2v3\"/> <path d=\"M16 2v3\"/> <rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"2\"/> <path d=\"M3 9h18\"/> <path d=\"M8 13h.01\"/> <path d=\"M12 13h.01\"/> <path d=\"M16 13h.01\"/> <path d=\"M8 17h.01\"/> <path d=\"M12 17h.01\"/> <path d=\"M16 17h.01\"/>","📅":"<path d=\"M16 14v2.2l1.6 1\"/> <path d=\"M16 2v3\"/> <path d=\"M21 7.338V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2h2.338\"/> <path d=\"M3 9h5.859\"/> <path d=\"M8 2v3\"/> <circle cx=\"16\" cy=\"16\" r=\"6\"/>","🕐":"<circle cx=\"12\" cy=\"12\" r=\"10\"/> <path d=\"M12 6v6l4 2\"/>","💰":"<path d=\"M13.744 17.736a6 6 0 1 1-7.48-7.48\"/> <path d=\"M15 6h1v4\"/> <path d=\"m6.134 14.768.866-.5 2 3.464\"/> <circle cx=\"16\" cy=\"8\" r=\"6\"/>","📜":"<path d=\"M15 12h-5\"/> <path d=\"M15 8h-5\"/> <path d=\"M19 17V5a2 2 0 0 0-2-2H4\"/> <path d=\"M8 21h12a2 2 0 0 0 2-2v-1a1 1 0 0 0-1-1H11a1 1 0 0 0-1 1v1a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v2a1 1 0 0 0 1 1h3\"/>","💱":"<path d=\"M8 3 4 7l4 4\"/> <path d=\"M4 7h16\"/> <path d=\"m16 21 4-4-4-4\"/> <path d=\"M20 17H4\"/>","🗑":"<path d=\"M10 11v6\"/> <path d=\"M14 11v6\"/> <path d=\"M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6\"/> <path d=\"M3 6h18\"/> <path d=\"M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2\"/>","🚫":"<circle cx=\"12\" cy=\"12\" r=\"10\"/> <path d=\"M4.929 4.929 19.07 19.071\"/>","📦":"<path d=\"M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z\"/> <path d=\"M12 22V12\"/> <polyline points=\"3.29 7 12 12 20.71 7\"/> <path d=\"m7.5 4.27 9 5.15\"/>","🚬":"<path d=\"M17 12H3a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h14\"/> <path d=\"M18 8c0-2.5-2-2.5-2-5\"/> <path d=\"M21 16a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1\"/> <path d=\"M22 8c0-2.5-2-2.5-2-5\"/> <path d=\"M7 12v4\"/>","🍷":"<path d=\"M8 22h8\"/> <path d=\"M7 10h10\"/> <path d=\"M12 15v7\"/> <path d=\"M12 15a5 5 0 0 0 5-5c0-2-.5-4-2-8H9c-1.5 4-2 6-2 8a5 5 0 0 0 5 5Z\"/>","👥":"<path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\"/> <path d=\"M16 3.128a4 4 0 0 1 0 7.744\"/> <path d=\"M22 21v-2a4 4 0 0 0-3-3.87\"/> <circle cx=\"9\" cy=\"7\" r=\"4\"/>","ℹ":"<circle cx=\"12\" cy=\"12\" r=\"10\"/> <path d=\"M12 16v-4\"/> <path d=\"M12 8h.01\"/>"};
@@ -243,7 +259,7 @@ function leafHTML(c){
  if(cyc.length)h+=sec("🗓️","週期性工作",numTbl("工作項目",cyc));
  if(c.timing.length){
   var sv=timeSVG(c.timing);
-  h+=sec("🕐","時段 / 站位",sv?'<div class="fsvg">'+sv+'</div><div class="fsvg-cap">紅點＝時間點；虛線下為不分時段的提醒</div>':timeTbl(c.timing));
+  h+=sec("🕐","時段 / 站位",sv?'<div class="fsvg tl">'+sv+'</div><div class="fsvg-cap">橘點＝時間點；虛線下方為不分時段的提醒</div>':timeTbl(c.timing));
  }
  if(c.proc&&c.proc.length){h+=sec("💰","帳後",numTbl("步驟",c.proc))}
 var grp=c.ruleKeys.map(k=>({cat:RULES[k].title.replace("規則",""),items:RULES[k].items}));if(c.pos!=="外場"&&c.pos!=="L9"){CASHIER.forEach(g=>grp.push(g));}var rt=grpTbl("分類","規則",grp);h+=sec("📜","規則",rt);
