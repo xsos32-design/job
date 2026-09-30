@@ -30,6 +30,7 @@ h1{font-size:18px;margin:0;letter-spacing:.5px}
 /* POS screen */
 .pos{background:#0B2545;border:2px solid #1D3F6E;border-radius:8px;overflow:hidden;font-size:12.5px}
 .pic{display:block;width:100%;height:auto;background:#0B2545}
+.ph{border-bottom:1px solid #1D3F6E}
 .piccap{font-size:11.5px;color:var(--sub);padding:6px 10px 8px;background:#0B2545;border-top:1px solid #1D3F6E}
 .pos .tb{background:#153A6B;padding:6px 9px;font-size:12px;font-weight:700;color:#DCE7F5;display:flex;justify-content:space-between}
 .pos .bd{padding:10px;min-height:96px;background:#0B2545;color:#CBD9EC}
@@ -78,7 +79,7 @@ h1{font-size:18px;margin:0;letter-spacing:.5px}
 <div id="home"></div>
 <div id="play" style="display:none"></div>
 
-<div class="foot">資料來源：昇恆昌 e 學院「POS RICH 功能工具書」、「結帳 POS 機操作流程 1-10 付款方式」<br><a href="./">← 回 SA晚班 · 工作執掌</a></div>
+<div class="foot">資料來源：昇恆昌 e 學院「POS RICH 功能工具書」、「結帳 POS 機操作流程 1-10 付款方式」；實機畫面拍攝於 SA-34<br><a href="./">← 回 SA晚班 · 工作執掌</a></div>
 </div>
 
 <script>
@@ -90,7 +91,8 @@ var MENU2={
  "庫存":["調撥"],
  "寄貨":["寄貨作業"]
 };
-var PAYKEYS=["返回銷售","現金","信用卡","匯率表","付款刪除","美元","電子支付","RICH Pay","上一頁","人民幣","酬賓券","禮券","下一頁","日幣","其他付款","確認付款"];
+var PAYKEYS=["返回銷售","現金","信用卡","匯率表","付款刪除","美元","電子支付","RICH Pay","上一頁","人民幣","酬賓券","禮券","下一頁","日幣","桃園消費券","其他付款","清除","商品預覽","統編","確認付款"];
+var TRADEKEYS=["重新登入","商品查詢","營業員","提貨註記","商品刪除","酬賓券","贈品","貴賓","快速結帳","單筆折扣","轉機註記","會員功能","下一頁","單筆折讓","統編","活動代碼","數量","清除","Enter","結帳"];
 var LOGIN={say:'在「新交易基本資料」畫面輸入售貨員工號、密碼，按 <b>POS RICH</b> 鍵',ok:"Pos Rich",
  fields:[["售貨員工號","27679"],["密碼","••••"],["國籍","1 中華民國"],["班機","BR0706"]],
  btns:["查價F1","交易作廢","暫存取消","確定A+E","會員登錄F9","Pos Rich","其他功能","取消Esc"]};
@@ -305,7 +307,33 @@ var FLOWS=[
 {id:"p7",cat:"結帳・付款方式",name:"電子／行動支付",task:"分清楚四類電子支付",steps:[L(),
  F({title:"付款畫面",say:'按 <b>電子支付</b> 鍵',ok:"電子支付",btns:PAYKEYS}),
  F({title:"四類分別",say:'記住分類後按 <b>完成</b>',ok:"完成",btns:["完成"],cap:"1-10-07～1-10-10。悠遊卡／一卡通：手冊列為電子票券，但目前門市不收，收款前先問組長",
-   pic:{k:"list",title:"電子類付款方式",lines:["第三方支付：支付寶、微信、韓亞、LINEPAY、街口支付","電子票券：悠遊卡、一卡通（門市目前不收，待確認）","行動支付：GOOGLE PAY、APPLE PAY、SAMSUNG PAY 等","LINKPAY：SP 下單網、移地銷售展售會用；保稅稅放訂單、含藥美白不可稅放使用"]}})]}
+   pic:{k:"list",title:"電子類付款方式",lines:["第三方支付：支付寶、微信、韓亞、LINEPAY、街口支付","電子票券：悠遊卡、一卡通（門市目前不收，待確認）","行動支付：GOOGLE PAY、APPLE PAY、SAMSUNG PAY 等","LINKPAY：SP 下單網、移地銷售展售會用；保稅稅放訂單、含藥美白不可稅放使用"]}})]},
+/* ── 結帳全流程（實機照片，SA-34 實拍） ── */
+{id:"c1",cat:"結帳・實機流程",name:"結帳全流程（實拍）",task:"從登入到確認付款走完一筆",steps:[
+ F({title:"售貨員選擇表",say:'售貨員欄按下去會跳出選擇表，選自己的工號——按 <b>36673 朱韋任</b>',ok:"36673 朱韋任",btns:["36673 朱韋任","32379 吳慶鴻","34866 林洧盈","32286 麥嘉琪"],
+   cap:"收銀員欄是機台固定帶入（例：66666 POS用_桃園L9），售貨員才是自己",
+   pic:{k:"photo",src:"pos-s1-login-list.jpg",title:"售貨員選擇表"}}),
+ F({title:"新交易基本資料",say:'密碼、國籍、班機都輸入後，按 <b>確定(A+E)</b>',ok:"確定A+E",btns:["查價F1","交易作廢","暫存取出","確定A+E","會員登錄F9","Pos Rich","其他功能","取消Esc"],
+   cap:"右邊「導引訊息框」會提示下一步；出境日會自動帶。要查匯率按匯率表，要刷登機證按刷登機證",
+   pic:{k:"photo",src:"pos-s2-login.jpg",title:"新交易基本資料"}}),
+ F({title:"交易主畫面",say:'掃或輸入商品條碼，按 <b>Enter</b>',ok:"Enter",btns:TRADEKEYS,
+   cap:"左下是「交易」頁的功能鍵；右下 即時訊息 會顯示錯誤或提醒",
+   pic:{k:"photo",src:"pos-s3-trade-empty.jpg",title:"交易主畫面（未輸入商品）"}}),
+ F({title:"商品帶入",say:'確認品名、單價、數量、售貨員工號都對，按 <b>結帳</b>',ok:"結帳",btns:TRADEKEYS,
+   cap:"右上 TOTAL 就是這筆總額。要改數量按數量鍵；打錯按商品刪除",
+   pic:{k:"photo",src:"pos-s4-trade-item.jpg",title:"商品已帶入（TOTAL 3,680）"}}),
+ F({title:"優惠券使用明細",say:'有酬賓券在這裡輸入；沒有就按 <b>下一步</b>',ok:"下一步",btns:["上一步","ESG贈點","其他按鍵","酬賓券","刪除優惠券","下一步"],
+   cap:"輸入區打券號；打錯按刪除優惠券。右邊會即時顯示交易總金額與抵用後金額",
+   pic:{k:"photo",src:"pos-s5-coupon.jpg",title:"優惠券使用明細"}}),
+ F({title:"全部折扣折讓／點換金",say:'要折扣、折讓或點換金在這裡做；沒有就按 <b>下一步</b>',ok:"下一步",btns:["上一步","全部折扣","全部折讓","刪除優惠","點換金","刪除點換金","下一步"],
+   cap:"右邊看得到商品總金額、滿額折讓金額、抵用後金額，以及會員點數（未抵用前／本次使用／剩餘）",
+   pic:{k:"photo",src:"pos-s6-discount.jpg",title:"全部折扣折讓／點換金"}}),
+ F({title:"付款畫面",say:'畫面跳到「付款」頁。這筆收現金——按 <b>現金</b>',ok:"現金",btns:PAYKEYS,
+   cap:"右上 TOTAL／不足 要看清楚；右邊有六種幣別即時匯率；EDC 要顯示「為連線狀態」才能刷卡",
+   pic:{k:"photo",src:"pos-s7-pay.jpg",title:"付款畫面"}}),
+ F({title:"確認付款",say:'金額輸入區確認無誤後，按 <b>確認付款</b> 完成這筆',ok:"確認付款",btns:PAYKEYS,
+   cap:"「不足」歸零才付得掉；要改付款方式按付款刪除，要回去改商品按返回銷售",
+   pic:{k:"photo",src:"pos-s8-pay2.jpg",title:"確認付款"}})]}
 ];
 
 var mode="guide",cur=null,idx=0,err=0,DONE={};
@@ -430,6 +458,7 @@ function picHTML(s){
  }
  if(p.k==="menu")return menuSVG(p.keys||[],p.t,p.g);
  if(p.k==="voucher")return voucherSVG(p);
+ if(p.k==="photo")return '<a href="'+p.src+'" target="_blank" rel="noopener"><img class="pic ph" src="'+p.src+'" alt="'+xe(p.title||"實機畫面")+'" loading="lazy"></a><div class="piccap">實機畫面・點圖可放大</div>';
  if(p.k==="win")return winSVG(p);
  if(p.k==="phone")return phoneSVG(p);
  if(p.k==="alert")return alertSVG(p);
