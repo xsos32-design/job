@@ -29,6 +29,8 @@ h1{font-size:18px;margin:0;letter-spacing:.5px}
 .fbtn .grow{flex:1;min-width:0}
 /* POS screen */
 .pos{background:#0B2545;border:2px solid #1D3F6E;border-radius:8px;overflow:hidden;font-size:12.5px}
+.pic{display:block;width:100%;height:auto;background:#0B2545}
+.piccap{font-size:11.5px;color:var(--sub);padding:6px 10px 8px;background:#0B2545;border-top:1px solid #1D3F6E}
 .pos .tb{background:#153A6B;padding:6px 9px;font-size:12px;font-weight:700;color:#DCE7F5;display:flex;justify-content:space-between}
 .pos .bd{padding:10px;min-height:96px;background:#0B2545;color:#CBD9EC}
 .fld{display:flex;align-items:center;gap:8px;margin-bottom:6px}
@@ -157,8 +159,8 @@ var FLOWS=[
    fields:[["銷售單號","自動帶入"],["贈品貨號","9001234"]]}),
  F({title:"核銷內容",say:'確認是否核銷後按 <b>確認</b> 鍵',ok:"確認",btns:["確認","取消"],
    out:"核銷成功：顯示該銷售單的完稅贈品 品號／數量／品名"}),
- F({title:"常見四種錯誤提示",say:'記起來後按 <b>完成</b>',ok:"完成",btns:["完成"],
-   out:"① 查無商品條碼　② 稅別錯誤\n③ 商品大類錯誤　④ 商品種類錯誤\n以上系統都會跳提示畫面"})]},
+ F({title:"常見四種錯誤提示",say:'記起來後按 <b>完成</b>',ok:"完成",btns:["完成"],cap:"這四種都會跳同樣形式的提示視窗，按確定後回原畫面重打",
+   pic:{k:"alert",title:"系統提示（四種）",lines:["① 查無商品條碼","② 稅別錯誤","③ 商品大類錯誤","④ 商品種類錯誤"]}})]},
 
 /* ── 查核 ── */
 {id:"f13",cat:"查核",name:"零錢兌換",task:"換新台幣零錢",steps:[L(),M1("查核"),M2("查核","零錢兌換"),
@@ -172,15 +174,15 @@ var FLOWS=[
    out:"POS 簽核可印五種紙"}),
  F({title:"POS 簽核",say:'收授美金 100 元與 50 元時要印——點 <b>美金流水票號</b>',ok:"美金流水票號",btns:["POS簽核列印","含銷售單號及日期","美金流水票號","張數合計列印","客人不要之錢財登記表"],
    out:"POS簽核列印 → 空白 MEMO\n含銷售單號及日期 → 印前一筆交易單號 MEMO"}),
- F({title:"POS 簽核",say:'記住其餘兩種用途後按 <b>完成</b>',ok:"完成",btns:["完成"],
-   out:"張數合計列印：有紙本售貨單／EDC 張數時印出填寫，一起繳回\n客人不要之錢財登記表：收到客人不要的零錢時印出填寫，一起繳回"})]},
+ F({title:"POS 簽核",say:'記住其餘兩種用途後按 <b>完成</b>',ok:"完成",btns:["完成"],cap:"張數合計：有紙本售貨單／EDC 張數時印。客人不要之錢財登記表：收到客人不要的零錢時印。兩張都要填完一起繳回",
+   pic:{k:"paper",title:"張數合計 MEMO（印出後手寫）",lines:["日期：____/__/__","單號：______________","售貨單張數：____ 張","EDC 張數：____ 張","合計：____ 張","工號／簽名：__________"]}})]},
 
 {id:"f15",cat:"查核",name:"營收投庫",task:"做營收投庫並印收款明細表",steps:[L(),M1("查核"),M2("查核","營收投庫"),
  F({title:"營收投庫 · 輸入金額",say:'歸帳日／庫別／機台都會自動帶出，不用 KEY IN。把營收金額結入正確欄位後按 <b>儲存</b>',ok:"儲存",btns:["儲存","清除","離開"],
    fields:[["歸帳日","自動帶出"],["庫別／機台","自動帶出"],["新台幣",""]]}),
  F({title:"營收投庫 · 確認",say:'完成後按 <b>確認</b> 鍵',ok:"確認",btns:["確認","取消"],out:"確認後產生收款明細表"}),
- F({title:"收款明細表",say:'把收款明細表印出後按 <b>完成</b>',ok:"完成",btns:["完成"],
-   out:"收款明細表印出後貼在營收夾鏈袋外面，再投庫"})]},
+ F({title:"收款明細表",say:'把收款明細表印出後按 <b>完成</b>',ok:"完成",btns:["完成"],cap:"印出後貼在營收夾鏈袋外面，再投庫",
+   pic:{k:"paper",title:"收款明細表",lines:["歸帳日：2026/09/30","庫別／機台：SA / __","新台幣：__________","美金：__________","日幣：__________","人民幣：__________","合計：__________","收款人簽名：________"]}})]},
 
 /* ── 庫存 ── */
 {id:"f16",cat:"庫存",name:"調撥",task:"把商品調撥到別的庫別",steps:[L(),M1("庫存"),M2("庫存","調撥"),
@@ -192,8 +194,8 @@ var FLOWS=[
    fields:[["商品條碼","2727130811"],["箱號","1"],["數量","6"]]}),
  F({title:"調撥 · 暫確",say:'項次內容數量正確後按 <b>暫確</b>（要改就按取消暫確，會有提醒視窗）',ok:"暫確",btns:["暫確","取消暫確"]}),
  F({title:"調撥 · 確認",say:'確認調撥的品項及數量是否正確，按 <b>確認</b>',ok:"確認",btns:["確認","取消"]}),
- F({title:"調撥 · 簽名列印",say:'在撥出欄位簽名＋工號，按 <b>列印</b> 印出調撥單',ok:"列印",btns:["列印","作廢"],
-   fields:[["撥出簽名","謝○○ 27679"]]}),
+ F({title:"調撥 · 簽名列印",say:'在撥出欄位簽名＋工號，按 <b>列印</b> 印出調撥單',ok:"列印",btns:["列印","作廢"],cap:"撥出欄位要簽名＋工號才算完成",
+   pic:{k:"paper",title:"調撥單",lines:["調撥單號：TR__________","撥出庫：SA　　撥入庫：RT1","品號　　　　數量　　箱號","2727130811　 6　　　1","撥出簽名：__________","撥入簽名：__________"]}}),
  F({title:"調撥 · 作廢規則",say:'記住後按 <b>完成</b>',ok:"完成",btns:["完成"],
    out:"要取消調撥就按「作廢」鍵，會有提醒視窗，狀態會變更為「作廢」"})]},
 
@@ -228,8 +230,8 @@ var FLOWS=[
    out:"有效期限欄位預設反灰不能改，折扣辦法選到 D、E 才開放"}),
  F({title:"屆期條碼 · 有效期限",say:'輸入有效期限（1/3 效期）後按 <b>確認</b>',ok:"確認",btns:["確認","鉛筆（改數量/效期）","作廢"],
    fields:[["有效期限","1/3 效期"]]}),
- F({title:"申請完成之後",say:'記住後按 <b>完成</b>',ok:"完成",btns:["完成"],
-   out:"確認後無法再修改。\n商控收到系統通知會印屆期條碼，賣場收到申請單後再逐一確認、貼在屆期商品上。"})]},
+ F({title:"申請完成之後",say:'記住後按 <b>完成</b>',ok:"完成",btns:["完成"],cap:"確認後無法再修改。商控收到系統通知會印條碼，賣場收到後逐一確認、貼在屆期商品上",
+   pic:{k:"paper",title:"屆期條碼（商控印出、到商控室領）",lines:["品名：Under Bag milk 100g","品號：2727130811","效期：2026/12/31","折扣辦法：D","│││ ││ │││ ││││ │││","貼在該屆期商品上"]}})]},
 
 /* ── 寄貨 ── */
 {id:"f20",cat:"寄貨",name:"POS 寄貨作業",task:"客人要寄貨（現場登打）",steps:[L(),M1("寄貨"),M2("寄貨","寄貨作業"),
@@ -242,21 +244,22 @@ var FLOWS=[
    fields:[["銷售單號","掃 QRCODE 帶入"],["已取商品","部份帶走才輸入貨號與數量"]],
    out:"一件寄貨條碼上限可輸入 11 張銷售單資料"}),
  F({title:"列印",say:'儲存後才能按 <b>確認並列印店面寄貨聯</b>',ok:"確認並列印店面寄貨聯",btns:["確認並列印店面寄貨聯","列印寄貨 label"]}),
- F({title:"收尾",say:'記住後按 <b>完成</b>',ok:"完成",btns:["完成"],
-   out:"店面寄貨聯請顧客簽名（中文正楷）；顧客寄貨聯給客人回國憑單取貨。\n列印後狀態為「AD 待領」，欄位皆不能修改。寄作取消只有組長有權限。"})]},
+ F({title:"收尾",say:'記住後按 <b>完成</b>',ok:"完成",btns:["完成"],cap:"列印後狀態變「AD 待領」，欄位都不能改；寄作取消只有組長有權限",
+   pic:{k:"paper",title:"店面寄貨聯（請顧客簽名）",lines:["寄貨條碼：ER__________","顧客電話：0912-345-678","抵達班機：BR0705　日期：10/05","銷售單號：1 / 11 張","顧客簽名（中文正楷）：________","狀態：AD 待領"]}})]},
 
 {id:"f21",cat:"寄貨",name:"APP 寄貨作業",task:"客人用 APP 預約寄貨",steps:[L(),M1("寄貨"),
- F({title:"請客人操作 APP",say:'請客人打開 APP 選 <b>預約寄貨</b>',ok:"預約寄貨",btns:["預約寄貨","提貨服務"]}),
- F({title:"客人輸入航班",say:'客人輸入出發航班、抵達航班、抵達日期，資料正確後按 <b>確定</b>，產生寄貨 QRCODE',ok:"確定",btns:["確定","取消"],
-   fields:[["出發航班","BR0706"],["抵達航班","BR0705"],["抵達日期","2026/10/05"]]}),
+ F({title:"請客人操作 APP",say:'請客人打開 APP 選 <b>預約寄貨</b>',ok:"預約寄貨",btns:["預約寄貨","提貨服務"],cap:"客人手機畫面：昇恆昌 APP 首頁",
+   pic:{k:"phone",title:"客人手機 · 昇恆昌 APP",lines:["最新話題","預約寄貨","提貨服務","品牌導覽","紅利酬賓"],btn:"預約寄貨"}}),
+ F({title:"客人輸入航班",say:'客人輸入出發航班、抵達航班、抵達日期，資料正確後按 <b>確定</b>，產生寄貨 QRCODE',ok:"確定",btns:["確定","取消"],cap:"客人自己在手機上填，填完會產生寄貨 QRCODE 給你掃",
+   pic:{k:"phone",title:"客人手機 · 預約寄貨",lines:["出發航班　BR0706","抵達航班　BR0705","抵達日期　2026/10/05","","確認資料正確後按確定"],btn:"確定"}}),
  F({title:"POS RICH",say:'回 POS：按 <b>寄貨作業</b>',ok:"寄貨作業",btns:["寄貨作業","查詢"]}),
  F({title:"掃寄貨 QRCODE",say:'在寄貨條碼欄掃客人 APP 的寄貨 QRCODE，按 <b>掃描</b> 帶入客人寄貨資料',ok:"掃描",btns:["掃描","清除"],fields:[["寄貨條碼","掃 APP QRCODE"]]}),
  F({title:"掃銷售單",say:'掃銷售單 QRCODE 帶入單號後按 <b>儲存</b>',ok:"儲存",btns:["儲存","清除"],
    fields:[["銷售單號","掃 QRCODE 帶入"],["已取商品","部份帶走才輸入"]],
    out:"一件寄貨條碼上限 11 張銷售單"}),
  F({title:"列印",say:'按 <b>確認並列印店面寄貨聯</b>',ok:"確認並列印店面寄貨聯",btns:["確認並列印店面寄貨聯","不印顧客寄貨聯"]}),
- F({title:"收尾",say:'記住後按 <b>完成</b>',ok:"完成",btns:["完成"],
-   out:"店面寄貨聯填寄貨數量並請顧客簽名（中文正楷）。\nAPP 寄貨的顧客寄貨聯可以不印——APP「提貨服務」裡就有提貨碼，客人回國點「提貨碼」出示 QR Code 取貨。"})]}
+ F({title:"收尾",say:'記住後按 <b>完成</b>',ok:"完成",btns:["完成"],cap:"店面寄貨聯要填寄貨數量並請顧客簽名；顧客寄貨聯可以不印，APP 就有提貨碼",
+   pic:{k:"phone",title:"客人手機 · 提貨服務",lines:["提貨碼","▣▣▣ ▣ ▣▣▣","ER20180022521","","回國時出示此 QR Code 取貨"],btn:"提貨碼"}})]}
 ];
 
 var mode="guide",cur=null,idx=0,err=0,DONE={};
@@ -293,6 +296,87 @@ function stepOf(){var s=cur.steps[idx];if(s.scr==="login"){return {scr:"login",t
  if(s.scr==="menu2"){return {scr:"menu2",title:s.cat+"（第二層）",say:s.say,ok:s.ok,btns:MENU2[s.cat]||[]}}
  return s;}
 
+/* ── 畫面示意圖（自己畫的 SVG，模擬實際 POS 畫面） ── */
+function xe(s){return String(s).replace(/[&<>]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;"}[c]})}
+function sv(h,inner){return '<svg viewBox="0 0 300 '+h+'" class="pic" preserveAspectRatio="xMidYMid meet" role="img">'+inner+'</svg>'}
+function bar(title,w){return '<rect x="0" y="0" width="300" height="18" fill="#153A6B"/><text x="8" y="12.5" font-size="9" font-weight="700" fill="#DCE7F5">'+xe(title)+'</text><text x="292" y="12.5" font-size="8" fill="#8FA9CC" text-anchor="end">SA 練習</text>'}
+function winSVG(o){
+ var f=o.fields||[],n=f.length,note=o.note?String(o.note).split("\n").slice(0,3):[],h=26+n*20+note.length*11+10;
+ var s=bar(o.title||"");
+ f.forEach(function(x,i){var y=26+i*20,fo=(i===o.focus);
+  s+='<text x="10" y="'+(y+10)+'" font-size="8.5" fill="#9FB6D4">'+xe(x[0])+'</text>';
+  s+='<rect x="92" y="'+y+'" width="176" height="14" rx="2" fill="#FFFFFF" stroke="'+(fo?"#E8952F":"#50688C")+'" stroke-width="'+(fo?2:1)+'"/>';
+  s+='<text x="97" y="'+(y+10.5)+'" font-size="8.5" fill="#16233A">'+xe(x[1]||"")+'</text>';
+  if(fo)s+='<circle cx="278" cy="'+(y+7)+'" r="6" fill="#E8952F"/><text x="278" y="'+(y+10)+'" font-size="7.5" font-weight="700" fill="#3A2200" text-anchor="middle">!</text>';
+ });
+ note.forEach(function(l,i){s+='<text x="10" y="'+(26+n*20+12+i*11)+'" font-size="8" fill="#8FA9CC">'+xe(l)+'</text>'});
+ return sv(h,'<rect width="300" height="'+h+'" fill="#0B2545"/>'+s);
+}
+function listSVG(o){
+ var L=(o.lines||[]).slice(0,14),h=26+L.length*13+8,s=bar(o.title||"");
+ L.forEach(function(l,i){var y=24+i*13;
+  s+='<rect x="8" y="'+y+'" width="284" height="12" fill="'+(i%2?"#0E2B4E":"#123255")+'"/>';
+  s+='<text x="12" y="'+(y+9)+'" font-size="8" fill="#CBD9EC">'+xe(l)+'</text>';
+ });
+ return sv(h,'<rect width="300" height="'+h+'" fill="#0B2545"/>'+s);
+}
+function menuSVG(keys,target,g){
+ var n=keys.length,rows=Math.ceil(n/4),h=26+rows*25+14,s=bar(g?"POS RICH 第二層功能":"POS RICH 功能列表（第一層）");
+ keys.forEach(function(k,i){var c=i%4,r=Math.floor(i/4),x=10+c*71,y=24+r*25,hit=(k===target);
+  s+='<rect x="'+x+'" y="'+y+'" width="66" height="20" rx="3" fill="'+(g?"#7FA53C":"#E8952F")+'" stroke="'+(hit?"#FFFFFF":(g?"#A9C86E":"#F3BE7A"))+'" stroke-width="'+(hit?2.4:1)+'"/>';
+  s+='<text x="'+(x+33)+'" y="'+(y+13.5)+'" font-size="8.5" font-weight="700" fill="'+(g?"#1E2A06":"#3A2200")+'" text-anchor="middle">'+xe(k)+'</text>';
+  if(hit)s+='<path d="M'+(x+33)+' '+(y+24)+' l-4 6 h8 z" fill="#FFFFFF"/>';
+ });
+ s+='<text x="150" y="'+(26+rows*25+10)+'" font-size="8" fill="#9FB6D4" text-anchor="middle">白框＋箭頭＝這一步要按的鍵</text>';
+ return sv(h,'<rect width="300" height="'+h+'" fill="#0B2545"/>'+s);
+}
+function phoneSVG(o){
+ var L=(o.lines||[]).slice(0,7),h=40+L.length*13+56;
+ var s='<rect width="300" height="'+h+'" fill="#0B2545"/>'+bar(o.title||"客人手機 APP");
+ var px=96,py=26,pw=108,ph=h-34;
+ s+='<rect x="'+px+'" y="'+py+'" width="'+pw+'" height="'+ph+'" rx="10" fill="#13202F" stroke="#5B7391" stroke-width="2"/>';
+ s+='<rect x="'+(px+6)+'" y="'+(py+10)+'" width="'+(pw-12)+'" height="'+(ph-24)+'" rx="4" fill="#F7F4EC"/>';
+ s+='<text x="'+(px+pw/2)+'" y="'+(py+7)+'" font-size="6" fill="#8FA9CC" text-anchor="middle">everrich</text>';
+ L.forEach(function(l,i){s+='<text x="'+(px+12)+'" y="'+(py+26+i*13)+'" font-size="7.5" fill="#2A2A2A">'+xe(l)+'</text>'});
+ if(o.btn){var by=py+ph-32;
+  s+='<rect x="'+(px+12)+'" y="'+by+'" width="'+(pw-24)+'" height="16" rx="3" fill="#E8952F" stroke="#B03A1E" stroke-width="2"/>';
+  s+='<text x="'+(px+pw/2)+'" y="'+(by+11.5)+'" font-size="8" font-weight="700" fill="#3A2200" text-anchor="middle">'+xe(o.btn)+'</text>';}
+ return sv(h,s);
+}
+function alertSVG(o){
+ var L=(o.lines||[]).slice(0,5),h=40+L.length*14+34;
+ var s='<rect width="300" height="'+h+'" fill="#0B2545"/>'+bar(o.title||"系統提示");
+ s+='<rect x="34" y="28" width="232" height="'+(h-44)+'" rx="4" fill="#F1EFE8" stroke="#9B3226" stroke-width="2"/>';
+ s+='<circle cx="52" cy="46" r="8" fill="#9B3226"/><text x="52" y="49.5" font-size="10" font-weight="700" fill="#fff" text-anchor="middle">!</text>';
+ L.forEach(function(l,i){s+='<text x="68" y="'+(50+i*14)+'" font-size="8.5" fill="#2A2018">'+xe(l)+'</text>'});
+ s+='<rect x="128" y="'+(h-30)+'" width="44" height="14" rx="2" fill="#38517A"/><text x="150" y="'+(h-19.5)+'" font-size="8" fill="#fff" text-anchor="middle">確定</text>';
+ return sv(h,s);
+}
+function paperSVG(o){
+ var L=(o.lines||[]).slice(0,10),h=30+L.length*13+30;
+ var s='<rect width="300" height="'+h+'" fill="#0B2545"/>'+bar(o.title||"印出的單據");
+ s+='<rect x="52" y="26" width="196" height="'+(h-52)+'" fill="#FBF8F0" stroke="#C9C2B0"/>';
+ s+='<path d="M52 26 h196" stroke="#C9C2B0" stroke-dasharray="3 3"/>';
+ L.forEach(function(l,i){s+='<text x="60" y="'+(44+i*13)+'" font-size="8" fill="#2A2018">'+xe(l)+'</text>'});
+ s+='<text x="150" y="'+(h-8)+'" font-size="7.5" fill="#8FA9CC" text-anchor="middle">✂ 撕下後依規定簽名／繳回</text>';
+ return sv(h,s);
+}
+function picHTML(s){
+ var p=s.pic;
+ if(!p){
+  if(s.scr==="menu1"||s.scr==="menu2")return "";
+  if(s.scr==="login")p={k:"win",title:s.title,fields:s.fields,focus:0,note:"四欄輸完按 POS RICH 鍵"};
+  else if(s.fields&&s.fields.length)p={k:"win",title:s.title,fields:s.fields,focus:s.fields.length-1,note:s.out};
+  else if(s.out)p={k:"list",title:s.title,lines:String(s.out).split("\n")};
+  else p={k:"list",title:s.title,lines:["畫面停在這裡，請在下方按鍵區操作"]};
+ }
+ if(p.k==="menu")return menuSVG(p.keys||[],p.t,p.g);
+ if(p.k==="win")return winSVG(p);
+ if(p.k==="phone")return phoneSVG(p);
+ if(p.k==="alert")return alertSVG(p);
+ if(p.k==="paper")return paperSVG(p);
+ return listSVG(p);
+}
 function render(){
  var s=stepOf(),n=cur.steps.length;
  var h='<button class="back" onclick="home()">‹ 回流程列表</button>';
@@ -300,11 +384,9 @@ function render(){
  h+='<div class="meta"><span>任務：'+esc(cur.task)+'</span><span>STEP '+(idx+1)+' / '+n+'</span></div>';
  h+='<div class="prog"><i style="width:'+Math.round(idx/n*100)+'%"></i></div></div>';
  if(mode==="guide")h+='<div class="say">'+s.say+'</div>';
- h+='<div class="pos"><div class="tb"><span>'+esc(s.title||"")+'</span><span>SA · 練習</span></div><div class="bd">';
- (s.fields||[]).forEach(function(f){h+='<div class="fld"><span>'+esc(f[0])+'</span><b>'+esc(f[1])+'</b></div>'});
- if(s.out)h+='<div class="out">'+esc(s.out)+'</div>';
- if(!s.fields&&!s.out)h+='<div class="out">請在下方按鍵區操作</div>';
- h+='</div><div class="keys'+(s.scr==="menu1"?" m1":"")+'">';
+ h+='<div class="pos">'+picHTML(s);
+ if(s.cap)h+='<div class="piccap">'+esc(s.cap)+'</div>';
+ h+='<div class="keys'+(s.scr==="menu1"?" m1":"")+'">';
  (s.btns||[]).forEach(function(b,i){
   var cls="k";
   if(s.scr==="menu1")cls+=" o";else if(s.scr==="menu2")cls+=" g";
