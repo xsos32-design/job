@@ -458,7 +458,7 @@ function picHTML(s){
  }
  if(p.k==="menu")return menuSVG(p.keys||[],p.t,p.g);
  if(p.k==="voucher")return voucherSVG(p);
- if(p.k==="photo")return '<a href="'+p.src+'" target="_blank" rel="noopener"><img class="pic ph" src="'+p.src+'" alt="'+xe(p.title||"實機畫面")+'" loading="lazy"></a><div class="piccap">實機畫面・點圖可放大</div>';
+ if(p.k==="photo")return '<a href="'+p.src+'" target="_blank" rel="noopener"><img class="pic ph" src="'+p.src+'" alt="'+xe(p.title||"實機畫面")+'"></a><div class="piccap">實機畫面・點圖可放大</div>';
  if(p.k==="win")return winSVG(p);
  if(p.k==="phone")return phoneSVG(p);
  if(p.k==="alert")return alertSVG(p);
