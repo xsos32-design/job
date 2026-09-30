@@ -78,7 +78,7 @@ h1{font-size:18px;margin:0;letter-spacing:.5px}
 <div id="home"></div>
 <div id="play" style="display:none"></div>
 
-<div class="foot">資料來源：昇恆昌 e 學院「POS RICH 功能工具書」<br><a href="./">← 回 SA晚班 · 工作執掌</a></div>
+<div class="foot">資料來源：昇恆昌 e 學院「POS RICH 功能工具書」、「結帳 POS 機操作流程 1-10 付款方式」<br><a href="./">← 回 SA晚班 · 工作執掌</a></div>
 </div>
 
 <script>
@@ -90,6 +90,7 @@ var MENU2={
  "庫存":["調撥"],
  "寄貨":["寄貨作業"]
 };
+var PAYKEYS=["返回銷售","現金","信用卡","匯率表","付款刪除","美元","電子支付","RICH Pay","上一頁","人民幣","酬賓券","禮券","下一頁","日幣","其他付款","確認付款"];
 var LOGIN={say:'在「新交易基本資料」畫面輸入售貨員工號、密碼，按 <b>POS RICH</b> 鍵',ok:"Pos Rich",
  fields:[["售貨員工號","27679"],["密碼","••••"],["國籍","1 中華民國"],["班機","BR0706"]],
  btns:["查價F1","交易作廢","暫存取消","確定A+E","會員登錄F9","Pos Rich","其他功能","取消Esc"]};
@@ -259,7 +260,52 @@ var FLOWS=[
    out:"一件寄貨條碼上限 11 張銷售單"}),
  F({title:"列印",say:'按 <b>確認並列印店面寄貨聯</b>',ok:"確認並列印店面寄貨聯",btns:["確認並列印店面寄貨聯","不印顧客寄貨聯"]}),
  F({title:"收尾",say:'記住後按 <b>完成</b>',ok:"完成",btns:["完成"],cap:"店面寄貨聯要填寄貨數量並請顧客簽名；顧客寄貨聯可以不印，APP 就有提貨碼",
-   pic:{k:"phone",title:"客人手機 · 提貨服務",lines:["提貨碼","▣▣▣ ▣ ▣▣▣","ER20180022521","","回國時出示此 QR Code 取貨"],btn:"提貨碼"}})]}
+   pic:{k:"phone",title:"客人手機 · 提貨服務",lines:["提貨碼","▣▣▣ ▣ ▣▣▣","ER20180022521","","回國時出示此 QR Code 取貨"],btn:"提貨碼"}})]},
+/* ── 結帳 · 付款方式（來源：結帳 POS 機操作流程 1-10） ── */
+{id:"p1",cat:"結帳・付款方式",name:"現金",task:"用現金收款",steps:[L(),
+ F({title:"付款畫面",say:'按 <b>現金</b> 鍵',ok:"現金",btns:PAYKEYS}),
+ F({title:"現金收款",say:'記住規定後按 <b>完成</b>',ok:"完成",btns:["完成"],cap:"1-10-01：現金一律唱收唱付",
+   pic:{k:"list",title:"現金",lines:["需唱收唱付","收多少、找多少都要唸出來給客人聽"]}})]},
+
+{id:"p2",cat:"結帳・付款方式",name:"信用卡",task:"收信用卡（要核對什麼）",steps:[L(),
+ F({title:"付款畫面",say:'按 <b>信用卡</b> 鍵',ok:"信用卡",btns:PAYKEYS}),
+ F({title:"核對卡號",say:'核對卡號與單據後按 <b>下一步</b>',ok:"下一步",btns:["下一步","取消"],cap:"1-10-02：信用卡也要唱收唱付，無須過卡",
+   pic:{k:"paper",title:"信用卡簽帳單",lines:["卡號：**** **** **** 7237","金額：NT$ 4,058","付款方式：VSA","持卡人簽名：____________"]}}),
+ F({title:"核對簽名",say:'確認兩件事後按 <b>完成</b>',ok:"完成",btns:["完成"],cap:"簽名相似度要達 90%，同時要防偽卡",
+   pic:{k:"list",title:"信用卡必check",lines:["卡號要與簽帳單卡號相同","銷售單據上要有 VSA 之付款方式","簽帳單簽名與信用卡簽名相符（相似度達 90%）","要防偽卡"]}})]},
+
+{id:"p3",cat:"結帳・付款方式",name:"旅行支票 TC",task:"收旅行支票",steps:[L(),
+ F({title:"付款畫面",say:'按 <b>其他付款</b> 鍵',ok:"其他付款",btns:PAYKEYS}),
+ F({title:"旅行支票 · 正面",say:'確認正面上下簽名相同後按 <b>下一步</b>',ok:"下一步",btns:["下一步","退回"],cap:"1-10-03：只收美國運通銀行發行，幣別限美金、日幣、歐元",
+   pic:{k:"paper",title:"旅行支票（正面）",lines:["AMERICAN EXPRESS","上方簽名：____________","下方簽名：____________","兩處簽名要相同"]}}),
+ F({title:"旅行支票 · 背面備註",say:'背面備註寫完後按 <b>完成</b>',ok:"完成",btns:["完成"],cap:"自打自收時，背面要多備註出納 CODE",
+   pic:{k:"paper",title:"旅行支票（背面備註）",lines:["客人護照號碼：____________","班機：__________","SALES CODE：__________","交易日期：____/__/__","出納 CODE：______（自打自收才寫）"]}})]},
+
+{id:"p4",cat:"結帳・付款方式",name:"提貨証明券",task:"收提貨証明券",steps:[L(),
+ F({title:"付款畫面",say:'按 <b>禮券</b> 鍵',ok:"禮券",btns:PAYKEYS}),
+ F({title:"鍵入條碼",say:'在 VIP 欄鍵入提貨券條碼後按 <b>查詢</b>',ok:"查詢",btns:["查詢","清除"],
+   fields:[["VIP 欄（提貨券條碼）","ER__________"]]}),
+ F({title:"三項檢查",say:'三項都查過後按 <b>完成</b>',ok:"完成",btns:["完成"],cap:"1-10-04：提貨証明券",
+   pic:{k:"list",title:"提貨証明券要檢查",lines:["有效期限","騎縫章","鋼印"]}})]},
+
+{id:"p5",cat:"結帳・付款方式",name:"提貨卡",task:"收提貨卡",steps:[L(),
+ F({title:"付款畫面",say:'按 <b>禮券</b> 鍵',ok:"禮券",btns:PAYKEYS}),
+ F({title:"鍵入條碼",say:'在 VIP 欄鍵入提貨券條碼後按 <b>查詢</b>',ok:"查詢",btns:["查詢","清除"],
+   fields:[["VIP 欄（提貨卡條碼）","ER__________"]]}),
+ F({title:"四項檢查",say:'四項都查過後按 <b>完成</b>',ok:"完成",btns:["完成"],cap:"1-10-05：提貨卡比提貨証明券多了刷兩段條碼",
+   pic:{k:"list",title:"提貨卡要檢查",lines:["防偽標籤","浮水印與流水號需一致","刷入兩段條碼確認卡片餘額","驗證"]}})]},
+
+{id:"p6",cat:"結帳・付款方式",name:"禮券／購物券／禮券卡",task:"認得三種票券樣式",steps:[L(),
+ F({title:"付款畫面",say:'按 <b>禮券</b> 鍵',ok:"禮券",btns:PAYKEYS}),
+ F({title:"現金禮券",say:'看過面額後按 <b>下一步</b>',ok:"下一步",btns:["下一步"],cap:"財務部發行，面額 10,000／1,000／500",
+   pic:{k:"voucher",title:"現金禮券",cards:[["現金禮券","10000","#2B4A8B"],["現金禮券","1000","#9A7B3F"],["現金禮券","500","#A62A57"]],note:"1-10-06 現金禮券"}}),
+ F({title:"商品購物券／商品禮券卡",say:'看完按 <b>完成</b>',ok:"完成",btns:["完成"],cap:"商品購物券 500／100；商品禮券卡 1,000／500",
+   pic:{k:"voucher",title:"商品購物券 · 商品禮券卡",cards:[["商品購物券","500","#6B3FA0"],["商品購物券","100","#1E7F91"],["商品禮券卡","1000","#8A6440"],["商品禮券卡","500","#C2185B"]],note:"1-10-06 商品購物券、商品禮券卡"}})]},
+
+{id:"p7",cat:"結帳・付款方式",name:"電子／行動支付",task:"分清楚四類電子支付",steps:[L(),
+ F({title:"付款畫面",say:'按 <b>電子支付</b> 鍵',ok:"電子支付",btns:PAYKEYS}),
+ F({title:"四類分別",say:'記住分類後按 <b>完成</b>',ok:"完成",btns:["完成"],cap:"1-10-07～1-10-10。悠遊卡／一卡通：手冊列為電子票券，但目前門市不收，收款前先問組長",
+   pic:{k:"list",title:"電子類付款方式",lines:["第三方支付：支付寶、微信、韓亞、LINEPAY、街口支付","電子票券：悠遊卡、一卡通（門市目前不收，待確認）","行動支付：GOOGLE PAY、APPLE PAY、SAMSUNG PAY 等","LINKPAY：SP 下單網、移地銷售展售會用；保稅稅放訂單、含藥美白不可稅放使用"]}})]}
 ];
 
 var mode="guide",cur=null,idx=0,err=0,DONE={};
@@ -361,6 +407,18 @@ function paperSVG(o){
  s+='<text x="150" y="'+(h-8)+'" font-size="7.5" fill="#8FA9CC" text-anchor="middle">✂ 撕下後依規定簽名／繳回</text>';
  return sv(h,s);
 }
+function voucherSVG(o){
+ var V=o.cards||[],rows=Math.ceil(V.length/3),h=26+rows*44+16;
+ var s='<rect width="300" height="'+h+'" fill="#0B2545"/>'+bar(o.title||"票券樣式");
+ V.forEach(function(c,i){var col=i%3,r=Math.floor(i/3),x=12+col*95,y=26+r*44;
+  s+='<rect x="'+x+'" y="'+y+'" width="88" height="36" rx="4" fill="'+c[2]+'"/>';
+  s+='<text x="'+(x+7)+'" y="'+(y+12)+'" font-size="6.5" fill="#FFFFFF" opacity="0.92">everrich 昇恆昌</text>';
+  s+='<text x="'+(x+7)+'" y="'+(y+24)+'" font-size="7.5" font-weight="700" fill="#FFFFFF">'+xe(c[0])+'</text>';
+  s+='<text x="'+(x+81)+'" y="'+(y+31)+'" font-size="12" font-weight="800" fill="#FFFFFF" text-anchor="end">'+xe(c[1])+'</text>';
+ });
+ if(o.note)s+='<text x="150" y="'+(h-6)+'" font-size="7.5" fill="#9FB6D4" text-anchor="middle">'+xe(o.note)+'</text>';
+ return sv(h,s);
+}
 function picHTML(s){
  var p=s.pic;
  if(!p){
@@ -371,6 +429,7 @@ function picHTML(s){
   else p={k:"list",title:s.title,lines:["畫面停在這裡，請在下方按鍵區操作"]};
  }
  if(p.k==="menu")return menuSVG(p.keys||[],p.t,p.g);
+ if(p.k==="voucher")return voucherSVG(p);
  if(p.k==="win")return winSVG(p);
  if(p.k==="phone")return phoneSVG(p);
  if(p.k==="alert")return alertSVG(p);
