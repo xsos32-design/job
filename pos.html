@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>POS RICH 練習機 · SA晚班</title>
+<meta name="theme-color" content="#0E1116">
+<link rel="apple-touch-icon" href="icon-180.png">
+<style>
+:root{--paper:#0E1116;--card:#171C23;--ink:#EAEDF0;--sub:#94A0AE;--seal:#EE6C56;--sealSoft:#2E1C18;--line:#262D37;--gold:#DDB566;--inkSoft:#20272F;--ok:#4FB477}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;line-height:1.6}
+.wrap{max-width:560px;margin:0 auto;padding:14px 14px 60px}
+header{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.logo{width:36px;height:36px;border-radius:9px;background:var(--sealSoft);border:1px solid var(--seal);color:var(--gold);display:grid;place-items:center;font-weight:800;font-size:18px;flex:0 0 auto}
+h1{font-size:18px;margin:0;letter-spacing:.5px}
+.tag{font-size:12px;color:var(--sub);margin:0}
+.bar{display:flex;gap:8px;margin:12px 0}
+.bar button{flex:1;padding:9px;border-radius:9px;border:1px solid var(--line);background:var(--inkSoft);color:var(--sub);font-size:13px;font-weight:700;cursor:pointer}
+.bar button.on{background:var(--sealSoft);border-color:var(--seal);color:var(--gold)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:12px}
+.card h2{font-size:14px;margin:0 0 8px;color:var(--gold);letter-spacing:.5px}
+.flowlist{display:grid;gap:8px}
+.catname{font-size:12px;color:var(--sub);margin:10px 0 2px;letter-spacing:1px}
+.fbtn{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:11px 12px;border-radius:10px;border:1px solid var(--line);background:var(--inkSoft);color:var(--ink);font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
+.fbtn small{display:block;font-size:11.5px;color:var(--sub);font-weight:400;margin-top:2px}
+.fbtn .dot{width:8px;height:8px;border-radius:50%;background:var(--line);flex:0 0 auto}
+.fbtn.done .dot{background:var(--ok)}
+.fbtn .grow{flex:1;min-width:0}
+/* POS screen */
+.pos{background:#0B2545;border:2px solid #1D3F6E;border-radius:8px;overflow:hidden;font-size:12.5px}
+.pos .tb{background:#153A6B;padding:6px 9px;font-size:12px;font-weight:700;color:#DCE7F5;display:flex;justify-content:space-between}
+.pos .bd{padding:10px;min-height:96px;background:#0B2545;color:#CBD9EC}
+.fld{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.fld span{width:82px;font-size:11.5px;color:#9FB6D4;flex:0 0 auto}
+.fld b{flex:1;background:#fff;color:#111;border-radius:3px;padding:3px 7px;font-size:12px;font-weight:600;min-height:22px}
+.out{background:#08182E;border:1px solid #1D3F6E;border-radius:4px;padding:8px;font-size:12px;color:#BFD3EC;white-space:pre-line}
+.keys{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:9px;background:#10233C;border-top:1px solid #1D3F6E}
+.keys.m1{grid-template-columns:repeat(4,1fr)}
+.k{padding:10px 4px;border-radius:5px;border:1px solid rgba(255,255,255,.18);background:#38517A;color:#fff;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit;line-height:1.25}
+.k.o{background:#E8952F;border-color:#F3BE7A;color:#3A2200}
+.k.g{background:#7FA53C;border-color:#A9C86E;color:#1E2A06}
+.k.act{background:#2E8B57;border-color:#6ED09B}
+.k.warn{background:#9B3226;border-color:#D07C6E}
+.k.hint{animation:pulse 1.1s infinite;outline:2px solid var(--gold)}
+@keyframes pulse{0%,100%{outline-color:rgba(221,181,102,.25)}50%{outline-color:rgba(221,181,102,1)}}
+.k:active{transform:translateY(1px)}
+.say{background:var(--sealSoft);border:1px solid var(--seal);border-radius:9px;padding:9px 11px;font-size:13.5px;margin:10px 0}
+.say b{color:var(--gold)}
+.msg{font-size:12.5px;padding:8px 11px;border-radius:8px;margin-top:8px;display:none}
+.msg.bad{display:block;background:#3A1A16;border:1px solid #9B3226;color:#F2C3BA}
+.msg.good{display:block;background:#12291F;border:1px solid #2E8B57;color:#B9E7CE}
+.meta{display:flex;justify-content:space-between;font-size:12px;color:var(--sub);margin-top:8px}
+.prog{height:5px;border-radius:3px;background:var(--inkSoft);overflow:hidden;margin-top:8px}
+.prog i{display:block;height:100%;background:var(--gold);width:0;transition:width .3s}
+.back{background:none;border:none;color:var(--sub);font-size:13px;padding:6px 0;cursor:pointer;font-family:inherit}
+.note{font-size:12px;color:var(--sub);margin-top:10px}
+.foot{font-size:11.5px;color:var(--sub);text-align:center;margin-top:18px;line-height:1.8}
+.foot a{color:var(--gold)}
+.big{font-size:26px;font-weight:800;color:var(--gold);text-align:center;margin:6px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="logo">韋</div>
+  <div><h1>POS RICH 練習機</h1><p class="tag">依公司「POS RICH 功能工具書」做的可點擊流程</p></div>
+</header>
+
+<div class="bar">
+  <button id="mGuide" class="on" onclick="setMode('guide')">引導模式</button>
+  <button id="mQuiz" onclick="setMode('quiz')">測驗模式</button>
+</div>
+<div id="modenote" class="note"></div>
+
+<div id="home"></div>
+<div id="play" style="display:none"></div>
+
+<div class="foot">資料來源：昇恆昌 e 學院「POS RICH 功能工具書」<br><a href="./">← 回 SA晚班 · 工作執掌</a></div>
+</div>
+
+<script>
+var MENU1=["公告","商品","完稅贈品","促銷","VIP","員購","優惠","查核","庫存","訂單","銷退","寄貨","商品促銷","商品條碼"];
+var MENU2={
+ "公告":["賣場公告","資訊公告"],
+ "商品":["商品即庫","調價記錄","促銷記錄","廠商貨號","香化批號","折扣表","不同尺寸","相同尺寸","贈品反查"],
+ "查核":["零錢兌換","POS簽核","營收投庫"],
+ "庫存":["調撥"],
+ "寄貨":["寄貨作業"]
+};
+var LOGIN={say:'在「新交易基本資料」畫面輸入售貨員工號、密碼，按 <b>POS RICH</b> 鍵',ok:"Pos Rich",
+ fields:[["售貨員工號","27679"],["密碼","••••"],["國籍","1 中華民國"],["班機","BR0706"]],
+ btns:["查價F1","交易作廢","暫存取消","確定A+E","會員登錄F9","Pos Rich","其他功能","取消Esc"]};
+
+function L(){return {scr:"login"};}
+function M1(k){return {scr:"menu1",ok:k,say:'按 <b>'+k+'</b> 鍵'};}
+function M2(cat,k){return {scr:"menu2",cat:cat,ok:k,say:'按 <b>'+k+'</b> 鍵'};}
+function F(o){o.scr="func";return o;}
+
+var FLOWS=[
+/* ── 公告 ── */
+{id:"f1",cat:"公告",name:"賣場公告",task:"查「可收入美金樣式」",steps:[L(),M1("公告"),M2("公告","賣場公告"),
+ F({title:"賣場公告",say:'在可收入樣式清單中點 <b>可收入美金樣式</b>',ok:"可收入美金樣式",btns:["可收入美金樣式","可收入日幣樣式","可收入人民幣樣式","各票券要點"],
+   out:"可收入樣式清單\n・美金 / 日幣 / 人民幣可收入樣式\n・各票券要點"}),
+ F({title:"樣式內容",say:'看完按 <b>完成</b>',ok:"完成",btns:["完成"],out:"顯示美金可收樣式圖與說明。\n（可查詢美金／日幣／人民幣可收入樣式及各票券要點）"})]},
+
+{id:"f2",cat:"公告",name:"資訊公告",task:"查電子票券的使用順序與注意事項",steps:[L(),M1("公告"),M2("公告","資訊公告"),
+ F({title:"資訊公告 · 票券分類",say:'點 <b>電子票券</b>',ok:"電子票券",btns:["電子票券","提貨券","單品折扣券"],
+   out:"票券分類：電子票券／提貨券／單品折扣券"}),
+ F({title:"票券內容",say:'看完按 <b>完成</b>',ok:"完成",btns:["完成"],out:"電子票券：使用順序、注意事項內容\n（提貨券、單品折扣券點進去也是看使用順序與注意事項）"})]},
+
+/* ── 商品 ── */
+{id:"f3",cat:"商品",name:"商品即庫",task:"查某支酒在各店的庫存",steps:[L(),M1("商品"),M2("商品","商品即庫"),
+ F({title:"商品即庫",say:'在商品條碼欄輸入商品貨號、點選稅別後按 <b>查詢</b>',ok:"查詢",btns:["查詢","清除","離開"],
+   fields:[["商品條碼","2727130811"],["稅別","保稅"]]}),
+ F({title:"庫存內容",say:'看完按 <b>完成</b>',ok:"完成",btns:["完成"],
+   out:"庫別代碼：\nRAB 台北旗艦　RLT 基隆　RTS 松山　RHL 花蓮\nRTC 台中　RKH 高雄　RJB 金門　RMD 金門水頭\nRT1 桃園一期　RT2 桃園二期　ALL 總倉 T96\n・點放大鏡看商品照片\n・無庫存與負庫存不會顯示"})]},
+
+{id:"f4",cat:"商品",name:"調價記錄",task:"查商品的原售價與新售價",steps:[L(),M1("商品"),M2("商品","調價記錄"),
+ F({title:"調價記錄",say:'輸入商品貨號後按 <b>查詢</b>',ok:"查詢",btns:["查詢","清除","離開"],fields:[["商品條碼","2727130811"]]}),
+ F({title:"調價內容",say:'看完按 <b>完成</b>',ok:"完成",btns:["完成"],out:"可查：原售價／新售價／生效日期／狀態／調價單號"})]},
+
+{id:"f5",cat:"商品",name:"促銷記錄",task:"查商品的促銷價與折扣％",steps:[L(),M1("商品"),M2("商品","促銷記錄"),
+ F({title:"促銷記錄",say:'輸入商品貨號後按 <b>查詢</b>',ok:"查詢",btns:["查詢","清除","離開"],fields:[["商品條碼","2727130811"]]}),
+ F({title:"促銷內容",say:'看完按 <b>完成</b>',ok:"完成",btns:["完成"],out:"可查：促銷價／折扣％／起始日期／終止日期／狀態／促銷單號"})]},
+
+{id:"f6",cat:"商品",name:"廠商貨號",task:"用廠商貨號對品號、品名",steps:[L(),M1("商品"),M2("商品","廠商貨號"),
+ F({title:"廠商貨號",say:'按 <b>查詢</b>',ok:"查詢",btns:["查詢","清除","離開"],fields:[["商品條碼","2727130811"]]}),
+ F({title:"商品內容",say:'看完按 <b>完成</b>',ok:"完成",btns:["完成"],out:"可查：廠商貨號／品號／品名／庫存／售價／促銷價／商品即庫"})]},
+
+{id:"f7",cat:"商品",name:"香化批號",task:"用鋼印批號查效期",steps:[L(),M1("商品"),M2("商品","香化批號"),
+ F({title:"香化批號 · 先查商品",say:'先在商品條碼欄輸入商品貨號，按 <b>查詢</b>',ok:"查詢",btns:["查詢","清除","離開"],fields:[["商品條碼","1180245"]]}),
+ F({title:"香化批號 · 查批號",say:'輸入商品鋼印的效期批號後按 <b>查詢</b>',ok:"查詢",btns:["查詢","清除","離開"],fields:[["批號","24K11"]]}),
+ F({title:"批號內容",say:'看完按 <b>完成</b>',ok:"完成",btns:["完成"],out:"可看：商品／製造日／到期日／批號／批號說明／剩下效期"})]},
+
+{id:"f8",cat:"商品",name:"折扣表",task:"查這支商品的折扣與生效日",steps:[L(),M1("商品"),M2("商品","折扣表"),
+ F({title:"折扣表",say:'輸入商品貨號後按 <b>查詢</b>',ok:"查詢",btns:["查詢","清除","離開"],fields:[["商品條碼","2727130811"]]}),
+ F({title:"折扣內容",say:'看完按 <b>完成</b>',ok:"完成",btns:["完成"],out:"可查：庫別／VIP 型別／名稱／商品折扣／折扣串／POS 生效日"})]},
+
+{id:"f9",cat:"商品",name:"不同尺寸",task:"查同款不同容量的庫存",steps:[L(),M1("商品"),M2("商品","不同尺寸"),
+ F({title:"不同尺寸",say:'輸入商品貨號後按 <b>查詢</b>',ok:"查詢",btns:["查詢","清除","離開"],fields:[["商品條碼","2727130811"]]}),
+ F({title:"不同尺寸庫存",say:'可選擇只顯示有庫存或全部——按 <b>全部顯示</b>',ok:"全部顯示",btns:["只顯示有庫存","全部顯示"],out:"顯示同商品不同尺寸的庫存數量"}),
+ F({title:"不同尺寸庫存",say:'看完按 <b>完成</b>',ok:"完成",btns:["完成"],out:"全部尺寸（含無庫存）都列出"})]},
+
+{id:"f10",cat:"商品",name:"相同尺寸",task:"查同容量的其他商品庫存",steps:[L(),M1("商品"),M2("商品","相同尺寸"),
+ F({title:"相同尺寸",say:'輸入商品貨號後按 <b>查詢</b>',ok:"查詢",btns:["查詢","清除","離開"],fields:[["商品條碼","2727130811"]]}),
+ F({title:"相同尺寸庫存",say:'選 <b>當區有庫存</b> 或全區——先按 <b>當區有庫存</b>',ok:"當區有庫存",btns:["當區有庫存","全區有庫存"],out:"可選當區有庫存／全區有庫存"}),
+ F({title:"相同尺寸庫存",say:'看完按 <b>完成</b>',ok:"完成",btns:["完成"],out:"列出當區同尺寸商品的庫存數量"})]},
+
+{id:"f11",cat:"商品",name:"贈品反查",task:"查這支商品搭哪個贈品",steps:[L(),M1("商品"),M2("商品","贈品反查"),
+ F({title:"贈品反查",say:'輸入商品貨號後按 <b>查詢</b>',ok:"查詢",btns:["查詢","清除","離開"],fields:[["商品條碼","2727130811"]]}),
+ F({title:"詳細內容",say:'看完按 <b>完成</b>',ok:"完成",btns:["完成"],out:"可查：促銷單號／描述／贈品品號／品名／日期區間／詳細資料"})]},
+
+/* ── 完稅贈品 ── */
+{id:"f12",cat:"完稅贈品",name:"完稅贈品核銷",task:"把完稅贈品核銷掉",steps:[L(),M1("完稅贈品"),
+ F({title:"完稅贈品",say:'畫面會自動帶入最近一筆銷售單號。輸入完稅贈品品號後按 <b>核銷</b>',ok:"核銷",btns:["核銷","確認","離開"],
+   fields:[["銷售單號","自動帶入"],["贈品貨號","9001234"]]}),
+ F({title:"核銷內容",say:'確認是否核銷後按 <b>確認</b> 鍵',ok:"確認",btns:["確認","取消"],
+   out:"核銷成功：顯示該銷售單的完稅贈品 品號／數量／品名"}),
+ F({title:"常見四種錯誤提示",say:'記起來後按 <b>完成</b>',ok:"完成",btns:["完成"],
+   out:"① 查無商品條碼　② 稅別錯誤\n③ 商品大類錯誤　④ 商品種類錯誤\n以上系統都會跳提示畫面"})]},
+
+/* ── 查核 ── */
+{id:"f13",cat:"查核",name:"零錢兌換",task:"換新台幣零錢",steps:[L(),M1("查核"),M2("查核","零錢兌換"),
+ F({title:"零錢兌換 · 選幣別",say:'下拉選單選幣別——選 <b>新台幣</b>',ok:"新台幣",btns:["新台幣","美元"],out:"幣別：新台幣／美元"}),
+ F({title:"零錢兌換 · 輸入",say:'在面額下的數量欄填入要兌換的數量，按 <b>存檔</b>',ok:"存檔",btns:["存檔","清除","離開"],
+   fields:[["100 元","10"],["50 元","6"],["10 元","20"]]}),
+ F({title:"完成",say:'按 <b>完成</b>',ok:"完成",btns:["完成"],out:"換錢包裝單位：100 元＝10,000 一捆／50 元＝3,000 硬幣盒\n10 元＝2,000 一袋、1,000 硬幣盒／5 元＝500 盒／1 元＝100 盒"})]},
+
+{id:"f14",cat:"查核",name:"POS 簽核（五種列印）",task:"印出美金流水票號 MEMO",steps:[L(),M1("查核"),M2("查核","POS簽核"),
+ F({title:"POS 簽核",say:'先看空白 MEMO：點 <b>POS簽核列印</b>',ok:"POS簽核列印",btns:["POS簽核列印","含銷售單號及日期","美金流水票號","張數合計列印","客人不要之錢財登記表"],
+   out:"POS 簽核可印五種紙"}),
+ F({title:"POS 簽核",say:'收授美金 100 元與 50 元時要印——點 <b>美金流水票號</b>',ok:"美金流水票號",btns:["POS簽核列印","含銷售單號及日期","美金流水票號","張數合計列印","客人不要之錢財登記表"],
+   out:"POS簽核列印 → 空白 MEMO\n含銷售單號及日期 → 印前一筆交易單號 MEMO"}),
+ F({title:"POS 簽核",say:'記住其餘兩種用途後按 <b>完成</b>',ok:"完成",btns:["完成"],
+   out:"張數合計列印：有紙本售貨單／EDC 張數時印出填寫，一起繳回\n客人不要之錢財登記表：收到客人不要的零錢時印出填寫，一起繳回"})]},
+
+{id:"f15",cat:"查核",name:"營收投庫",task:"做營收投庫並印收款明細表",steps:[L(),M1("查核"),M2("查核","營收投庫"),
+ F({title:"營收投庫 · 輸入金額",say:'歸帳日／庫別／機台都會自動帶出，不用 KEY IN。把營收金額結入正確欄位後按 <b>儲存</b>',ok:"儲存",btns:["儲存","清除","離開"],
+   fields:[["歸帳日","自動帶出"],["庫別／機台","自動帶出"],["新台幣",""]]}),
+ F({title:"營收投庫 · 確認",say:'完成後按 <b>確認</b> 鍵',ok:"確認",btns:["確認","取消"],out:"確認後產生收款明細表"}),
+ F({title:"收款明細表",say:'把收款明細表印出後按 <b>完成</b>',ok:"完成",btns:["完成"],
+   out:"收款明細表印出後貼在營收夾鏈袋外面，再投庫"})]},
+
+/* ── 庫存 ── */
+{id:"f16",cat:"庫存",name:"調撥",task:"把商品調撥到別的庫別",steps:[L(),M1("庫存"),M2("庫存","調撥"),
+ F({title:"調撥",say:'按 <b>新增</b> 鍵',ok:"新增",btns:["新增","查詢","離開"]}),
+ F({title:"調撥 · 稅別",say:'選擇調撥稅別——按 <b>保稅</b>',ok:"保稅",btns:["保稅","完稅"]}),
+ F({title:"調撥 · 輸入",say:'輸入撥入庫／調轉人工號後按 <b>儲存</b>。調轉到外點要在備註欄輸入收貨單位的庫別代碼',ok:"儲存",btns:["儲存","清除","離開"],
+   fields:[["撥入庫","RT1"],["調轉人工號","27679"],["備註","（外點才填庫別代碼）"]]}),
+ F({title:"調撥 · 明細",say:'輸入商品條碼／箱號／數量後按 <b>新增明細</b>',ok:"新增明細",btns:["新增明細","取消暫確","離開"],
+   fields:[["商品條碼","2727130811"],["箱號","1"],["數量","6"]]}),
+ F({title:"調撥 · 暫確",say:'項次內容數量正確後按 <b>暫確</b>（要改就按取消暫確，會有提醒視窗）',ok:"暫確",btns:["暫確","取消暫確"]}),
+ F({title:"調撥 · 確認",say:'確認調撥的品項及數量是否正確，按 <b>確認</b>',ok:"確認",btns:["確認","取消"]}),
+ F({title:"調撥 · 簽名列印",say:'在撥出欄位簽名＋工號，按 <b>列印</b> 印出調撥單',ok:"列印",btns:["列印","作廢"],
+   fields:[["撥出簽名","謝○○ 27679"]]}),
+ F({title:"調撥 · 作廢規則",say:'記住後按 <b>完成</b>',ok:"完成",btns:["完成"],
+   out:"要取消調撥就按「作廢」鍵，會有提醒視窗，狀態會變更為「作廢」"})]},
+
+/* ── 商品促銷 ── */
+{id:"f17",cat:"商品促銷",name:"商品促銷查詢",task:"查這支商品的滿件優惠",steps:[L(),M1("商品促銷"),
+ F({title:"商品促銷",say:'輸入商品貨號後按 <b>查詢</b>',ok:"查詢",btns:["查詢","清除","離開"],fields:[["商品條碼","2727130811"]]}),
+ F({title:"商品促銷內容",say:'看完按 <b>完成</b>',ok:"完成",btns:["完成"],
+   out:"可查：單號／滿件／滿 N 優惠／滿 N 數值／品號／品名／售價"})]},
+
+/* ── 商品條碼 ── */
+{id:"f18",cat:"商品條碼",name:"一般條碼申請",task:"申請一般商品條碼",steps:[L(),M1("商品條碼"),
+ F({title:"商品條碼",say:'確認要申請哪一種——按 <b>一般條碼</b>',ok:"一般條碼",btns:["一般條碼","屆期條碼"]}),
+ F({title:"一般條碼 · 新增單號",say:'在申請人欄位輸入申請工號後按 <b>新增</b>，會自動取得單號',ok:"新增",btns:["新增","查詢","清除"],
+   fields:[["申請人","27679"],["稅別","保稅／完稅"]]}),
+ F({title:"一般條碼 · 輸入",say:'輸入商品條碼及申請數量後按 <b>新增</b>（下一步再選類型）',ok:"新增",btns:["新增","作廢"],
+   fields:[["商品條碼","2727130811"],["數量","5"],["進貨年月 / AGE CODE","可擇一"]],
+   out:"商品條碼可輸入國際碼與品號，不能輸入廠商貨號"}),
+ F({title:"一般條碼 · 類型",say:'類型下拉選單選申請類別及需求原因，按 <b>新增</b>',ok:"新增",btns:["新增","鉛筆（修改）","垃圾桶（刪項次）","作廢"],
+   out:"輸入的是日期會自動填入 AGE CODE；未輸入預設 NA"}),
+ F({title:"一般條碼 · 確認",say:'完成申請後按 <b>確認</b>——確認後不能再修改',ok:"確認",btns:["確認","鉛筆（修改）","作廢"]}),
+ F({title:"修改與取消",say:'記住後按 <b>完成</b>',ok:"完成",btns:["完成"],
+   out:"要修改按鉛筆鍵；要刪某項次按垃圾桶鍵；整筆取消按作廢鍵"})]},
+
+{id:"f19",cat:"商品條碼",name:"屆期條碼申請",task:"幫屆期商品申請折扣條碼",steps:[L(),M1("商品條碼"),
+ F({title:"商品條碼",say:'按 <b>屆期條碼</b>',ok:"屆期條碼",btns:["一般條碼","屆期條碼"]}),
+ F({title:"屆期條碼 · 新增單號",say:'申請人欄位輸入申請工號後按 <b>新增</b> 取得單號',ok:"新增",btns:["新增","查詢","清除"],
+   fields:[["申請人","27679"],["稅別","屆期保／完稅"]]}),
+ F({title:"屆期條碼 · 輸入",say:'輸入商品條碼、數量後按 <b>新增</b>',ok:"新增",btns:["新增","作廢"],
+   fields:[["商品條碼","2727130811"],["數量","3"]],
+   out:"商品條碼可輸入國際碼與品號，不能輸入廠商貨號"}),
+ F({title:"屆期條碼 · 折扣辦法",say:'折扣辦法下拉選單選 <b>A-F 大類</b>',ok:"折扣辦法 A-F",btns:["折扣辦法 A-F","有效期限"],
+   out:"有效期限欄位預設反灰不能改，折扣辦法選到 D、E 才開放"}),
+ F({title:"屆期條碼 · 有效期限",say:'輸入有效期限（1/3 效期）後按 <b>確認</b>',ok:"確認",btns:["確認","鉛筆（改數量/效期）","作廢"],
+   fields:[["有效期限","1/3 效期"]]}),
+ F({title:"申請完成之後",say:'記住後按 <b>完成</b>',ok:"完成",btns:["完成"],
+   out:"確認後無法再修改。\n商控收到系統通知會印屆期條碼，賣場收到申請單後再逐一確認、貼在屆期商品上。"})]},
+
+/* ── 寄貨 ── */
+{id:"f20",cat:"寄貨",name:"POS 寄貨作業",task:"客人要寄貨（現場登打）",steps:[L(),M1("寄貨"),M2("寄貨","寄貨作業"),
+ F({title:"寄貨作業",say:'按 <b>新增</b> 鍵',ok:"新增",btns:["新增","查詢","離開"]}),
+ F({title:"輸入客人資料",say:'依 ❶-❽ 欄位逐一輸入客人寄貨資料。顧客電話欄輸入電話或掃會員卡 QRCODE 後，要按 <b>ENT</b> 才會出現寄貨站點資料',ok:"ENT",btns:["ENT","清除"],
+   fields:[["顧客電話","0912-345-678"],["寄貨站點","按 ENT 後出現"]]}),
+ F({title:"抵達班機",say:'輸入抵達班機。客人不確定班機時可勾選 <b>□未定</b>',ok:"□未定",btns:["□未定","繼續輸入"],
+   out:"提醒字樣：\n・非當區航班 →「請留意，您輸入的非當區的航班」\n・出境航班 →「此為出境航班，請確認」"}),
+ F({title:"掃銷售單",say:'掃描銷售單上 QRCODE 帶入銷售單號，按 <b>儲存</b>',ok:"儲存",btns:["儲存","清除"],
+   fields:[["銷售單號","掃 QRCODE 帶入"],["已取商品","部份帶走才輸入貨號與數量"]],
+   out:"一件寄貨條碼上限可輸入 11 張銷售單資料"}),
+ F({title:"列印",say:'儲存後才能按 <b>確認並列印店面寄貨聯</b>',ok:"確認並列印店面寄貨聯",btns:["確認並列印店面寄貨聯","列印寄貨 label"]}),
+ F({title:"收尾",say:'記住後按 <b>完成</b>',ok:"完成",btns:["完成"],
+   out:"店面寄貨聯請顧客簽名（中文正楷）；顧客寄貨聯給客人回國憑單取貨。\n列印後狀態為「AD 待領」，欄位皆不能修改。寄作取消只有組長有權限。"})]},
+
+{id:"f21",cat:"寄貨",name:"APP 寄貨作業",task:"客人用 APP 預約寄貨",steps:[L(),M1("寄貨"),
+ F({title:"請客人操作 APP",say:'請客人打開 APP 選 <b>預約寄貨</b>',ok:"預約寄貨",btns:["預約寄貨","提貨服務"]}),
+ F({title:"客人輸入航班",say:'客人輸入出發航班、抵達航班、抵達日期，資料正確後按 <b>確定</b>，產生寄貨 QRCODE',ok:"確定",btns:["確定","取消"],
+   fields:[["出發航班","BR0706"],["抵達航班","BR0705"],["抵達日期","2026/10/05"]]}),
+ F({title:"POS RICH",say:'回 POS：按 <b>寄貨作業</b>',ok:"寄貨作業",btns:["寄貨作業","查詢"]}),
+ F({title:"掃寄貨 QRCODE",say:'在寄貨條碼欄掃客人 APP 的寄貨 QRCODE，按 <b>掃描</b> 帶入客人寄貨資料',ok:"掃描",btns:["掃描","清除"],fields:[["寄貨條碼","掃 APP QRCODE"]]}),
+ F({title:"掃銷售單",say:'掃銷售單 QRCODE 帶入單號後按 <b>儲存</b>',ok:"儲存",btns:["儲存","清除"],
+   fields:[["銷售單號","掃 QRCODE 帶入"],["已取商品","部份帶走才輸入"]],
+   out:"一件寄貨條碼上限 11 張銷售單"}),
+ F({title:"列印",say:'按 <b>確認並列印店面寄貨聯</b>',ok:"確認並列印店面寄貨聯",btns:["確認並列印店面寄貨聯","不印顧客寄貨聯"]}),
+ F({title:"收尾",say:'記住後按 <b>完成</b>',ok:"完成",btns:["完成"],
+   out:"店面寄貨聯填寄貨數量並請顧客簽名（中文正楷）。\nAPP 寄貨的顧客寄貨聯可以不印——APP「提貨服務」裡就有提貨碼，客人回國點「提貨碼」出示 QR Code 取貨。"})]}
+];
+
+var mode="guide",cur=null,idx=0,err=0,DONE={};
+try{DONE=JSON.parse(localStorage.getItem("posrich_done")||"{}")}catch(e){DONE={}}
+function save(){try{localStorage.setItem("posrich_done",JSON.stringify(DONE))}catch(e){}}
+function esc(s){return String(s).replace(/[&<>]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;"}[c]})}
+function $(i){return document.getElementById(i)}
+
+function setMode(m){mode=m;$("mGuide").className=m==="guide"?"on":"";$("mQuiz").className=m==="quiz"?"on":"";
+ $("modenote").textContent=m==="guide"?"引導模式：該按的鍵會發亮，照著按走完整個流程。":"測驗模式：只給任務，不提示按鍵。按錯會記次數，最後算分。";
+ if(cur)render();else home();}
+
+function home(){
+ cur=null;$("play").style.display="none";$("home").style.display="";
+ var cats=[],seen={};FLOWS.forEach(function(f){if(!seen[f.cat]){seen[f.cat]=1;cats.push(f.cat)}});
+ var h='<div class="card"><h2>選一個流程</h2><div class="flowlist">';
+ cats.forEach(function(c){
+  h+='<div class="catname">'+esc(c)+'</div>';
+  FLOWS.filter(function(f){return f.cat===c}).forEach(function(f){
+   h+='<button class="fbtn'+(DONE[f.id]?" done":"")+'" onclick="start(\''+f.id+'\')"><span class="dot"></span><span class="grow">'+esc(f.name)+'<small>'+esc(f.task)+'</small></span></button>';
+  });
+ });
+ h+='</div></div>';
+ var d=Object.keys(DONE).length;
+ h+='<div class="card"><h2>進度</h2><div class="meta"><span>已完成 '+d+' / '+FLOWS.length+' 個流程</span><button class="back" onclick="reset()">清除紀錄</button></div><div class="prog"><i style="width:'+Math.round(d/FLOWS.length*100)+'%"></i></div></div>';
+ $("home").innerHTML=h;
+}
+function reset(){DONE={};save();home()}
+
+function start(id){cur=FLOWS.filter(function(f){return f.id===id})[0];idx=0;err=0;$("home").style.display="none";$("play").style.display="";render()}
+
+function stepOf(){var s=cur.steps[idx];if(s.scr==="login"){return {scr:"login",title:"新交易基本資料",say:LOGIN.say,ok:LOGIN.ok,btns:LOGIN.btns,fields:LOGIN.fields}}
+ if(s.scr==="menu1"){return {scr:"menu1",title:"POS RICH 功能列表（第一層）",say:s.say,ok:s.ok,btns:MENU1}}
+ if(s.scr==="menu2"){return {scr:"menu2",title:s.cat+"（第二層）",say:s.say,ok:s.ok,btns:MENU2[s.cat]||[]}}
+ return s;}
+
+function render(){
+ var s=stepOf(),n=cur.steps.length;
+ var h='<button class="back" onclick="home()">‹ 回流程列表</button>';
+ h+='<div class="card"><h2>'+esc(cur.cat)+' · '+esc(cur.name)+'</h2>';
+ h+='<div class="meta"><span>任務：'+esc(cur.task)+'</span><span>STEP '+(idx+1)+' / '+n+'</span></div>';
+ h+='<div class="prog"><i style="width:'+Math.round(idx/n*100)+'%"></i></div></div>';
+ if(mode==="guide")h+='<div class="say">'+s.say+'</div>';
+ h+='<div class="pos"><div class="tb"><span>'+esc(s.title||"")+'</span><span>SA · 練習</span></div><div class="bd">';
+ (s.fields||[]).forEach(function(f){h+='<div class="fld"><span>'+esc(f[0])+'</span><b>'+esc(f[1])+'</b></div>'});
+ if(s.out)h+='<div class="out">'+esc(s.out)+'</div>';
+ if(!s.fields&&!s.out)h+='<div class="out">請在下方按鍵區操作</div>';
+ h+='</div><div class="keys'+(s.scr==="menu1"?" m1":"")+'">';
+ (s.btns||[]).forEach(function(b,i){
+  var cls="k";
+  if(s.scr==="menu1")cls+=" o";else if(s.scr==="menu2")cls+=" g";
+  else if(/確認|儲存|存檔|完成|確定|核銷|暫確/.test(b))cls+=" act";
+  else if(/作廢|取消|清除/.test(b))cls+=" warn";
+  if(mode==="guide"&&b===s.ok)cls+=" hint";
+  h+='<button class="'+cls+'" onclick="hit('+i+')">'+esc(b)+'</button>';
+ });
+ h+='</div></div><div id="msg" class="msg"></div>';
+ h+='<div id="note" class="note">共 '+n+' 步・按錯 '+err+' 次</div>';
+ $("play").innerHTML=h;
+}
+
+function hit(i){
+ var s=stepOf(),b=(s.btns||[])[i];
+ if(b===s.ok){
+  idx++;
+  if(idx>=cur.steps.length){finish();return}
+  render();
+  var m=$("msg");if(m){m.className="msg good";m.textContent="✓ 正確"}
+ }else{
+  err++;
+  var m=$("msg");m.className="msg bad";
+  m.innerHTML="✗ 不是這一鍵。"+(mode==="quiz"&&err>=2?"　提示："+s.say:"");
+  var nt=$("note");if(nt)nt.textContent="共 "+cur.steps.length+" 步・按錯 "+err+" 次";
+  var n=document.querySelectorAll(".k")[i];if(n){n.style.transform="translateX(3px)";setTimeout(function(){n.style.transform=""},120)}
+ }
+}
+
+function finish(){
+ DONE[cur.id]=1;save();
+ var sc=Math.max(0,100-err*10);
+ var h='<button class="back" onclick="home()">‹ 回流程列表</button>';
+ h+='<div class="card"><h2>'+esc(cur.cat)+' · '+esc(cur.name)+' 完成</h2>';
+ h+='<div class="big">'+(mode==="quiz"?sc+" 分":"✓ 走完")+'</div>';
+ h+='<div class="meta"><span>按錯 '+err+' 次</span><span>共 '+cur.steps.length+' 步</span></div>';
+ h+='<div class="note">'+esc(cur.task)+'</div></div>';
+ h+='<div class="card"><h2>再練一次</h2><div class="flowlist">';
+ h+='<button class="fbtn" onclick="start(\''+cur.id+'\')"><span class="dot"></span><span class="grow">重做這個流程</span></button>';
+ var nx=FLOWS[FLOWS.map(function(f){return f.id}).indexOf(cur.id)+1];
+ if(nx)h+='<button class="fbtn" onclick="start(\''+nx.id+'\')"><span class="dot"></span><span class="grow">下一個：'+esc(nx.name)+'<small>'+esc(nx.task)+'</small></span></button>';
+ h+='<button class="fbtn" onclick="home()"><span class="dot"></span><span class="grow">回流程列表</span></button>';
+ h+='</div></div>';
+ $("play").innerHTML=h;
+}
+
+setMode("guide");
+</script>
+</body>
+</html>
