@@ -30,7 +30,9 @@ h1{font-size:18px;margin:0;letter-spacing:.5px}
 /* POS screen */
 .pos{background:#0B2545;border:2px solid #1D3F6E;border-radius:8px;overflow:hidden;font-size:12.5px}
 .pic{display:block;width:100%;height:auto;background:#0B2545}
-.ph{border-bottom:1px solid #1D3F6E}
+.pwrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.pwrap>svg{width:100%}
+.pwrap.zoom>svg{width:620px;max-width:none}
 .piccap{font-size:11.5px;color:var(--sub);padding:6px 10px 8px;background:#0B2545;border-top:1px solid #1D3F6E}
 .pos .tb{background:#153A6B;padding:6px 9px;font-size:12px;font-weight:700;color:#DCE7F5;display:flex;justify-content:space-between}
 .pos .bd{padding:10px;min-height:96px;background:#0B2545;color:#CBD9EC}
@@ -82,9 +84,10 @@ h1{font-size:18px;margin:0;letter-spacing:.5px}
 <div id="home"></div>
 <div id="play" style="display:none"></div>
 
-<div class="foot">資料來源：昇恆昌 e 學院「POS RICH 功能工具書」、「結帳 POS 機操作流程 1-10 付款方式」；實機畫面拍攝於 SA-34<br><a href="./">← 回 SA晚班 · 工作執掌</a></div>
+<div class="foot">資料來源：昇恆昌 e 學院「POS RICH 功能工具書」、「結帳 POS 機操作流程 1-10 付款方式」；畫面依 SA-34 實機版面重繪<br><a href="./">← 回 SA晚班 · 工作執掌</a></div>
 </div>
 
+<script src="posframe.js"></script>
 <script>
 var MENU1=["公告","商品","完稅贈品","促銷","VIP","員購","優惠","查核","庫存","訂單","銷退","寄貨","商品促銷","商品條碼"];
 var MENU2={
@@ -312,31 +315,31 @@ var FLOWS=[
  F({title:"四類分別",say:'記住分類後按 <b>完成</b>',ok:"完成",btns:["完成"],cap:"1-10-07～1-10-10。悠遊卡／一卡通：手冊列為電子票券，但目前門市不收，收款前先問組長",
    pic:{k:"list",title:"電子類付款方式",lines:["第三方支付：支付寶、微信、韓亞、LINEPAY、街口支付","電子票券：悠遊卡、一卡通（門市目前不收，待確認）","行動支付：GOOGLE PAY、APPLE PAY、SAMSUNG PAY 等","LINKPAY：SP 下單網、移地銷售展售會用；保稅稅放訂單、含藥美白不可稅放使用"]}})]},
 /* ── 結帳全流程（實機照片，SA-34 實拍） ── */
-{id:"c1",cat:"結帳・實機流程",name:"結帳全流程（實拍）",task:"從登入到確認付款走完一筆",steps:[
+{id:"c1",cat:"結帳・實機流程",name:"結帳全流程",task:"從登入到確認付款走完一筆",steps:[
  F({title:"售貨員選擇表",say:'售貨員欄按下去會跳出選擇表，選自己的工號——按 <b>36673 朱韋任</b>',ok:"36673 朱韋任",btns:["36673 朱韋任","32379 吳慶鴻","34866 林洧盈","32286 麥嘉琪"],
    cap:"收銀員欄是機台固定帶入（例：66666 POS用_桃園L9），售貨員才是自己",
-   pic:{k:"photo",src:"pos-s1-login-list.jpg",title:"售貨員選擇表"}}),
+   pic:{k:"dlg",fields:[["收銀員：","66666",1,"POS用_桃園L9"],["售貨員：","",1,""],["密碼：","",1,""],["國籍：","",1,""],["號碼1：","",0,""],["購物卡：","",0,""],["班機：","",1,""],["出境日：","2026/10/01",0,""],["提貨點：","",0,""]],focus:1,list:[["36673","朱韋任"],["32379","吳慶鴻"],["34866","林洧盈"],["32286","麥嘉琪"],["34546","湯文愷"],["32147","黃貽靖"],["20698","吳蕙如"]],time:"AM 04:14:26"}}),
  F({title:"新交易基本資料",say:'密碼、國籍、班機都輸入後，按 <b>確定(A+E)</b>',ok:"確定A+E",btns:["查價F1","交易作廢","暫存取出","確定A+E","會員登錄F9","Pos Rich","其他功能","取消Esc"],
    cap:"右邊「導引訊息框」會提示下一步；出境日會自動帶。要查匯率按匯率表，要刷登機證按刷登機證",
-   pic:{k:"photo",src:"pos-s2-login.jpg",title:"新交易基本資料"}}),
+   pic:{k:"dlg",fields:[["收銀員：","66666",1,"POS用_桃園L9"],["售貨員：","36673",1,"朱韋任"],["密碼：","••••",1,""],["國籍：","1",1,"中華民國"],["號碼1：","",0,""],["購物卡：","",0,""],["班機：","BR0023",1,""],["出境日：","2026/10/01",0,""],["提貨點：","",0,""]],focus:6,hi:"確定(A+E)",time:"AM 04:14:34"}}),
  F({title:"交易主畫面",say:'掃或輸入商品條碼，按 <b>Enter</b>',ok:"Enter",btns:TRADEKEYS,
    cap:"左下是「交易」頁的功能鍵；右下 即時訊息 會顯示錯誤或提醒",
-   pic:{k:"photo",src:"pos-s3-trade-empty.jpg",title:"交易主畫面（未輸入商品）"}}),
+   pic:{k:"pos",tab:"trade",item:false,total:"0",keys:TRADE_KEYS,right:TRADE_RIGHT,hi:"Enter",time:"AM 04:14:43"}}),
  F({title:"商品帶入",say:'確認品名、單價、數量、售貨員工號都對，按 <b>結帳</b>',ok:"結帳",btns:TRADEKEYS,
    cap:"右上 TOTAL 就是這筆總額。要改數量按數量鍵；打錯按商品刪除",
-   pic:{k:"photo",src:"pos-s4-trade-item.jpg",title:"商品已帶入（TOTAL 3,680）"}}),
+   pic:{k:"pos",tab:"trade",item:true,total:"3680",keys:TRADE_KEYS,right:TRADE_RIGHT,hi:"結帳",time:"AM 04:15:03"}}),
  F({title:"優惠券使用明細",say:'有酬賓券在這裡輸入；沒有就按 <b>下一步</b>',ok:"下一步",btns:["上一步","ESG贈點","其他按鍵","酬賓券","刪除優惠券","下一步"],
    cap:"輸入區打券號；打錯按刪除優惠券。右邊會即時顯示交易總金額與抵用後金額",
-   pic:{k:"photo",src:"pos-s5-coupon.jpg",title:"優惠券使用明細"}}),
+   pic:{k:"cpn",title:"優惠券使用明細",sum:[["交易總金額","3,680"],["抵用後金額","3,680"],["",""],["09類商品","3,680"]],note:"優惠券使用合計：　0 張　0",mid:["ESG贈點","其他按鍵"],btns:[["上一步",14,70],["酬賓券",300,70],["刪除優惠券",420,70],["下一步",510,70]],hi:"下一步",time:"AM 04:15:09"}}),
  F({title:"全部折扣折讓／點換金",say:'要折扣、折讓或點換金在這裡做；沒有就按 <b>下一步</b>',ok:"下一步",btns:["上一步","全部折扣","全部折讓","刪除優惠","點換金","刪除點換金","下一步"],
    cap:"右邊看得到商品總金額、滿額折讓金額、抵用後金額，以及會員點數（未抵用前／本次使用／剩餘）",
-   pic:{k:"photo",src:"pos-s6-discount.jpg",title:"全部折扣折讓／點換金"}}),
+   pic:{k:"cpn",title:"全部折扣折讓/點換金",sum:[["商品總金額","3,680"],["滿額折讓金額","0"],["抵用後金額","3,680"],["",""],["09類商品","3,680"],["",""],["未抵用前點數","0"],["本次使用點數","0"],["剩餘累積點數","0"]],mid:[],btns:[["上一步",14,70],["全部折扣",120,70],["全部折讓",200,70],["刪除優惠",280,70],["點換金",400,60],["刪除點換金",465,66],["下一步",535,56]],hi:"下一步",time:"AM 04:15:12"}}),
  F({title:"付款畫面",say:'畫面跳到「付款」頁。這筆收現金——按 <b>現金</b>',ok:"現金",btns:PAYKEYS,
    cap:"右上 TOTAL／不足 要看清楚；右邊有六種幣別即時匯率；EDC 要顯示「為連線狀態」才能刷卡",
-   pic:{k:"photo",src:"pos-s7-pay.jpg",title:"付款畫面"}}),
+   pic:{k:"pos",tab:"pay",item:true,total:"3680",keys:PAY_KEYS,right:PAY_RIGHT,hi:"現金",input:"3680",time:"AM 04:15:57"}}),
  F({title:"確認付款",say:'金額輸入區確認無誤後，按 <b>確認付款</b> 完成這筆',ok:"確認付款",btns:PAYKEYS,
    cap:"「不足」歸零才付得掉；要改付款方式按付款刪除，要回去改商品按返回銷售",
-   pic:{k:"photo",src:"pos-s8-pay2.jpg",title:"確認付款"}})]}
+   pic:{k:"pos",tab:"pay",item:true,total:"3680",keys:PAY_KEYS,right:PAY_RIGHT,hi:"確認付款",input:"3680",time:"AM 04:16:24"}})]}
 ];
 
 var mode="guide",cur=null,idx=0,err=0,DONE={};
@@ -453,6 +456,7 @@ function voucherSVG(o){
  if(o.note)s+='<text x="150" y="'+(h-6)+'" font-size="7.5" fill="#9FB6D4" text-anchor="middle">'+xe(o.note)+'</text>';
  return sv(h,s);
 }
+function wrapZ(x){return '<div class="pwrap" onclick="this.classList.toggle(\'zoom\')">'+x+'</div><div class="piccap">點畫面可放大／縮小，放大後可左右滑</div>'}
 function picHTML(s){
  var p=s.pic;
  if(!p){
@@ -464,7 +468,9 @@ function picHTML(s){
  }
  if(p.k==="menu")return menuSVG(p.keys||[],p.t,p.g);
  if(p.k==="voucher")return voucherSVG(p);
- if(p.k==="photo")return '<a href="'+p.src+'" target="_blank" rel="noopener"><img class="pic ph" src="'+p.src+'" alt="'+xe(p.title||"實機畫面")+'"></a><div class="piccap">實機畫面・點圖可放大</div>';
+ if(p.k==="pos")return wrapZ(posSVG(p));
+ if(p.k==="dlg")return wrapZ(dlgSVG(p));
+ if(p.k==="cpn")return wrapZ(cpnSVG(p));
  if(p.k==="win")return winSVG(p);
  if(p.k==="phone")return phoneSVG(p);
  if(p.k==="alert")return alertSVG(p);
