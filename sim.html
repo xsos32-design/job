@@ -79,6 +79,14 @@ h1{font-size:17px;margin:0;letter-spacing:.5px}
 .foot{max-width:1020px;margin:10px auto 40px;padding:0 12px;font-size:11.5px;color:var(--sub);text-align:center;line-height:1.8}
 .foot a{color:var(--gold)}
 .tiny{font-size:11px;color:#415072}
+.scanp{background:#EDEFF5;border:1px solid #9FAEC6;overflow:auto;padding:6px}
+.scantip{font-size:11px;color:#415072;line-height:1.5;margin-bottom:6px}
+.bc{background:#fff;border:1px solid #8A96B4;padding:5px 6px;margin-bottom:6px;cursor:pointer}
+.bc:hover{background:#FFF6DF;border-color:#E8541E}
+.bc:active{transform:translateY(1px)}
+.bars{height:28px;margin-bottom:4px;background:repeating-linear-gradient(90deg,#16233F 0 2px,#fff 2px 4px,#16233F 4px 5px,#fff 5px 9px,#16233F 9px 12px,#fff 12px 13px)}
+.bcn{font-size:11.5px;font-weight:700;color:#16233F;line-height:1.3}
+.bcc{font-size:10.5px;color:#415072}
 </style>
 </head>
 <body>
@@ -99,7 +107,7 @@ h1{font-size:17px;margin:0;letter-spacing:.5px}
 <script>
 /* ───── 資料 ───── */
 var CASHIERS=[["66666","POS用_桃園L9","大夜用"],["77777","POS用_桃園L2","晚班用"],["88888","POS用_桃園K6","早班用"]];
-var SELLERS=[["36673","朱韋任"],["32379","吳慶鴻"],["34866","林洧盈"],["32286","麥嘉琪"],["34546","湯文愷"],["32147","黃貽靖"],["20698","吳蕙如"]];
+var SELLERS=[["31024","陳怡君"],["31588","林志明"],["32077","王美玲"],["32416","張家豪"],["33095","李淑芬"],["33742","黃雅婷"],["34180","吳建宏"],["34623","劉冠廷"]];
 var NATIONS=[["1","中華民國"],["—","中國大陸"],["—","日本"],["—","韓國"],["—","香港"],["—","澳門"],["—","新加坡"],["—","馬來西亞"],["—","泰國"],["—","越南"],["—","菲律賓"],["—","印尼"],["—","美國"]];
 var PRODUCTS=[
  ["2831568702520","Mac 110 Proof 12Y 0.75L",3680],
@@ -242,6 +250,7 @@ function panelHTML(){
  if(S.panel==="seller"){
   var h='<div class="pick" style="left:'+x+'px;top:'+y+'px;width:'+w+'px"><div class="pickh">售貨員選擇表：</div>';
   SELLERS.forEach(function(c){h+='<div class="prow" onclick="setSeller(\''+c[0]+'\')"><b>'+c[0]+'</b><span>'+c[1]+'</span></div>'});
+  h+='<div class="prow" style="color:#B03A1E;cursor:default">※ 模擬用假名假工號；實機請選自己的工號</div>';
   return h+'</div>';
  }
  if(S.panel==="nation"){
@@ -272,8 +281,18 @@ function tabsHTML(pay){
  return h;
 }
 function tradeHTML(){
- return hdrHTML()+gridHTML(102,318)+tabsHTML(false)+keysHTML(452,TRADE_K,TRADE_R)+msgHTML(686,452,290,180,"即時訊息")+statusHTML();
+ return hdrHTML()+gridHTML(102,318,686)+scanHTML()+tabsHTML(false)+keysHTML(452,TRADE_K,TRADE_R)+msgHTML(686,452,290,180,"即時訊息")+statusHTML();
 }
+function scanHTML(){
+ var h='<div class="ab msgh" style="left:690px;top:102px;width:286px">掃描商品條碼</div>';
+ h+='<div class="ab scanp" style="left:690px;top:120px;width:286px;height:300px">';
+ h+='<div class="scantip">點下面任一張條碼＝掃一次，商品直接帶進左邊單身。<br>（實機是用掃描槍掃商品上的條碼）</div>';
+ PRODUCTS.forEach(function(p,i){
+  h+='<div class="bc" onclick="scanCode('+i+')"><div class="bars"></div><div class="bcn">'+esc(p[1])+'</div><div class="bcc">'+p[0]+'　NT$ '+money(p[2])+'</div></div>';
+ });
+ return h+'</div>';
+}
+function scanCode(i){var p=PRODUCTS[i];say("嗶——掃到條碼 "+p[0]+"。");addItem(p);}
 function payHTML(){
  var h=hdrHTML()+gridHTML(102,180,700);
  /* 匯率表 */
@@ -317,7 +336,7 @@ function render(){
 }
 function hintText(){
  if(S.scr==="login")return "<b>新交易基本資料</b>：點欄位→右邊出現選擇表。密碼不用打，班機要按「刷登機證」掃 QR。資料齊了按 <b>確定(A+E)</b>。";
- if(S.scr==="trade")return "<b>交易畫面</b>：按「商品查詢」挑商品，或用數字鍵打條碼後按 <b>Enter</b>。點商品列可選取，再按「數量」或「商品刪除」。打完按 <b>結帳</b>。";
+ if(S.scr==="trade")return "<b>交易畫面</b>：右邊點商品條碼＝掃描加入，或用數字鍵打條碼後按 <b>Enter</b>；「商品查詢」只查資料、不會加入商品。點商品列可選取，再按「數量」或「商品刪除」。打完按 <b>結帳</b>。";
  if(S.scr==="pay")return "<b>付款畫面</b>：先按付款方式（現金／信用卡／RICH Pay／外幣…），輸入金額後按 <b>確認付款</b>。「不足」歸零才付得掉。";
  return "交易完成。按「下一筆交易」重來。";
 }
@@ -355,7 +374,7 @@ function key(k){
  if(S.scr==="login"){
   if(k==="確定(A+E)"){
    if(!readyLogin()){say("資料不齊：請確認收銀員、售貨員、國籍、班機都已帶入。");render();return}
-   S.scr="trade";S.input="";say("進入交易畫面。按「商品查詢」或直接打商品條碼。");render();return;
+   S.scr="trade";S.input="";say("進入交易畫面。請點右邊「掃描商品條碼」加入商品，或用數字鍵打條碼按 Enter。");render();return;
   }
   if(k==="取消(Esc)"){say("取消本次登打，欄位清空。");S.cashier=S.seller=S.nation=S.flight=S.dep="";S.cashierNote=S.sellerName=S.nationName="";S.focus="cashier";S.panel="cashier";render();return}
   if(k==="查價(F1)"){S.ov="plist";S.ovData="price";render();return}
@@ -364,7 +383,7 @@ function key(k){
   say("「"+k+"」在這個模擬機沒有做動作。");render();return;
  }
  if(S.scr==="trade"){
-  if(k==="商品查詢"){S.ov="plist";S.ovData="add";render();return}
+  if(k==="商品查詢"){S.ov="plist";S.ovData="query";say("商品查詢只用來查資料，不會把商品打進單身。");render();return}
   if(k==="Enter"){addByCode();return}
   if(k==="清除"){S.input="";say("輸入區已清除。");render();return}
   if(k==="數量"){
@@ -414,9 +433,9 @@ function num(n){
 function pickRow(i){S.sel=i;say('已選取第 '+(i+1)+' 項「'+S.items[i].name+'」，可按「數量」或「商品刪除」。');render()}
 function addByCode(){
  var c=S.input.trim();
- if(!c){say("請先輸入商品條碼，或按「商品查詢」。");render();return}
+ if(!c){say("請先輸入商品條碼，或點右邊「掃描商品條碼」。");render();return}
  var p=PRODUCTS.filter(function(x){return x[0]===c})[0];
- if(!p){say("查無此商品條碼："+c+"（模擬機只有示範商品，可用商品查詢挑）。");S.input="";render();return}
+ if(!p){say("查無此商品條碼："+c+"（模擬機只有示範商品，可點右邊的條碼掃描）。");S.input="";render();return}
  addItem(p);
 }
 function addItem(p){
@@ -471,8 +490,9 @@ function ovHTML(){
  }
  if(S.ov==="plist"){
   h+='<div class="card2" style="min-width:420px"><h3>'+(S.ovData==="price"?"查價":"商品查詢")+'</h3><div class="bd">';
+  h+='<div class="tiny" style="margin-bottom:6px">※ 這裡只查資料，不會把商品打進單身；要加入商品請用交易畫面右邊的「掃描商品條碼」。</div>';
   PRODUCTS.forEach(function(p,i){
-   h+='<div class="prow" style="border:1px solid #C3CCDD;margin-bottom:4px" onclick="'+(S.ovData==="price"?'showPrice('+i+')':'addItem(PRODUCTS['+i+']);closeOv()')+'"><b style="min-width:120px">'+p[0]+'</b><span style="flex:1">'+p[1]+'</span><span style="font-weight:700">NT$ '+money(p[2])+'</span></div>';
+   h+='<div class="prow" style="border:1px solid #C3CCDD;margin-bottom:4px" onclick="'+(S.ovData==="price"?'showPrice('+i+')':'showInfo('+i+')')+'"><b style="min-width:120px">'+p[0]+'</b><span style="flex:1">'+p[1]+'</span><span style="font-weight:700">NT$ '+money(p[2])+'</span></div>';
   });
   h+='<button class="btn" style="margin-top:6px;width:90px" onclick="closeOv()">關閉</button></div></div>';
  }
@@ -494,6 +514,7 @@ function ovHTML(){
 function closeOv(){S.ov=null;S.ovData=null;render()}
 function scanBP(){S.flight=BP.flight;S.dep=BP.dep;S.ov=null;S.focus="";S.panel="guide";say("登機證掃描成功：班機 "+BP.flight+"、出境日 "+BP.dep+" 已帶入。");render()}
 function showPrice(i){var p=PRODUCTS[i];say("查價："+p[1]+"　NT$ "+money(p[2]));closeOv()}
+function showInfo(i){var p=PRODUCTS[i];say("商品查詢："+p[1]+"｜條碼 "+p[0]+"｜單價 NT$ "+money(p[2])+"（查詢不會帶入單身）");closeOv()}
 resetAll();
 </script>
 </body>
