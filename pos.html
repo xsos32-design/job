@@ -76,15 +76,14 @@ h1{font-size:18px;margin:0;letter-spacing:.5px}
 </header>
 
 <div class="bar">
-  <button id="mGuide" class="on" onclick="setMode('guide')">引導模式</button>
-  <button id="mQuiz" onclick="setMode('quiz')">測驗模式</button>
+  <button class="on" onclick="location.href='sim.html'">🔢 改用 POS 模擬機（自由點選）</button>
 </div>
 <div id="modenote" class="note"></div>
 
 <div id="home"></div>
 <div id="play" style="display:none"></div>
 
-<div class="foot">資料來源：昇恆昌 e 學院「POS RICH 功能工具書」、「結帳 POS 機操作流程 1-10 付款方式」；畫面依 SA-34 實機版面重繪<br><a href="./">← 回 SA晚班 · 工作執掌</a></div>
+<div class="foot">資料來源：昇恆昌 e 學院「POS RICH 功能工具書」、「結帳 POS 機操作流程 1-10 付款方式」；畫面依 SA-34 實機版面重繪<br><a href="sim.html">🔢 POS 模擬機（自由點選）</a><br><a href="./">← 回 SA晚班 · 工作執掌</a></div>
 </div>
 
 <script src="posframe.js"></script>
@@ -349,8 +348,8 @@ function save(){try{localStorage.setItem("posrich_done",JSON.stringify(DONE))}ca
 function esc(s){return String(s).replace(/[&<>]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;"}[c]})}
 function $(i){return document.getElementById(i)}
 
-function setMode(m){mode=m;try{localStorage.setItem("posrich_mode",m)}catch(e){}$("mGuide").className=m==="guide"?"on":"";$("mQuiz").className=m==="quiz"?"on":"";
- $("modenote").textContent=m==="guide"?"引導模式：該按的鍵會發亮，照著按走完整個流程。":"測驗模式：只給任務，不提示按鍵。按錯會記次數，最後算分。";
+function setMode(m){mode="guide";
+ $("modenote").textContent="一步一步的功能教學：該按的鍵會發亮，照著按走完整個流程。想自由操作請用上面的 POS 模擬機。";
  if(cur)render();else home();}
 
 function home(){
