@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>POS 模擬機 · SA晚班</title>
+<meta name="theme-color" content="#0E1116">
+<style>
+:root{--paper:#0E1116;--card:#171C23;--ink:#EAEDF0;--sub:#94A0AE;--seal:#EE6C56;--line:#262D37;--gold:#DDB566;--inkSoft:#20272F}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif}
+.top{max-width:1020px;margin:0 auto;padding:10px 12px 0}
+header{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.logo{width:34px;height:34px;border-radius:9px;background:#2E1C18;border:1px solid var(--seal);color:var(--gold);display:grid;place-items:center;font-weight:800;font-size:17px;flex:0 0 auto}
+h1{font-size:17px;margin:0;letter-spacing:.5px}
+.tag{font-size:11.5px;color:var(--sub);margin:2px 0 0}
+.bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+.bar button{padding:7px 11px;border-radius:8px;border:1px solid var(--line);background:var(--inkSoft);color:var(--sub);font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit}
+.bar button.on{background:#2E1C18;border-color:var(--seal);color:var(--gold)}
+.bar .sp{flex:1}
+.hint{font-size:12px;color:var(--sub);margin:0 0 8px;line-height:1.6}
+.hint b{color:var(--gold)}
+#wrap{overflow:auto;background:#0A0D12;border:1px solid var(--line);border-radius:10px;padding:6px}
+#stageBox{transform-origin:top left}
+#stage{position:relative;width:980px;height:660px;background:#DDE3EE;border:1px solid #7A86A8;font-size:12px;color:#13214A;user-select:none}
+#stage *{box-sizing:border-box}
+.ab{position:absolute}
+.tt{background:#AEB6E8;color:#1B2660;font-size:10px;padding:2px 6px}
+.hdr{background:#C6CBEE}
+.hd{font-size:12px;line-height:17px}
+.tot{background:#5A5FD2;color:#fff}
+.tot b{font-size:19px}
+.gh{background:#E8EAF2;border-bottom:1px solid #9FAEC6;display:flex;align-items:center;font-weight:700;font-size:11.5px}
+.gh span,.gr span{padding:0 4px;overflow:hidden;white-space:nowrap}
+.gr{display:flex;align-items:center;font-size:11.5px;height:22px;cursor:pointer}
+.gr.sel{background:#2B4FC8;color:#fff}
+.gr:nth-child(even):not(.sel){background:#F2F5FA}
+.body{background:#93A0BC}
+.tabs{background:#DDE3EE;display:flex;align-items:center;gap:6px;padding:0 6px}
+.tab{background:#AAB4CC;color:#fff;font-weight:700;font-size:12.5px;padding:3px 16px 3px 10px;clip-path:polygon(0 0,calc(100% - 9px) 0,100% 50%,calc(100% - 9px) 100%,0 100%)}
+.tab.on{background:#2B4FC8}
+.inbox{background:#fff;border:1px solid #8A96B4;font-size:14px;font-weight:700;padding:2px 6px;height:22px;display:flex;align-items:center}
+.keys{display:grid;gap:2px}
+.k{border:1px solid #9FAEC6;background:#DCE6F5;font-size:12px;font-weight:700;color:#16233F;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.15;cursor:pointer;font-family:inherit;padding:2px}
+.k:active{transform:translateY(1px);filter:brightness(.94)}
+.k.y{background:#F0E24B}.k.p{background:#F2BFCE}.k.b{background:#CFE2F7}.k.g{background:#8FE39B}.k.c{background:#9FE4F0}.k.l{background:#D7E34B}.k.w{background:#EDEFF5}
+.k.dim{opacity:.45}
+.msgp{background:#EDEFF5;border:1px solid #9FAEC6;font-size:11.5px;padding:5px 7px;overflow:auto;line-height:1.5}
+.msgh{background:#2B4FC8;color:#fff;text-align:center;font-weight:700;font-size:11.5px;padding:2px}
+.st{background:#DDE3EE;font-size:10.5px;display:flex;align-items:center;gap:10px;padding:0 6px}
+.st .on{background:#E9E24B;padding:0 5px;font-weight:700}
+/* 對話框 */
+.dlg{position:absolute;background:#EDEFF5;border:1.5px solid #5A6686;box-shadow:0 6px 24px rgba(0,0,0,.35)}
+.dlgh{background:#C9CFE8;font-size:12px;font-weight:700;padding:2px 7px}
+.fld{display:flex;align-items:center;margin:6px 0 0 10px}
+.fld label{width:62px;font-size:12px}
+.inp{width:160px;height:20px;background:#fff;border:1px solid #8A96B4;font-size:12.5px;padding:1px 5px;display:flex;align-items:center;cursor:pointer}
+.inp.ro{background:#E4E7EE;cursor:default}
+.inp.on{border:2px solid #E8541E;box-shadow:0 0 0 2px rgba(232,84,30,.18)}
+.fld .sfx{font-size:12px;margin-left:8px;color:#2A3758}
+.btn{border:1px solid #8A96B4;background:#E6E9F2;font-size:12px;padding:5px 4px;text-align:center;cursor:pointer;font-family:inherit;line-height:1.2}
+.btn:active{filter:brightness(.95)}
+.btn.hi{border:2px solid #E8541E}
+.pick{position:absolute;background:#F6F8FC;border:1.5px solid #5A6686}
+.pickh{background:#C9CFE8;font-weight:700;font-size:13px;padding:3px 8px}
+.prow{display:flex;gap:10px;font-size:13.5px;padding:5px 9px;border-bottom:1px solid #C3CCDD;cursor:pointer}
+.prow:nth-child(odd){background:#DCE3F4}
+.prow:hover{background:#FFE9B0}
+.prow b{min-width:52px}
+.ov{position:absolute;inset:0;background:rgba(10,14,22,.45);display:flex;align-items:center;justify-content:center}
+.card2{background:#F6F8FC;border:1.5px solid #5A6686;min-width:320px;max-width:560px}
+.card2 h3{margin:0;background:#C9CFE8;font-size:13px;padding:4px 9px}
+.card2 .bd{padding:10px}
+.bp{background:#fff;border:1px dashed #8A96B4;padding:10px;display:flex;gap:12px;align-items:center;cursor:pointer}
+.qr{width:74px;height:74px;background:
+ repeating-linear-gradient(90deg,#111 0 6px,#fff 6px 12px),
+ repeating-linear-gradient(0deg,#111 0 6px,#fff 6px 12px);
+ background-blend-mode:difference;border:3px solid #fff;outline:1px solid #111}
+.foot{max-width:1020px;margin:10px auto 40px;padding:0 12px;font-size:11.5px;color:var(--sub);text-align:center;line-height:1.8}
+.foot a{color:var(--gold)}
+.tiny{font-size:11px;color:#415072}
+</style>
+</head>
+<body>
+<div class="top">
+<header><div class="logo">韋</div><div><h1>POS 模擬機</h1><p class="tag">依 SA-34 實機版面重繪・可自由點選操作</p></div></header>
+<div class="bar">
+  <button onclick="zoomSet(-1)">－</button>
+  <button id="zfit" class="on" onclick="zoomFit()">適合畫面</button>
+  <button onclick="zoomSet(1)">＋</button>
+  <span class="sp"></span>
+  <button onclick="resetAll()">↺ 重新開始</button>
+</div>
+<p class="hint" id="hint"></p>
+</div>
+<div id="wrap"><div id="stageBox"><div id="stage"></div></div></div>
+<div class="foot">想看一步一步的教學流程 → <a href="pos.html">POS RICH 練習機</a><br><a href="./">← 回 SA晚班 · 工作執掌</a></div>
+
+<script>
+/* ───── 資料 ───── */
+var CASHIERS=[["66666","POS用_桃園L9","大夜用"],["77777","POS用_桃園L2","晚班用"],["88888","POS用_桃園K6","早班用"]];
+var SELLERS=[["36673","朱韋任"],["32379","吳慶鴻"],["34866","林洧盈"],["32286","麥嘉琪"],["34546","湯文愷"],["32147","黃貽靖"],["20698","吳蕙如"]];
+var NATIONS=[["1","中華民國"],["—","中國大陸"],["—","日本"],["—","韓國"],["—","香港"],["—","澳門"],["—","新加坡"],["—","馬來西亞"],["—","泰國"],["—","越南"],["—","菲律賓"],["—","印尼"],["—","美國"]];
+var PRODUCTS=[
+ ["2831568702520","Mac 110 Proof 12Y 0.75L",3680],
+ ["2727130811205","Under Bag milk 100g",270],
+ ["2831560001234","JW 黑牌 0.7L",1050],
+ ["2845120009876","Gentle 1 條",1200],
+ ["2845120005555","七星 1 條",1150]
+];
+var FX=[["USD","美元",31.45],["JPD","日幣",0.1937],["HKD","港幣",3.9],["KRW","韓元",0.02183],["CNY","人民幣",4.65],["EUR","歐元",35.33]];
+var BP={flight:"BR0023",dep:"2026/10/01",name:"CHU/WEIJEN",seat:"32A",gate:"D5"};
+
+/* ───── 狀態 ───── */
+var S={};
+function resetAll(){
+ S={scr:"login",cashier:"",cashierNote:"",seller:"",sellerName:"",pw:"",nation:"",nationName:"",flight:"",dep:"",
+    focus:"cashier",panel:"guide",items:[],sel:-1,input:"",msg:[],pays:[],ov:null,ovData:null,done:null};
+ say("歡迎使用 POS 模擬機。先點「收銀員」欄位選機台帳號。");
+ render();
+}
+function say(t){S.msg.unshift(t);if(S.msg.length>14)S.msg.pop();}
+function esc(s){return String(s).replace(/[&<>]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;"}[c]})}
+function money(n){return Number(n).toLocaleString("en-US")}
+function total(){var t=0;S.items.forEach(function(i){t+=i.price*i.qty});return t}
+function paid(){var t=0;S.pays.forEach(function(p){t+=p.twd});return t}
+function due(){return Math.max(0,total()-paid())}
+
+/* ───── 畫面縮放 ───── */
+var ZOOM=null;
+function applyZoom(){
+ var w=document.getElementById('wrap').clientWidth-14;
+ var k=ZOOM||Math.min(1,w/980);
+ document.getElementById('stageBox').style.transform='scale('+k+')';
+ document.getElementById('wrap').style.height=(660*k+14)+'px';
+ document.getElementById('stageBox').style.width=(980*k)+'px';
+}
+function zoomFit(){ZOOM=null;document.getElementById('zfit').classList.add('on');applyZoom()}
+function zoomSet(d){var w=document.getElementById('wrap').clientWidth-14;var cur=ZOOM||Math.min(1,w/980);ZOOM=Math.max(.3,Math.min(2,cur+d*0.15));document.getElementById('zfit').classList.remove('on');applyZoom()}
+window.addEventListener('resize',applyZoom);
+
+/* ───── 版面 ───── */
+function hdrHTML(){
+ var c=S.cashier?S.cashier+"　"+S.cashierNote:"";
+ var h='<div class="ab tt" style="left:0;top:0;width:980px">[主畫面]　版本：2.0.0.650　門市：SA SA　機台：SA-34　IP：192.168.33.14</div>';
+ h+='<div class="ab hdr" style="left:0;top:16px;width:700px;height:86px;padding:4px 8px">';
+ h+='<div class="hd">交易日期：2026/10/01(四)　　　　序號：2295155　　　　<span style="color:#C0392B;font-weight:700">銷貨單號：3402295155</span></div>';
+ h+='<div class="hd">歸帳日期：2026/10/01　　　　店：SA　SA　機：34　　　活動代碼：</div>';
+ h+='<div class="hd">收銀人員：'+esc(c)+'　　售貨人員：'+esc(S.seller?S.seller+" "+S.sellerName:"")+'　統一編號：</div>';
+ h+='<div class="hd">Passport/Id No：　　　Transfer：　　　Nationality：'+esc(S.nation?S.nation+" "+S.nationName:"")+'</div>';
+ h+='<div class="hd">Flight No(D)：'+esc(S.flight)+'　　Departure：'+esc(S.dep)+'　　Collecting：</div>';
+ h+='</div>';
+ h+='<div class="ab tot" style="left:700px;top:16px;width:280px;height:44px;padding:4px 8px">';
+ h+='<div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:15px;font-weight:700">TOTAL：</span><b>'+money(total())+'</b></div>';
+ h+='<div style="display:flex;justify-content:space-between;align-items:baseline;color:#E7E9FF"><span style="font-size:13px;font-weight:700">不足：</span><b style="font-size:16px">'+money(due())+'</b></div></div>';
+ h+='<div class="ab hdr" style="left:700px;top:60px;width:280px;height:42px;padding:3px 8px"><div class="hd" style="font-size:11.5px">會員編號：　　　會員姓名：　　集點卡號：</div>'
+   +'<button class="btn" style="position:absolute;right:6px;top:4px;padding:2px 6px;font-size:11px" onclick="key(\'會員功能\')">會員功能&lt;</button></div>';
+ return h;
+}
+var COLS=[["No",34],["商品編號",130],["商品名稱",230],["單價",64],["折扣",50],["售價",64],["數量",48],["小計",70],["售貨員",64],["序號",56],["備註",70]];
+function gridHTML(top,height,gw){
+ gw=gw||980;
+ var h='<div class="ab gh" style="left:0;top:'+top+'px;width:'+gw+'px;height:20px;overflow:hidden">';
+ COLS.forEach(function(c){h+='<span style="width:'+c[1]+'px">'+c[0]+'</span>'});
+ h+='</div>';
+ h+='<div class="ab body" style="left:0;top:'+(top+20)+'px;width:'+gw+'px;height:'+(height-20)+'px;overflow:hidden">';
+ S.items.forEach(function(it,i){
+  h+='<div class="gr'+(i===S.sel?' sel':'')+'" onclick="pickRow('+i+')">';
+  var v=[i+1,it.code,it.name,money(it.price),"100",money(it.price),it.qty,money(it.price*it.qty),S.seller,"",""];
+  COLS.forEach(function(c,j){h+='<span style="width:'+c[1]+'px">'+esc(v[j])+'</span>'});
+  h+='</div>';
+ });
+ h+='</div>';
+ return h;
+}
+function keysHTML(top,list,right){
+ var h='<div class="ab keys" style="left:4px;top:'+top+'px;width:420px;grid-template-columns:repeat(4,1fr);grid-auto-rows:30px">';
+ list.forEach(function(k){h+='<button class="k '+(k[1]||"")+'" onclick="key(\''+k[0].replace(/\n/g,"")+'\')">'+k[0].replace(/\n/g,"<br>")+'</button>'});
+ h+='</div>';
+ h+='<div class="ab keys" style="left:430px;top:'+top+'px;width:150px;grid-template-columns:repeat(3,1fr);grid-auto-rows:30px">';
+ ["7","8","9","4","5","6","1","2","3","0","00","←BACK"].forEach(function(n){h+='<button class="k b" onclick="num(\''+n+'\')">'+n+'</button>'});
+ h+='</div>';
+ h+='<div class="ab keys" style="left:586px;top:'+top+'px;width:92px;grid-template-columns:1fr;grid-auto-rows:30px">';
+ right.forEach(function(k){h+='<button class="k '+(k[1]||"")+'" onclick="key(\''+k[0].replace(/\n/g,"")+'\')">'+k[0].replace(/\n/g,"<br>")+'</button>'});
+ h+='</div>';
+ return h;
+}
+function msgHTML(left,top,w,hh,title){
+ var h='<div class="ab msgh" style="left:'+left+'px;top:'+top+'px;width:'+w+'px">'+title+'</div>';
+ h+='<div class="ab msgp" style="left:'+left+'px;top:'+(top+18)+'px;width:'+w+'px;height:'+(hh-18)+'px">';
+ S.msg.forEach(function(m,i){h+='<div style="'+(i?'color:#5A6684':'color:#102040;font-weight:700')+'">'+(i?'':'▶ ')+esc(m)+'</div>'});
+ h+='</div>';
+ return h;
+}
+function statusHTML(){
+ return '<div class="ab st" style="left:0;top:640px;width:980px;height:20px"><span class="sp" style="flex:1"></span><span class="on">連線</span><span>使用者：'+esc(S.sellerName||"—")+'</span><span>'+nowStr()+'</span></div>';
+}
+function nowStr(){var d=new Date();function p(n){return (n<10?"0":"")+n}return (d.getHours()<12?"AM ":"PM ")+p(d.getHours()%12||12)+":"+p(d.getMinutes())+":"+p(d.getSeconds())}
+
+/* ───── 各畫面 ───── */
+function loginHTML(){
+ var h=hdrHTML()+gridHTML(102,318)+tabsHTML(false)+keysHTML(452,TRADE_K,TRADE_R)+msgHTML(686,452,290,180,"即時訊息")+statusHTML();
+ /* 對話框 */
+ h+='<div class="dlg" style="left:110px;top:92px;width:480px;height:352px">';
+ h+='<div class="dlgh">新交易基本資料</div>';
+ h+=fld("收銀員：","cashier",S.cashier,S.cashierNote,0);
+ h+=fld("售貨員：","seller",S.seller,S.sellerName,0);
+ h+=fld("密碼：","pw",S.pw,"不用輸入",0);
+ h+=fld("國籍：","nation",S.nation,S.nationName,0);
+ h+=fld("號碼1：","no1","","",1);
+ h+=fld("購物卡：","card","","",1);
+ h+=fld("班機：","flight",S.flight,"",0);
+ h+=fld("出境日：","dep",S.dep,"",1);
+ h+=fld("提貨點：","pick2","","",1);
+ /* 右側三鍵 */
+ h+='<button class="btn" style="position:absolute;left:310px;top:34px;width:155px" onclick="key(\'匯率表\')">匯率表</button>';
+ h+='<button class="btn" style="position:absolute;left:310px;top:92px;width:155px" onclick="key(\'加總合併刷卡\')">加總合併刷卡</button>';
+ h+='<button class="btn" style="position:absolute;left:310px;top:150px;width:155px'+(S.focus==="flight"?';border:2px solid #E8541E':'')+'" onclick="key(\'刷登機證\')">刷登機證</button>';
+ /* 下方八鍵 */
+ var B=[["查價(F1)",0,0],["交易作廢(A+F1)",1,0],["暫存取出",2,0],["確定(A+E)",3,0],["會員登錄(F9)",0,1],["Pos Rich",1,1],["其他功能",2,1],["取消(Esc)",3,1]];
+ B.forEach(function(b){
+  var x=10+b[1]*116,y=262+b[2]*34;
+  h+='<button class="btn'+(b[0]==="確定(A+E)"&&readyLogin()?" hi":"")+'" style="position:absolute;left:'+x+'px;top:'+y+'px;width:110px" onclick="key(\''+b[0]+'\')">'+b[0]+'</button>';
+ });
+ h+='</div>';
+ /* 右側選單面板 */
+ h+=panelHTML();
+ return h;
+}
+function fld(lab,id,val,sfx,ro){
+ var on=(S.focus===id);
+ return '<div class="fld"><label>'+lab+'</label><div class="inp'+(ro?" ro":"")+(on?" on":"")+'" onclick="focusF(\''+id+'\')">'+esc(val)+'</div>'+(sfx?'<span class="sfx">'+esc(sfx)+'</span>':'')+'</div>';
+}
+function readyLogin(){return S.cashier&&S.seller&&S.nation&&S.flight}
+function panelHTML(){
+ var x=604,y=96,w=368;
+ if(S.panel==="cashier"){
+  var h='<div class="pick" style="left:'+x+'px;top:'+y+'px;width:'+w+'px"><div class="pickh">收銀員選擇表：</div>';
+  CASHIERS.forEach(function(c){h+='<div class="prow" onclick="setCashier(\''+c[0]+'\')"><b>'+c[0]+'</b><span>'+c[1]+'</span><span style="margin-left:auto;color:#B03A1E;font-weight:700">'+c[2]+'</span></div>'});
+  return h+'</div>';
+ }
+ if(S.panel==="seller"){
+  var h='<div class="pick" style="left:'+x+'px;top:'+y+'px;width:'+w+'px"><div class="pickh">售貨員選擇表：</div>';
+  SELLERS.forEach(function(c){h+='<div class="prow" onclick="setSeller(\''+c[0]+'\')"><b>'+c[0]+'</b><span>'+c[1]+'</span></div>'});
+  return h+'</div>';
+ }
+ if(S.panel==="nation"){
+  var h='<div class="pick" style="left:'+x+'px;top:'+y+'px;width:'+w+'px;max-height:300px;overflow:auto"><div class="pickh">國籍選擇表：</div>';
+  NATIONS.forEach(function(c,i){h+='<div class="prow" onclick="setNation('+i+')"><b>'+c[0]+'</b><span>'+c[1]+'</span></div>'});
+  return h+'<div class="prow" style="color:#B03A1E">※ 除中華民國＝1 外，代碼待補</div></div>';
+ }
+ return '<div class="pick" style="left:'+x+'px;top:'+y+'px;width:'+w+'px;height:200px"><div class="pickh">導引訊息框：</div><div style="padding:8px 10px;font-size:12.5px;line-height:1.8;color:#1B2A52">'+esc(guideText())+'</div></div>';
+}
+function guideText(){
+ if(!S.cashier)return "請點「收銀員」欄位，選擇這台機器的帳號（大夜 66666／晚班 77777／早班 88888）。";
+ if(!S.seller)return "請點「售貨員」欄位，從選擇表挑自己的工號。";
+ if(!S.nation)return "請點「國籍」欄位選客人的國籍。密碼欄不用輸入。";
+ if(!S.flight)return "請按右邊「刷登機證」，掃客人登機證上的 QR 碼帶入班機與出境日。";
+ return "資料齊全，按「確定(A+E)」進入交易畫面。";
+}
+var TRADE_K=[["重新\n登入","y"],["商品\n查詢",""],["營業員",""],["提貨\n註記",""],["商品\n刪除","y"],["酬賓券","p"],["贈品",""],["貴賓",""],["快速\n結帳","p"],["單筆\n折扣",""],["轉機\n註記",""],["會員\n功能","c"],["下一頁","b"],["單筆\n折讓","p"],["統編",""],["活動\n代碼",""]];
+var TRADE_R=[["數量","w"],["清除","y"],["Enter","g"],["結帳","p"]];
+var PAY_K=[["返回\n銷售","y"],["現金",""],["信用卡",""],["匯率表",""],["付款\n刪除","y"],["美元",""],["電子\n支付",""],["RICH\nPay","l"],["上一頁","b"],["人民幣",""],["酬賓券","p"],["禮券",""],["下一頁","b"],["日幣",""],["桃園\n消費券",""],["其他\n付款",""]];
+var PAY_R=[["清除","y"],["商品\n預覽","w"],["統編","w"],["確認\n付款","p"]];
+function tabsHTML(pay){
+ var h='<div class="ab tabs" style="left:0;top:420px;width:980px;height:26px">';
+ h+='<span class="tab'+(pay?"":" on")+'">交 易</span><span class="tab'+(pay?" on":"")+'">付 款</span>';
+ h+='<span style="margin-left:14px">交易品項：'+S.items.length+'</span><span style="margin-left:16px">商品數量：'+S.items.reduce(function(a,b){return a+b.qty},0)+'</span><span style="margin-left:16px">折讓金額：0</span>';
+ h+='<span style="margin-left:auto"></span>';
+ h+='<span class="btn" style="padding:2px 8px">輸入區</span><span class="inbox" style="width:200px">'+esc(S.input)+'</span>';
+ h+='</div>';
+ return h;
+}
+function tradeHTML(){
+ return hdrHTML()+gridHTML(102,318)+tabsHTML(false)+keysHTML(452,TRADE_K,TRADE_R)+msgHTML(686,452,290,180,"即時訊息")+statusHTML();
+}
+function payHTML(){
+ var h=hdrHTML()+gridHTML(102,180,700);
+ /* 匯率表 */
+ h+='<div class="ab gh" style="left:700px;top:102px;width:280px;height:20px"><span style="width:50px">代碼</span><span style="width:60px">幣別</span><span style="width:80px">匯率</span><span style="width:86px">金額</span></div>';
+ FX.forEach(function(r,i){
+  h+='<div class="ab" style="left:700px;top:'+(122+i*18)+'px;width:280px;height:18px;background:'+(i%2?"#F2F5FA":"#fff")+';border-bottom:1px solid #C9D2E2;font-size:11.5px;display:flex;align-items:center">'
+   +'<span style="width:50px;padding-left:4px">'+r[0]+'</span><span style="width:60px">'+r[1]+'</span><span style="width:80px;text-align:right">'+r[2].toFixed(5)+'</span><span style="width:86px;text-align:right;padding-right:4px">'+(due()/r[2]).toFixed(2)+'</span></div>';
+ });
+ /* 付款明細 */
+ h+='<div class="ab gh" style="left:0;top:286px;width:700px;height:20px"><span style="width:34px">No</span><span style="width:60px">代碼</span><span style="width:160px">付款名稱</span><span style="width:110px">付款金額</span><span style="width:90px">匯率</span><span style="width:110px">本地幣值</span><span style="width:130px">參考號碼</span></div>';
+ h+='<div class="ab body" style="left:0;top:306px;width:700px;height:114px;overflow:auto">';
+ S.pays.forEach(function(p,i){
+  h+='<div class="gr"><span style="width:34px">'+(i+1)+'</span><span style="width:60px">'+esc(p.code)+'</span><span style="width:160px">'+esc(p.name)+'</span><span style="width:110px;text-align:right">'+esc(p.amt)+'</span><span style="width:90px;text-align:right">'+esc(p.rate)+'</span><span style="width:110px;text-align:right">'+money(p.twd)+'</span><span style="width:130px">'+esc(p.ref||"")+'</span></div>';
+ });
+ h+='</div>';
+ h+='<div class="ab" style="left:700px;top:230px;width:280px;height:190px;background:#93A0BC"></div>';
+ h+=tabsHTML(true)+keysHTML(452,PAY_K,PAY_R);
+ h+='<div class="ab btn" style="left:686px;top:452px;width:90px;font-size:11px;padding:4px 2px" onclick="key(\'EDC連線切換\')">EDC連線切換</div>';
+ h+='<div class="ab" style="left:782px;top:452px;width:190px;font-size:13px;font-weight:700;color:#13214A">EDC為連線狀態</div>';
+ h+=msgHTML(686,476,290,156,"即時訊息")+statusHTML();
+ return h;
+}
+function doneHTML(){
+ var h=hdrHTML()+gridHTML(102,318)+tabsHTML(true)+keysHTML(452,PAY_K,PAY_R)+msgHTML(686,452,290,180,"即時訊息")+statusHTML();
+ h+='<div class="ov"><div class="card2"><h3>交易完成</h3><div class="bd" style="font-size:13px;line-height:1.9">'
+  +'銷貨單號：3402295155<br>總金額：NT$ '+money(total())+'<br>已收：NT$ '+money(paid())+'<br>找零：NT$ '+money(Math.max(0,paid()-total()))+'<br>'
+  +'<span class="tiny">銷售單已印出，請連同商品交給客人。</span><br><br>'
+  +'<button class="btn" style="width:140px;display:inline-block" onclick="resetAll()">下一筆交易</button></div></div></div>';
+ return h;
+}
+function render(){
+ var h="";
+ if(S.scr==="login")h=loginHTML();
+ else if(S.scr==="trade")h=tradeHTML();
+ else if(S.scr==="pay")h=payHTML();
+ else if(S.scr==="done")h=doneHTML();
+ if(S.ov)h+=ovHTML();
+ document.getElementById('stage').innerHTML=h;
+ document.getElementById('hint').innerHTML=hintText();
+ applyZoom();
+}
+function hintText(){
+ if(S.scr==="login")return "<b>新交易基本資料</b>：點欄位→右邊出現選擇表。密碼不用打，班機要按「刷登機證」掃 QR。資料齊了按 <b>確定(A+E)</b>。";
+ if(S.scr==="trade")return "<b>交易畫面</b>：按「商品查詢」挑商品，或用數字鍵打條碼後按 <b>Enter</b>。點商品列可選取，再按「數量」或「商品刪除」。打完按 <b>結帳</b>。";
+ if(S.scr==="pay")return "<b>付款畫面</b>：先按付款方式（現金／信用卡／RICH Pay／外幣…），輸入金額後按 <b>確認付款</b>。「不足」歸零才付得掉。";
+ return "交易完成。按「下一筆交易」重來。";
+}
+/* ───── 互動 ───── */
+function focusF(id){
+ S.focus=id;
+ if(id==="cashier")S.panel="cashier";
+ else if(id==="seller")S.panel="seller";
+ else if(id==="nation")S.panel="nation";
+ else S.panel="guide";
+ if(id==="pw")say("密碼欄不用輸入，直接跳下一欄。");
+ if(id==="flight")say("班機不能用打的，請按「刷登機證」掃登機證 QR 碼。");
+ if(id==="dep"||id==="no1"||id==="card"||id==="pick2")say("這一欄是系統自動帶入／不需輸入。");
+ render();
+}
+function setCashier(code){
+ var c=CASHIERS.filter(function(x){return x[0]===code})[0];
+ S.cashier=c[0];S.cashierNote=c[1]+"（"+c[2]+"）";S.focus="seller";S.panel="seller";
+ say("收銀員帶入 "+c[0]+" "+c[1]+"，這台是"+c[2]+"。接著選售貨員。");render();
+}
+function setSeller(code){
+ var c=SELLERS.filter(function(x){return x[0]===code})[0];
+ S.seller=c[0];S.sellerName=c[1];S.focus="nation";S.panel="nation";
+ say("售貨員帶入 "+c[0]+" "+c[1]+"。密碼不用輸入，接著選國籍。");render();
+}
+function setNation(i){
+ var c=NATIONS[i];S.nation=c[0];S.nationName=c[1];S.focus="flight";S.panel="guide";
+ say("國籍帶入 "+c[0]+" "+c[1]+"。接著按「刷登機證」。");render();
+}
+function key(k){
+ /* 共用 */
+ if(k==="匯率表"){S.ov="fx";render();return}
+ if(k==="刷登機證"){S.ov="bp";render();return}
+ if(k==="重新登入"){resetAll();return}
+ if(S.scr==="login"){
+  if(k==="確定(A+E)"){
+   if(!readyLogin()){say("資料不齊：請確認收銀員、售貨員、國籍、班機都已帶入。");render();return}
+   S.scr="trade";S.input="";say("進入交易畫面。按「商品查詢」或直接打商品條碼。");render();return;
+  }
+  if(k==="取消(Esc)"){say("取消本次登打，欄位清空。");S.cashier=S.seller=S.nation=S.flight=S.dep="";S.cashierNote=S.sellerName=S.nationName="";S.focus="cashier";S.panel="cashier";render();return}
+  if(k==="查價(F1)"){S.ov="plist";S.ovData="price";render();return}
+  if(k==="Pos Rich"){say("POS RICH：公告／商品查詢／完稅贈品／查核／庫存／寄貨等功能（見練習機教學頁）。");render();return}
+  if(k==="加總合併刷卡"){say("加總合併刷卡：多筆交易合併成一張簽帳單時使用。");render();return}
+  say("「"+k+"」在這個模擬機沒有做動作。");render();return;
+ }
+ if(S.scr==="trade"){
+  if(k==="商品查詢"){S.ov="plist";S.ovData="add";render();return}
+  if(k==="Enter"){addByCode();return}
+  if(k==="清除"){S.input="";say("輸入區已清除。");render();return}
+  if(k==="數量"){
+   if(S.sel<0){say("請先點一列商品，再按「數量」。");render();return}
+   var q=parseInt(S.input,10);
+   if(!q||q<1){say("請先用數字鍵輸入數量，再按「數量」。");render();return}
+   S.items[S.sel].qty=q;S.input="";say("第 "+(S.sel+1)+" 項數量改為 "+q+"。");render();return;
+  }
+  if(k==="商品刪除"){
+   if(S.sel<0){say("請先點一列商品，再按「商品刪除」。");render();return}
+   var n=S.items[S.sel].name;S.items.splice(S.sel,1);S.sel=-1;say("已刪除「"+n+"」。");render();return;
+  }
+  if(k==="結帳"||k==="快速結帳"){
+   if(!S.items.length){say("還沒有商品，不能結帳。");render();return}
+   S.scr="pay";S.input="";say("進入付款畫面。先按付款方式，再輸入金額。");render();return;
+  }
+  if(k==="會員功能"){say("會員功能：掃會員條碼可看行動支付碼 Y/N、聯名卡、載具與點數。");render();return}
+  if(k==="酬賓券"){say("酬賓券：在優惠券畫面輸入券號折抵。");render();return}
+  if(k==="單筆折扣"||k==="單筆折讓"){say("「"+k+"」針對選取的那一項做調整；全部折扣／折讓在結帳後的畫面做。");render();return}
+  if(k==="統編"){say("統編：客人要打統編時在這裡輸入。");render();return}
+  say("「"+k+"」在這個模擬機沒有做動作。");render();return;
+ }
+ if(S.scr==="pay"){
+  var cash={"現金":["TWD","現金",1],"美元":["USD","美元",31.45],"日幣":["JPD","日幣",0.1937],"人民幣":["CNY","人民幣",4.65]};
+  if(cash[k]){payCash(k,cash[k]);return}
+  if(k==="信用卡"){payCard();return}
+  if(k==="RICHPay"||k==="RICH Pay"){payRich();return}
+  if(k==="電子支付"){say("電子支付：支付寶／微信／LINE Pay／街口等，POS 感應客人手機條碼，一次條碼全付不可拆。");render();return}
+  if(k==="禮券"){say("禮券：現金禮券／商品購物券／商品禮券卡，在 VIP 欄鍵入條碼。");render();return}
+  if(k==="桃園消費券"){say("桃園消費券：依當期活動規定收受。");render();return}
+  if(k==="其他付款"){say("其他付款：旅行支票(TC)等走這裡。");render();return}
+  if(k==="付款刪除"){if(!S.pays.length){say("目前沒有付款明細可刪。");render();return}var p=S.pays.pop();say("已刪除付款「"+p.name+"」。");render();return}
+  if(k==="返回銷售"){S.scr="trade";say("回到交易畫面，可以再加減商品。");render();return}
+  if(k==="清除"){S.input="";render();return}
+  if(k==="確認付款"){
+   if(due()>0){say("還不足 NT$ "+money(due())+"，不能確認付款。");render();return}
+   S.scr="done";say("付款完成，印出銷售單。");render();return;
+  }
+  if(k==="商品預覽"){S.ov="preview";render();return}
+  say("「"+k+"」在這個模擬機沒有做動作。");render();return;
+ }
+}
+function num(n){
+ if(n==="←BACK"){S.input=S.input.slice(0,-1)}else{S.input+=n}
+ render();
+}
+function pickRow(i){S.sel=i;say('已選取第 '+(i+1)+' 項「'+S.items[i].name+'」，可按「數量」或「商品刪除」。');render()}
+function addByCode(){
+ var c=S.input.trim();
+ if(!c){say("請先輸入商品條碼，或按「商品查詢」。");render();return}
+ var p=PRODUCTS.filter(function(x){return x[0]===c})[0];
+ if(!p){say("查無此商品條碼："+c+"（模擬機只有示範商品，可用商品查詢挑）。");S.input="";render();return}
+ addItem(p);
+}
+function addItem(p){
+ S.items.push({code:p[0],name:p[1],price:p[2],qty:1});S.input="";S.sel=S.items.length-1;
+ say("已帶入「"+p[1]+"」NT$ "+money(p[2])+"。");render();
+}
+function payCash(k,info){
+ var amt=parseFloat(S.input);
+ if(!amt){say("請先用數字鍵輸入收到的"+k+"金額，再按「"+k+"」。");render();return}
+ var twd=Math.round(amt*info[2]);
+ S.pays.push({code:info[0],name:info[1],amt:String(amt),rate:info[2]===1?"1":String(info[2]),twd:twd});
+ S.input="";
+ if(due()>0)say("已收 "+info[1]+" "+amt+"（折合 NT$ "+money(twd)+"），還不足 NT$ "+money(due())+"。");
+ else say("已收 "+info[1]+" "+amt+"，應找零 NT$ "+money(paid()-total())+"。按「確認付款」完成。");
+ render();
+}
+function payCard(){
+ var amt=parseFloat(S.input)||due();
+ if(amt<=0){say("金額為 0，不需刷卡。");render();return}
+ S.pays.push({code:"VSA",name:"信用卡",amt:String(amt),rate:"1",twd:amt,ref:"授權碼 048217"});
+ S.input="";
+ say("信用卡授權成功（授權碼 048217）。記得核對卡號與簽帳單相同、簽名相似度達 90%。");
+ render();
+}
+function payRich(){
+ var amt=parseFloat(S.input)||due();
+ if(amt<=0){say("金額為 0。");render();return}
+ S.ov="rich";S.ovData=amt;render();
+}
+function richDone(amt,otp){
+ S.pays.push({code:"RICH",name:"RICH Pay",amt:String(amt),rate:"1",twd:amt,ref:otp?"OTP 驗證":"直接取款"});
+ S.ov=null;S.input="";
+ say(otp?"金額超過 3,000 元，已傳 OTP 驗證碼，客人輸入後取款完成。":"金額 3,000 元以下，直接取款並印出銷售單。");
+ render();
+}
+/* ───── 浮動視窗 ───── */
+function ovHTML(){
+ var h='<div class="ov" onclick="if(event.target===this)closeOv()">';
+ if(S.ov==="fx"){
+  h+='<div class="card2"><h3>匯率表</h3><div class="bd">';
+  h+='<table style="font-size:13px;border-collapse:collapse"><tr><th style="text-align:left;padding:3px 10px">代碼</th><th style="text-align:left;padding:3px 10px">幣別</th><th style="text-align:right;padding:3px 10px">匯率</th></tr>';
+  FX.forEach(function(r){h+='<tr><td style="padding:3px 10px">'+r[0]+'</td><td style="padding:3px 10px">'+r[1]+'</td><td style="padding:3px 10px;text-align:right">'+r[2].toFixed(5)+'</td></tr>'});
+  h+='</table><div class="tiny" style="margin-top:8px">外幣一律只收紙鈔，硬幣不收。</div>';
+  h+='<button class="btn" style="margin-top:10px;width:90px" onclick="closeOv()">關閉</button></div></div>';
+ }
+ if(S.ov==="bp"){
+  h+='<div class="card2"><h3>刷登機證</h3><div class="bd">';
+  h+='<div class="bp" onclick="scanBP()"><div class="qr"></div><div style="font-size:13px;line-height:1.7">'
+   +'<b>BOARDING PASS</b><br>'+BP.name+'<br>班機 '+BP.flight+'　　座位 '+BP.seat+'<br>登機門 '+BP.gate+'　　'+BP.dep+'</div></div>';
+  h+='<div class="tiny" style="margin-top:8px">點登機證上的 QR 碼模擬掃描。</div>';
+  h+='<button class="btn" style="margin-top:10px;width:90px" onclick="closeOv()">取消</button></div></div>';
+ }
+ if(S.ov==="plist"){
+  h+='<div class="card2" style="min-width:420px"><h3>'+(S.ovData==="price"?"查價":"商品查詢")+'</h3><div class="bd">';
+  PRODUCTS.forEach(function(p,i){
+   h+='<div class="prow" style="border:1px solid #C3CCDD;margin-bottom:4px" onclick="'+(S.ovData==="price"?'showPrice('+i+')':'addItem(PRODUCTS['+i+']);closeOv()')+'"><b style="min-width:120px">'+p[0]+'</b><span style="flex:1">'+p[1]+'</span><span style="font-weight:700">NT$ '+money(p[2])+'</span></div>';
+  });
+  h+='<button class="btn" style="margin-top:6px;width:90px" onclick="closeOv()">關閉</button></div></div>';
+ }
+ if(S.ov==="rich"){
+  var amt=S.ovData,big=amt>3000;
+  h+='<div class="card2"><h3>RICH Pay</h3><div class="bd" style="font-size:13px;line-height:1.9">';
+  h+='金額：NT$ '+money(amt)+'<br>① 請客人打開 APP 按「支付」並輸入支付密碼<br>② 請客人出示三合一會員付款條碼<br>③ 掃描後：'+(big?'<b style="color:#B03A1E">超過 3,000 元 → 傳送 OTP 驗證碼</b>':'<b style="color:#1E7F91">3,000 元以下 → 直接取款印單</b>');
+  h+='<br><br><button class="btn" style="width:150px;display:inline-block" onclick="richDone('+amt+','+(big?1:0)+')">'+(big?"客人輸入 OTP 完成":"掃描完成")+'</button> ';
+  h+='<button class="btn" style="width:80px;display:inline-block" onclick="closeOv()">取消</button></div></div>';
+ }
+ if(S.ov==="preview"){
+  h+='<div class="card2" style="min-width:420px"><h3>商品預覽</h3><div class="bd">';
+  S.items.forEach(function(it,i){h+='<div class="prow"><b>'+(i+1)+'</b><span style="flex:1">'+esc(it.name)+'</span><span>×'+it.qty+'</span><span style="font-weight:700;min-width:80px;text-align:right">NT$ '+money(it.price*it.qty)+'</span></div>'});
+  h+='<div style="text-align:right;font-weight:700;margin-top:6px">合計 NT$ '+money(total())+'</div>';
+  h+='<button class="btn" style="margin-top:8px;width:90px" onclick="closeOv()">關閉</button></div></div>';
+ }
+ return h+'</div>';
+}
+function closeOv(){S.ov=null;S.ovData=null;render()}
+function scanBP(){S.flight=BP.flight;S.dep=BP.dep;S.ov=null;S.focus="";S.panel="guide";say("登機證掃描成功：班機 "+BP.flight+"、出境日 "+BP.dep+" 已帶入。");render()}
+function showPrice(i){var p=PRODUCTS[i];say("查價："+p[1]+"　NT$ "+money(p[2]));closeOv()}
+resetAll();
+</script>
+</body>
+</html>
