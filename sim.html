@@ -100,6 +100,7 @@ h1{font-size:17px;margin:0;letter-spacing:.5px}
   <button onclick="resetAll()">↺ 重新開始</button>
 </div>
 <p class="hint" id="hint"></p>
+<p class="hint" id="mtip" style="display:none">手機建議<b>橫放</b>看最清楚；畫面可左右滑動，用 ＋ － 調整大小。</p>
 </div>
 <div id="wrap"><div id="stageBox"><div id="stage"></div></div></div>
 <div class="foot">想看一步一步的教學流程 → <a href="pos.html">POS RICH 練習機</a><br><a href="./">← 回 SA晚班 · 工作執掌</a></div>
@@ -366,6 +367,51 @@ function setNation(i){
  var c=NATIONS[i];S.nation=c[0];S.nationName=c[1];S.focus="flight";S.panel="guide";
  say("國籍帶入 "+c[0]+" "+c[1]+"。接著按「刷登機證」。");render();
 }
+var KEYHELP={
+ "營業員":"營業員：改這一筆的售貨員（CODE 卡）。非菸類打 CODE 卡那個人的工號，香菸一律打自己的。",
+ "提貨註記":"提貨註記：客人先結帳、之後到提貨區領貨時要做的註記。",
+ "贈品":"贈品：帶入完稅贈品或檔期活動贈品。",
+ "貴賓":"貴賓：接貴賓單時用，走貴賓專屬流程。",
+ "轉機註記":"轉機註記：轉機旅客要註記，會影響稅放與提貨方式。",
+ "下一頁":"下一頁：功能鍵換頁，看後面還有哪些功能鍵。",
+ "上一頁":"上一頁：功能鍵換回前一頁。",
+ "活動代碼":"活動代碼：輸入當期檔期的活動代碼。",
+ "統編":"統編：客人要打公司統一編號時在這裡輸入。",
+ "酬賓券":"酬賓券：輸入券號折抵；交易畫面在優惠券畫面做，付款畫面可直接當付款方式。",
+ "商品查詢":"商品查詢：查條碼、品名、售價用，不會把商品打進單身。",
+ "商品刪除":"商品刪除：先點一列商品，再按這顆刪掉它。",
+ "數量":"數量：先點一列商品、用數字鍵打數字，再按這顆改數量。",
+ "清除":"清除：把下面輸入區的數字清掉。",
+ "Enter":"Enter：把輸入區的條碼帶入成商品。",
+ "結帳":"結帳：商品打完後按這顆進付款畫面。",
+ "快速結帳":"快速結帳：直接跳到付款畫面（等同結帳）。",
+ "單筆折扣":"單筆折扣：對選取的那一項扣百分比（%）。",
+ "單筆折讓":"單筆折讓：對選取的那一項直接扣金額。",
+ "會員功能":"會員功能：掃會員條碼，看行動支付碼 Y/N、聯名卡、載具與點數。",
+ "重新登入":"重新登入：整台機器回到新交易基本資料，重打一筆。",
+ "付款刪除":"付款刪除：刪掉付款明細裡最後一筆付款。",
+ "返回銷售":"返回銷售：回交易畫面加減商品。",
+ "商品預覽":"商品預覽：看這一筆打了哪些商品。",
+ "確認付款":"確認付款：不足歸零後按這顆完成交易、印單。",
+ "確定(A+E)":"確定(A+E)：基本資料填齊後按這顆進交易畫面。",
+ "取消(Esc)":"取消(Esc)：清掉基本資料重打。",
+ "查價(F1)":"查價(F1)：只看價格，不會帶入商品。",
+ "Pos Rich":"POS RICH：公告／商品查詢／完稅贈品／查核／庫存／寄貨等功能（見練習機教學頁）。",
+ "加總合併刷卡":"加總合併刷卡：多筆交易合併成一張簽帳單時使用。",
+ "匯率表":"匯率表：看各幣別即時匯率。",
+ "刷登機證":"刷登機證：掃客人登機證 QR 帶入班機與出境日。",
+ "現金":"現金：用數字鍵打收到的金額，再按這顆。",
+ "信用卡":"信用卡：走 EDC 刷卡，要核對卡號、簽名相似度與 VSA。",
+ "美元":"美元：外幣只收紙鈔，依匯率換算成台幣。",
+ "日幣":"日幣：外幣只收紙鈔，依匯率換算成台幣。",
+ "人民幣":"人民幣：外幣只收紙鈔，依匯率換算成台幣。",
+ "電子支付":"電子支付：支付寶／微信／LINE Pay／街口等，POS 感應客人手機條碼，一次條碼全付不可拆。",
+ "RICHPay":"RICH Pay：昇恆昌 APP 會員付款，超過 3,000 元要傳 OTP 給客人。",
+ "禮券":"禮券：現金禮券／商品購物券／商品禮券卡，在 VIP 欄鍵入條碼。",
+ "桃園消費券":"桃園消費券：依當期活動規定收受。",
+ "其他付款":"其他付款：旅行支票(TC)等走這裡。"
+};
+function help(k,pre){say((pre||"")+(KEYHELP[k]||("「"+k+"」在這台模擬機沒有做動作。")));render()}
 function key(k){
  /* 共用 */
  if(k==="匯率表"){S.ov="fx";render();return}
@@ -379,8 +425,7 @@ function key(k){
   if(k==="取消(Esc)"){say("取消本次登打，欄位清空。");S.cashier=S.seller=S.nation=S.flight=S.dep="";S.cashierNote=S.sellerName=S.nationName="";S.focus="cashier";S.panel="cashier";render();return}
   if(k==="查價(F1)"){S.ov="plist";S.ovData="price";render();return}
   if(k==="Pos Rich"){say("POS RICH：公告／商品查詢／完稅贈品／查核／庫存／寄貨等功能（見練習機教學頁）。");render();return}
-  if(k==="加總合併刷卡"){say("加總合併刷卡：多筆交易合併成一張簽帳單時使用。");render();return}
-  say("「"+k+"」在這個模擬機沒有做動作。");render();return;
+  help(k,"⚠ 這顆是交易畫面的鍵，要先按「確定(A+E)」進交易畫面才用得到。　");return;
  }
  if(S.scr==="trade"){
   if(k==="商品查詢"){S.ov="plist";S.ovData="query";say("商品查詢只用來查資料，不會把商品打進單身。");render();return}
@@ -400,30 +445,22 @@ function key(k){
    if(!S.items.length){say("還沒有商品，不能結帳。");render();return}
    S.scr="pay";S.input="";say("進入付款畫面。先按付款方式，再輸入金額。");render();return;
   }
-  if(k==="會員功能"){say("會員功能：掃會員條碼可看行動支付碼 Y/N、聯名卡、載具與點數。");render();return}
-  if(k==="酬賓券"){say("酬賓券：在優惠券畫面輸入券號折抵。");render();return}
-  if(k==="單筆折扣"||k==="單筆折讓"){say("「"+k+"」針對選取的那一項做調整；全部折扣／折讓在結帳後的畫面做。");render();return}
-  if(k==="統編"){say("統編：客人要打統編時在這裡輸入。");render();return}
-  say("「"+k+"」在這個模擬機沒有做動作。");render();return;
+  help(k);return;
  }
  if(S.scr==="pay"){
   var cash={"現金":["TWD","現金",1],"美元":["USD","美元",31.45],"日幣":["JPD","日幣",0.1937],"人民幣":["CNY","人民幣",4.65]};
   if(cash[k]){payCash(k,cash[k]);return}
   if(k==="信用卡"){payCard();return}
   if(k==="RICHPay"||k==="RICH Pay"){payRich();return}
-  if(k==="電子支付"){say("電子支付：支付寶／微信／LINE Pay／街口等，POS 感應客人手機條碼，一次條碼全付不可拆。");render();return}
-  if(k==="禮券"){say("禮券：現金禮券／商品購物券／商品禮券卡，在 VIP 欄鍵入條碼。");render();return}
-  if(k==="桃園消費券"){say("桃園消費券：依當期活動規定收受。");render();return}
-  if(k==="其他付款"){say("其他付款：旅行支票(TC)等走這裡。");render();return}
   if(k==="付款刪除"){if(!S.pays.length){say("目前沒有付款明細可刪。");render();return}var p=S.pays.pop();say("已刪除付款「"+p.name+"」。");render();return}
   if(k==="返回銷售"){S.scr="trade";say("回到交易畫面，可以再加減商品。");render();return}
-  if(k==="清除"){S.input="";render();return}
+  if(k==="清除"){S.input="";say("輸入區已清除。");render();return}
   if(k==="確認付款"){
    if(due()>0){say("還不足 NT$ "+money(due())+"，不能確認付款。");render();return}
    S.scr="done";say("付款完成，印出銷售單。");render();return;
   }
   if(k==="商品預覽"){S.ov="preview";render();return}
-  say("「"+k+"」在這個模擬機沒有做動作。");render();return;
+  help(k);return;
  }
 }
 function num(n){
@@ -515,6 +552,7 @@ function closeOv(){S.ov=null;S.ovData=null;render()}
 function scanBP(){S.flight=BP.flight;S.dep=BP.dep;S.ov=null;S.focus="";S.panel="guide";say("登機證掃描成功：班機 "+BP.flight+"、出境日 "+BP.dep+" 已帶入。");render()}
 function showPrice(i){var p=PRODUCTS[i];say("查價："+p[1]+"　NT$ "+money(p[2]));closeOv()}
 function showInfo(i){var p=PRODUCTS[i];say("商品查詢："+p[1]+"｜條碼 "+p[0]+"｜單價 NT$ "+money(p[2])+"（查詢不會帶入單身）");closeOv()}
+if(innerWidth<760){ZOOM=0.62;document.getElementById('zfit').classList.remove('on');document.getElementById('mtip').style.display='block';}
 resetAll();
 </script>
 </body>
