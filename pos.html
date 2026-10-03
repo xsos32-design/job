@@ -18,6 +18,8 @@ h1{font-size:18px;margin:0;letter-spacing:.5px}
 .bar{display:flex;gap:8px;margin:12px 0}
 .bar button{flex:1;padding:9px;border-radius:9px;border:1px solid var(--line);background:var(--inkSoft);color:var(--sub);font-size:13px;font-weight:700;cursor:pointer}
 .bar button.on{background:var(--sealSoft);border-color:var(--seal);color:var(--gold)}
+.wrap.simmode{max-width:1060px}
+#simbox iframe{width:100%;border:0;display:block;height:760px;background:var(--paper)}
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:12px}
 .card h2{font-size:14px;margin:0 0 8px;color:var(--gold);letter-spacing:.5px}
 .flowlist{display:grid;gap:8px}
@@ -76,14 +78,16 @@ h1{font-size:18px;margin:0;letter-spacing:.5px}
 </header>
 
 <div class="bar">
-  <button class="on" onclick="location.href='sim.html'">🔢 改用 POS 模擬機（自由點選）</button>
+  <button id="tbGuide" class="on" onclick="setTab('guide')">📖 教學流程</button>
+  <button id="tbSim" onclick="setTab('sim')">🔢 模擬機・自由點選</button>
 </div>
 <div id="modenote" class="note"></div>
 
 <div id="home"></div>
 <div id="play" style="display:none"></div>
+<div id="simbox" style="display:none"><iframe id="simf" title="POS 模擬機" scrolling="no"></iframe></div>
 
-<div class="foot">資料來源：昇恆昌 e 學院「POS RICH 功能工具書」、「結帳 POS 機操作流程 1-10 付款方式」；畫面依 SA-34 實機版面重繪<br><a href="sim.html">🔢 POS 模擬機（自由點選）</a><br><a href="./">← 回 SA晚班 · 工作執掌</a></div>
+<div class="foot">資料來源：昇恆昌 e 學院「POS RICH 功能工具書」、「結帳 POS 機操作流程 1-10 付款方式」；畫面依 SA-34 實機版面重繪<br><a href="./">← 回 SA晚班 · 工作執掌</a></div>
 </div>
 
 <script src="posframe.js"></script>
@@ -349,8 +353,25 @@ function esc(s){return String(s).replace(/[&<>]/g,function(c){return {"&":"&amp;
 function $(i){return document.getElementById(i)}
 
 function setMode(m){mode="guide";
- $("modenote").textContent="一步一步的功能教學：該按的鍵會發亮，照著按走完整個流程。想自由操作請用上面的 POS 模擬機。";
+ $("modenote").textContent="一步一步的功能教學：該按的鍵會發亮，照著按走完整個流程。想自由亂按請切到上面的「模擬機」。";
  if(cur)render();else home();}
+
+/* ── 分頁：教學流程 ／ 模擬機 ── */
+function setTab(t){
+ var g=(t!=="sim");
+ $("tbGuide").className=g?"on":"";
+ $("tbSim").className=g?"":"on";
+ document.querySelector(".wrap").classList.toggle("simmode",!g);
+ $("simbox").style.display=g?"none":"";
+ $("modenote").style.display=g?"":"none";
+ $("home").style.display=(g&&!cur)?"":"none";
+ $("play").style.display=(g&&cur)?"":"none";
+ if(!g){var f=$("simf");if(!f.getAttribute("src"))f.setAttribute("src","sim.html");window.scrollTo(0,0);}
+ try{localStorage.setItem("posrich_tab",g?"guide":"sim")}catch(e){}
+}
+window.addEventListener("message",function(e){
+ if(e&&e.data&&typeof e.data.simh==="number"&&e.data.simh>80)$("simf").style.height=e.data.simh+"px";
+});
 
 function home(){
  cur=null;$("play").style.display="none";$("home").style.display="";
@@ -533,6 +554,7 @@ function finish(){
 }
 
 setMode(mode);
+try{if(localStorage.getItem("posrich_tab")==="sim")setTab("sim");}catch(e){}
 </script>
 </body>
 </html>
