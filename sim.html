@@ -143,7 +143,9 @@ function applyZoom(){
  document.getElementById('stageBox').style.transform='scale('+k+')';
  document.getElementById('wrap').style.height=(660*k+14)+'px';
  document.getElementById('stageBox').style.width=(980*k)+'px';
+ tellHeight();
 }
+function tellHeight(){if(top===self)return;try{var w=document.getElementById('wrap');var h=Math.ceil(w.getBoundingClientRect().bottom+(window.pageYOffset||0))+10;parent.postMessage({simh:h},'*')}catch(e){}}
 function zoomFit(){ZOOM=null;document.getElementById('zfit').classList.add('on');applyZoom()}
 function zoomSet(d){var w=document.getElementById('wrap').clientWidth-14;var cur=ZOOM||Math.min(1,w/980);ZOOM=Math.max(.3,Math.min(2,cur+d*0.15));document.getElementById('zfit').classList.remove('on');applyZoom()}
 window.addEventListener('resize',applyZoom);
@@ -552,8 +554,10 @@ function closeOv(){S.ov=null;S.ovData=null;render()}
 function scanBP(){S.flight=BP.flight;S.dep=BP.dep;S.ov=null;S.focus="";S.panel="guide";say("登機證掃描成功：班機 "+BP.flight+"、出境日 "+BP.dep+" 已帶入。");render()}
 function showPrice(i){var p=PRODUCTS[i];say("查價："+p[1]+"　NT$ "+money(p[2]));closeOv()}
 function showInfo(i){var p=PRODUCTS[i];say("商品查詢："+p[1]+"｜條碼 "+p[0]+"｜單價 NT$ "+money(p[2])+"（查詢不會帶入單身）");closeOv()}
+if(top!==self){var _h=document.querySelector('header');if(_h)_h.style.display='none';var _f=document.querySelector('.foot');if(_f)_f.style.display='none';document.querySelector('.top').style.paddingTop='0';document.body.style.background='transparent';}
 if(innerWidth<760){ZOOM=0.62;document.getElementById('zfit').classList.remove('on');document.getElementById('mtip').style.display='block';}
 resetAll();
+setTimeout(tellHeight,80);window.addEventListener("load",tellHeight);
 </script>
 </body>
 </html>
