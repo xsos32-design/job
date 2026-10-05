@@ -534,6 +534,9 @@ var PRODUCTS=[
  ["2845120009876","Gentle 1 條",1200],
  ["2845120005555","七星 1 條",1150]
 ];
+/* 活動代碼：照機台上的清單，代號和名稱都要對得起來 */
+var ACTS=[["A1","CKS東南亞專案"],["A2","樂高導客"],["A3","獨家泡麵專案活動"],
+          ["A4","RICH PARTY"],["A5","永續循環袋"],["A6","金酒影片贈小酒"]];
 var FX=[["USD","美元",31.45],["JPD","日幣",0.1937],["HKD","港幣",3.9],["KRW","韓元",0.02183],["CNY","人民幣",4.65],["EUR","歐元",35.33]];
 var BP={flight:"BR0023",dep:"2026/10/01",name:"CHU/WEIJEN",seat:"32A",gate:"D5"};
 
@@ -556,7 +559,8 @@ var PQ={code:"",p:null,kbd:false};
 var S={};
 function resetAll(){
  S={scr:"login",cashier:"",cashierNote:"",seller:"",sellerName:"",pw:"",nation:"",nationName:"",flight:"",dep:"",
-    focus:"cashier",panel:"guide",items:[],sel:-1,input:"",msg:[],pays:[],ov:null,ovData:null,done:null};
+    focus:"cashier",panel:"guide",items:[],sel:-1,input:"",msg:[],pays:[],ov:null,ovData:null,done:null,
+    act:"",actName:"",merges:[],kpage:1};
  say("歡迎使用 POS 模擬機。先點「收銀員」欄位選機台帳號。");
  render();
 }
@@ -588,7 +592,7 @@ function hdrHTML(){
  var h='<div class="ab tt" style="left:0;top:0;width:980px">[主畫面]　版本：2.0.0.650　門市：SA SA　機台：SA-34　IP：192.168.33.14</div>';
  h+='<div class="ab hdr" style="left:0;top:16px;width:700px;height:86px;padding:4px 8px">';
  h+='<div class="hd">交易日期：2026/10/01(四)　　　　序號：2295155　　　　<span style="color:#C0392B;font-weight:700">銷貨單號：3402295155</span></div>';
- h+='<div class="hd">歸帳日期：2026/10/01　　　　店：SA　SA　機：34　　　活動代碼：</div>';
+ h+='<div class="hd">歸帳日期：2026/10/01　　　　店：SA　SA　機：34　　　活動代碼：'+esc(S.act?S.act+" "+S.actName:"")+'</div>';
  h+='<div class="hd">收銀人員：'+esc(c)+'　　售貨人員：'+esc(S.seller?S.seller+" "+S.sellerName:"")+'　統一編號：</div>';
  h+='<div class="hd">Passport/Id No：　　　Transfer：　　　Nationality：'+esc(S.nation?S.nation+" "+S.nationName:"")+'</div>';
  h+='<div class="hd">Flight No(D)：'+esc(S.flight)+'　　Departure：'+esc(S.dep)+'　　Collecting：</div>';
@@ -618,7 +622,9 @@ function gridHTML(top,height,gw){
 }
 function keysHTML(top,list,right){
  var h='<div class="ab keys" style="left:4px;top:'+top+'px;width:420px;grid-template-columns:repeat(4,1fr);grid-auto-rows:30px">';
- list.forEach(function(k){var kk=k[0].replace(/\n/g,"");h+='<button class="k '+(k[1]||"")+(gKeyWanted()===kk?" hi":"")+'" onclick="key(\''+kk+'\')">'+k[0].replace(/\n/g,"<br>")+'</button>'});
+ list.forEach(function(k){
+  if(!k[0]){h+='<span class="k" style="opacity:.28;cursor:default"></span>';return}
+  var kk=k[0].replace(/\n/g,"");h+='<button class="k '+(k[1]||"")+(gKeyWanted()===kk?" hi":"")+'" onclick="key(\''+kk+'\')">'+k[0].replace(/\n/g,"<br>")+'</button>'});
  h+='</div>';
  h+='<div class="ab keys" style="left:430px;top:'+top+'px;width:150px;grid-template-columns:repeat(3,1fr);grid-auto-rows:30px">';
  ["7","8","9","4","5","6","1","2","3","0","00","←BACK"].forEach(function(n){h+='<button class="k b" onclick="num(\''+n+'\')">'+n+'</button>'});
@@ -703,6 +709,12 @@ function guideText(){
  return "資料齊全，按「確定(A+E)」進入交易畫面。";
 }
 var TRADE_K=[["重新\n登入","y"],["商品\n查詢",""],["營業員",""],["提貨\n註記",""],["商品\n刪除","y"],["酬賓券","p"],["贈品",""],["貴賓",""],["快速\n結帳","p"],["單筆\n折扣",""],["轉機\n註記",""],["會員\n功能","c"],["下一頁","b"],["單筆\n折讓","p"],["統編",""],["活動\n代碼",""]];
+/* 交易畫面第二頁。照片上只看得到最後一排（下一頁／商品序號／IRICH卡輸入），
+   「併單」在被對話框擋住的那幾排裡，位置還要跟小韋確認。 */
+var TRADE_K2=[["併單",""],["",""],["",""],["",""],
+              ["",""],["",""],["",""],["",""],
+              ["",""],["",""],["",""],["",""],
+              ["下一頁","b"],["商品\n序號",""],["IRICH\n卡輸入",""],["",""]];
 var TRADE_R=[["數量","w"],["清除","y"],["Enter","g"],["結帳","p"]];
 var PAY_K=[["返回\n銷售","y"],["現金",""],["信用卡",""],["匯率表",""],["付款\n刪除","y"],["美元",""],["電子\n支付",""],["RICH\nPay","l"],["上一頁","b"],["人民幣",""],["酬賓券","p"],["禮券",""],["下一頁","b"],["日幣",""],["桃園\n消費券",""],["其他\n付款",""]];
 var PAY_R=[["清除","y"],["商品\n預覽","w"],["統編","w"],["確認\n付款","p"]];
@@ -716,7 +728,7 @@ function tabsHTML(pay){
  return h;
 }
 function tradeHTML(){
- return hdrHTML()+gridHTML(102,318,686)+scanHTML()+tabsHTML(false)+keysHTML(452,TRADE_K,TRADE_R)+msgHTML(686,452,290,180,"即時訊息")+statusHTML();
+ return hdrHTML()+gridHTML(102,318,686)+scanHTML()+tabsHTML(false)+keysHTML(452,(S.kpage===2?TRADE_K2:TRADE_K),TRADE_R)+msgHTML(686,452,290,180,"即時訊息")+statusHTML();
 }
 function scanHTML(){
  var h='<div class="ab msgh" style="left:690px;top:102px;width:286px">掃描商品條碼</div>';
@@ -808,13 +820,16 @@ var KEYHELP={
  "贈品":"贈品：帶入完稅贈品或檔期活動贈品。",
  "貴賓":"貴賓：接貴賓單時用，走貴賓專屬流程。",
  "轉機註記":"轉機註記：轉機旅客要註記，會影響稅放與提貨方式。",
- "下一頁":"下一頁：功能鍵換頁，看後面還有哪些功能鍵。",
+ "下一頁":"下一頁：功能鍵換頁。交易畫面第二頁有併單、商品序號、IRICH 卡輸入。",
  "上一頁":"上一頁：功能鍵換回前一頁。",
- "活動代碼":"活動代碼：輸入當期檔期的活動代碼。",
+ "活動代碼":"活動代碼：跳出活動清單（A1 CKS東南亞專案／A2 樂高導客／A3 獨家泡麵專案活動／A4 RICH PARTY／A5 永續循環袋／A6 金酒影片贈小酒），選完會帶到上面標題列。",
+ "併單":"併單：同一位客人分開打的幾張單，把售貨單號填進去合併成一筆結帳，最多十張。",
+ "商品序號":"商品序號：單一商品要登記序號（手錶、名品那類）時用。",
+ "IRICH卡輸入":"IRICH 卡輸入：手動打會員卡號，掃不到條碼時用。",
  "統編":"統編：客人要打公司統一編號時在這裡輸入。",
  "酬賓券":"酬賓券：輸入券號折抵；交易畫面在優惠券畫面做，付款畫面可直接當付款方式。",
  "商品查詢":"商品查詢：查條碼、品名、售價用，不會把商品打進單身。",
- "商品刪除":"商品刪除：先點一列商品，再按這顆刪掉它。",
+ "商品刪除":"商品刪除：先點一列商品，再按這顆；會先跳出確認框（品名／數量），按「是」才真的刪掉。",
  "數量":"數量：先點一列商品、用數字鍵打數字，再按這顆改數量。",
  "清除":"清除：把下面輸入區的數字清掉。",
  "Enter":"Enter：把輸入區的條碼帶入成商品。",
@@ -856,7 +871,7 @@ function key0(k){
  if(S.scr==="login"){
   if(k==="確定(A+E)"){
    if(!readyLogin()){say("資料不齊：請確認收銀員、售貨員、國籍、班機都已帶入。");render();return}
-   S.scr="trade";S.input="";say("進入交易畫面。請點右邊「掃描商品條碼」加入商品，或用數字鍵打條碼按 Enter。");render();return;
+   S.scr="trade";S.input="";S.kpage=1;say("進入交易畫面。請點右邊「掃描商品條碼」加入商品，或用數字鍵打條碼按 Enter。");render();return;
   }
   if(k==="取消(Esc)"){say("取消本次登打，欄位清空。");S.cashier=S.seller=S.nation=S.flight=S.dep="";S.cashierNote=S.sellerName=S.nationName="";S.focus="cashier";S.panel="cashier";render();return}
   if(k==="查價(F1)"){pqOpen();return}
@@ -874,9 +889,15 @@ function key0(k){
    S.items[S.sel].qty=q;S.input="";say("第 "+(S.sel+1)+" 項數量改為 "+q+"。");render();return;
   }
   if(k==="商品刪除"){
+   /* 真機會先跳確認框（品名／數量／是否刪除），不是按了就不見 */
    if(S.sel<0){say("請先點一列商品，再按「商品刪除」。");render();return}
-   var n=S.items[S.sel].name;S.items.splice(S.sel,1);S.sel=-1;say("已刪除「"+n+"」。");render();return;
+   S.ov="delq";render();return;
   }
+  if(k==="活動代碼"){S.ov="act";S.ovData={code:S.act,sel:-1};render();return}
+  if(k==="併單"){S.ov="merge";S.ovData={v:["","","","","","","","","",""]};render();return}
+  if(k==="下一頁"){S.kpage=(S.kpage===2?1:2);say("功能鍵換到第 "+S.kpage+" 頁。");render();return}
+  if(k==="商品序號"){say("商品序號：單一商品要登記序號（例如手錶、名品）時用。這台模擬機先不做。");render();return}
+  if(k==="IRICH卡輸入"){say("IRICH 卡輸入：手動打會員卡號，不想掃條碼時用。這台模擬機先不做。");render();return}
   if(k==="結帳"||k==="快速結帳"){
    if(!S.items.length){say("還沒有商品，不能結帳。");render();return}
    S.scr="pay";S.input="";say("進入付款畫面。先按付款方式，再輸入金額。");render();return;
@@ -893,7 +914,8 @@ function key0(k){
   if(k==="清除"){S.input="";say("輸入區已清除。");render();return}
   if(k==="確認付款"){
    if(due()>0){say("還不足 NT$ "+money(due())+"，不能確認付款。");render();return}
-   S.scr="done";say("付款完成，印出銷售單。");render();return;
+   /* 真機會先跳「應收／付款／是否進行結帳」，收外幣時這一步最容易抓到收錯 */
+   S.ov="payq";render();return;
   }
   if(k==="商品預覽"){S.ov="preview";render();return}
   help(k);return;
@@ -1269,6 +1291,93 @@ function richDone(amt,otp){
  render();
 }
 /* ───── 浮動視窗 ───── */
+
+/* ═══════════ 活動代碼 · 併單 · 兩個確認框 ═══════════ */
+var FIN='font-family:inherit;font-size:12px;padding:2px 5px;border:1px solid #8A96B4;background:#fff';
+function actName(c){c=String(c||"").toUpperCase();for(var i=0;i<ACTS.length;i++)if(ACTS[i][0]===c)return ACTS[i][1];return ""}
+function actHTML(){
+ var d=S.ovData||{code:"",sel:-1};
+ var h='<div class="card2" style="min-width:470px"><h3>活動代碼輸入</h3><div class="bd">';
+ h+='<div style="display:flex;gap:8px;align-items:center;font-size:12.5px;margin-bottom:9px;flex-wrap:wrap">'
+  +'<span>活動代號：</span><input value="'+esc(d.code)+'" oninput="S.ovData.code=this.value;actPaint()" style="width:110px;'+FIN+'">'
+  +'<span>活動名稱：</span><input id="actnm" readonly value="'+esc(actName(d.code))+'" style="width:190px;'+FIN+';background:#EEF1F7">'
+  +'</div>';
+ ACTS.forEach(function(a,i){
+  var on=(String(d.code||"").toUpperCase()===a[0]);
+  h+='<div class="prow" onclick="actPick('+i+')"'+(on?' style="background:#2C4B8C;color:#fff"':'')+'>'
+   +'<b style="min-width:44px">'+a[0]+'</b><span style="flex:1">'+a[1]+'</span></div>';
+ });
+ h+='<div style="display:flex;gap:5px;margin-top:10px">'
+  +'<button class="btn" style="flex:1" onclick="closeOv()">取消(Esc)</button>'
+  +'<button class="btn" style="flex:1" onclick="actReset()">清除(C+Bak)</button>'
+  +'<button class="btn" style="flex:1" onclick="actQuery()">查詢(A+Q)</button>'
+  +'<button class="btn" style="flex:1" onclick="actRemove()">活動清除</button>'
+  +'<button class="btn" style="flex:1" onclick="actApply()">輸入(A+E)</button></div>';
+ h+='<div class="tiny" style="margin-top:8px">點一列直接選，或打代號再按「輸入(A+E)」。帶進去之後上面標題列的「活動代碼：」會顯示出來。</div>';
+ return h+'</div></div>';
+}
+function actPaint(){var e=document.getElementById("actnm");if(e)e.value=actName(S.ovData.code)}
+function actPick(i){S.ovData.code=ACTS[i][0];S.ovData.sel=i;render()}
+function actReset(){S.ovData={code:"",sel:-1};render()}
+function actQuery(){var c=String(S.ovData.code||"").toUpperCase(),n=actName(c);
+ say(n?("查到："+c+"　"+n):("查無活動代號「"+(c||"(空白)")+"」，請從清單點選。"));render()}
+function actRemove(){S.act="";S.actName="";S.ovData={code:"",sel:-1};
+ say("已清除本筆的活動代碼。");render()}
+function actApply(){
+ var c=String(S.ovData.code||"").toUpperCase(),n=actName(c);
+ if(!n){say("活動代號「"+(c||"(空白)")+"」查無資料，請從清單點選。");render();return}
+ S.act=c;S.actName=n;S.ov=null;S.ovData=null;
+ say("本筆帶入活動代碼 "+c+"　"+n+"。結帳前記得確認活動品項和贈品條件有沒有符合。");render();
+}
+function mergeHTML(){
+ var d=S.ovData||{v:["","","","","","","","","",""]};
+ var h='<div class="card2" style="min-width:520px"><h3>併單紀錄</h3><div class="bd">';
+ h+='<div style="font-size:13px;font-weight:700;margin-bottom:9px">售貨單號輸入</div>';
+ h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:5px 16px">';
+ for(var i=0;i<10;i++){
+  h+='<div style="display:flex;gap:5px;align-items:center;font-size:12px">'
+   +'<span style="min-width:50px;text-align:right">單號'+(i+1)+'：</span>'
+   +'<input value="'+esc(d.v[i]||"")+'" inputmode="numeric" oninput="S.ovData.v['+i+']=this.value" style="flex:1;min-width:0;'+FIN+'"></div>';
+ }
+ h+='</div><div style="display:flex;gap:5px;margin-top:11px">'
+  +'<button class="btn" style="flex:1" onclick="closeOv()">取消</button>'
+  +'<button class="btn" style="flex:1" onclick="mergeReset()">清除</button>'
+  +'<button class="btn" style="flex:1" onclick="mergeKeypad()">OpenKeypad</button>'
+  +'<button class="btn" style="flex:1" onclick="mergeApply()">輸入</button></div>';
+ h+='<div class="tiny" style="margin-top:8px">同一位客人分開打的幾張單，把售貨單號填進來合併成一筆結帳，最多十張。</div>';
+ return h+'</div></div>';
+}
+function mergeReset(){S.ovData={v:["","","","","","","","","",""]};render()}
+function mergeKeypad(){say("真機上這顆會叫出軟鍵盤；這台是模擬機，直接點欄位用自己的鍵盤打就好。");render()}
+function mergeApply(){
+ var list=(S.ovData.v||[]).map(function(x){return String(x||"").trim()}).filter(Boolean);
+ if(!list.length){say("還沒有輸入任何售貨單號。");render();return}
+ S.merges=list;S.ov=null;S.ovData=null;
+ say("已併入 "+list.length+" 張單號："+list.join("、")+"。結帳金額會是這幾張的合計。");render();
+}
+function delqHTML(){
+ var it=S.items[S.sel];
+ if(!it)return '<div class="card2"><h3>確認訊息</h3><div class="bd">沒有選到商品。<br><br><button class="btn" style="width:110px" onclick="closeOv()">關閉</button></div></div>';
+ return '<div class="card2"><h3>確認訊息</h3><div class="bd" style="font-size:13px;line-height:1.95">'
+  +'商品名稱：'+esc(it.name)+'<br>商品數量：'+it.qty+'<br>是否刪除？<br><br>'
+  +'<button class="btn" style="width:110px;display:inline-block" onclick="delYes()">是(Y)</button>　'
+  +'<button class="btn" style="width:110px;display:inline-block" onclick="closeOv()">否(N)</button></div></div>';
+}
+function delYes(){
+ if(S.sel<0||!S.items[S.sel]){closeOv();return}
+ var n=S.items[S.sel].name;S.items.splice(S.sel,1);S.sel=-1;
+ S.ov=null;S.ovData=null;say("已刪除「"+n+"」。");render();
+}
+function payqHTML(){
+ return '<div class="card2"><h3>確認訊息</h3><div class="bd" style="font-size:13px;line-height:1.95">'
+  +'應收總金額：'+money(total())+'<br>付款總金額：'+money(paid())+'<br>是否進行結帳？<br><br>'
+  +'<button class="btn" style="width:110px;display:inline-block" onclick="payYes()">是(Y)</button>　'
+  +'<button class="btn" style="width:110px;display:inline-block" onclick="closeOv()">否(N)</button>'
+  +'<div class="tiny" style="margin-top:9px">收外幣的時候這一行要看清楚：付款總金額是折合台幣後的數字，找零一律找台幣。</div>'
+  +'</div></div>';
+}
+function payYes(){S.ov=null;S.ovData=null;S.scr="done";say("付款完成，印出銷售單。");render()}
+
 function ovHTML(){
  if(S.ov==="pq")return pqHTML();
  if(S.ov==="rich1")return rich1HTML();
@@ -1277,6 +1386,10 @@ function ovHTML(){
  if(S.ov==="picker")return h+pickerHTML()+'</div>';
  if(S.ov==="chg")return h+chgHTML()+'</div>';
  if(S.ov==="gf")return h+flowHTML()+'</div>';
+ if(S.ov==="act")return h+actHTML()+'</div>';
+ if(S.ov==="merge")return h+mergeHTML()+'</div>';
+ if(S.ov==="delq")return h+delqHTML()+'</div>';
+ if(S.ov==="payq")return h+payqHTML()+'</div>';
  if(S.ov==="fx"){
   h+='<div class="card2"><h3>匯率表</h3><div class="bd">';
   h+='<table style="font-size:13px;border-collapse:collapse"><tr><th style="text-align:left;padding:3px 10px">代碼</th><th style="text-align:left;padding:3px 10px">幣別</th><th style="text-align:right;padding:3px 10px">匯率</th></tr>';
