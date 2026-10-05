@@ -161,6 +161,14 @@ h1{font-size:17px;margin:0;letter-spacing:.5px}
 .kbd{display:grid;grid-template-columns:repeat(11,1fr);gap:3px;padding:7px 10px;background:#E4E8F0;border-top:1px solid #B9C4D6}
 .kbd button{height:30px;border:1px solid #C3CCDD;background:#fff;font-size:13px;cursor:pointer;font-family:inherit;color:#16233F}
 .kbd button:hover{background:#FFF6DF}
+.chg{font-size:14px;line-height:2;color:#13214A}
+.chg .r{display:flex;justify-content:space-between;gap:20px}
+.chg .r b{font-weight:700}
+.chg hr{border:0;border-top:1px solid #8A96B4;margin:7px 0}
+.chg .big{font-size:26px;font-weight:800;text-align:center;padding:8px 0 2px}
+.chg .ok{color:#1E7A4A}
+.chg .no{color:#B03A1E}
+.chg .nt{font-size:12px;color:#415072;line-height:1.7}
 </style>
 </head>
 <body>
@@ -765,7 +773,7 @@ function hintText(){
  if(G.t)return "<b>引導中</b>：橘框／發亮的那一個就是這一步要點的。想自己亂按可以按引導列的「結束」。";
  if(S.scr==="login")return "<b>新交易基本資料</b>：點欄位→右邊出現選擇表。密碼不用打，班機要按「刷登機證」掃 QR。資料齊了按 <b>確定(A+E)</b>。想照流程走就按上面的「📋 選流程」。";
  if(S.scr==="trade")return "<b>交易畫面</b>：右邊點商品條碼＝掃描加入，或用數字鍵打條碼後按 <b>Enter</b>；「商品查詢」只查資料、不會加入商品。點商品列可選取，再按「數量」或「商品刪除」。打完按 <b>結帳</b>。";
- if(S.scr==="pay")return "<b>付款畫面</b>：先按付款方式（現金／信用卡／RICH Pay／外幣…），輸入金額後按 <b>確認付款</b>。「不足」歸零才付得掉。";
+ if(S.scr==="pay")return "<b>付款畫面</b>：先用數字鍵在「輸入區」打<b>收到的金額</b>，再按幣別鍵（現金／美元／日幣／人民幣），畫面會跳出折合台幣與<b>要找多少台幣</b>。「不足」歸零後按 <b>確認付款</b>。";
  return "交易完成。按「下一筆交易」重來。";
 }
 /* ───── 互動 ───── */
@@ -827,11 +835,11 @@ var KEYHELP={
  "加總合併刷卡":"加總合併刷卡：多筆交易合併成一張簽帳單時使用。",
  "匯率表":"匯率表：看各幣別即時匯率。",
  "刷登機證":"刷登機證：掃客人登機證 QR 帶入班機與出境日。",
- "現金":"現金：用數字鍵打收到的金額，再按這顆。",
+ "現金":"現金：先用數字鍵在輸入區打收到的台幣，再按這顆；會跳出要找客人多少錢。",
  "信用卡":"信用卡：走 EDC 刷卡，要核對卡號、簽名相似度與 VSA。",
- "美元":"美元：外幣只收紙鈔，依匯率換算成台幣。",
- "日幣":"日幣：外幣只收紙鈔，依匯率換算成台幣。",
- "人民幣":"人民幣：外幣只收紙鈔，依匯率換算成台幣。",
+ "美元":"美元：先用數字鍵打收到的美元金額再按這顆，會跳出折合台幣與要找多少台幣；外幣只收紙鈔，找零一律找台幣。",
+ "日幣":"日幣：先用數字鍵打收到的日幣金額再按這顆，會跳出折合台幣與要找多少台幣；外幣只收紙鈔，找零一律找台幣。",
+ "人民幣":"人民幣：先用數字鍵打收到的人民幣金額再按這顆，會跳出折合台幣與要找多少台幣；外幣只收紙鈔，找零一律找台幣。",
  "電子支付":"電子支付：支付寶／微信／LINE Pay／街口等，POS 感應客人手機條碼，一次條碼全付不可拆。",
  "RICHPay":"RICH Pay：昇恆昌 APP 會員付款，超過 3,000 元要傳 OTP 給客人。",
  "禮券":"禮券：現金禮券／商品購物券／商品禮券卡，在 VIP 欄鍵入條碼。",
@@ -1206,13 +1214,40 @@ function addItem(p){
 }
 function payCash(k,info){
  var amt=parseFloat(S.input);
- if(!amt){say("請先用數字鍵輸入收到的"+k+"金額，再按「"+k+"」。");render();return}
+ if(!amt){say("請先用數字鍵在下面「輸入區」打收到的"+k+"金額，再按「"+k+"」。");render();return}
  var twd=Math.round(amt*info[2]);
  S.pays.push({code:info[0],name:info[1],amt:String(amt),rate:info[2]===1?"1":String(info[2]),twd:twd});
  S.input="";
- if(due()>0)say("已收 "+info[1]+" "+amt+"（折合 NT$ "+money(twd)+"），還不足 NT$ "+money(due())+"。");
- else say("已收 "+info[1]+" "+amt+"，應找零 NT$ "+money(paid()-total())+"。按「確認付款」完成。");
+ var chg=paid()-total();
+ if(chg<0)say("已收 "+info[1]+" "+amt+"（折合 NT$ "+money(twd)+"），還不足 NT$ "+money(due())+"。");
+ else say("已收 "+info[1]+" "+amt+"（折合 NT$ "+money(twd)+"），要找客人台幣 NT$ "+money(chg)+"。");
+ S.ov="chg";S.ovData={cur:info[0],name:info[1],amt:amt,rate:info[2],twd:twd};
  render();
+}
+function chgHTML(){
+ var d=S.ovData||{},chg=paid()-total(),fx=(d.rate!==1);
+ var h='<div class="card2" style="min-width:380px"><h3>收款換算'+(fx?"（"+esc(d.name)+"）":"")+'</h3><div class="bd"><div class="chg">';
+ h+='<div class="r"><span>收到</span><b>'+esc(d.name)+' '+esc(String(d.amt))+'</b></div>';
+ if(fx){
+  h+='<div class="r"><span>當日匯率</span><b>× '+d.rate+'</b></div>';
+  h+='<div class="r"><span>折合台幣</span><b>NT$ '+money(d.twd)+'</b></div>';
+ }
+ h+='<hr>';
+ h+='<div class="r"><span>本筆應付</span><b>NT$ '+money(total())+'</b></div>';
+ h+='<div class="r"><span>累計已收</span><b>NT$ '+money(paid())+'</b></div>';
+ h+='<hr>';
+ if(chg<0){
+  h+='<div class="big no">還差 NT$ '+money(-chg)+'</div>';
+  h+='<div class="nt">再按一次付款方式繼續收款（可混收台幣／外幣／刷卡）。</div>';
+ }else{
+  h+='<div class="big ok">找零 NT$ '+money(chg)+'</div>';
+  h+='<div class="nt">'+(fx?'外幣<b>一律找台幣</b>，不找外幣、外幣也只收紙鈔。<br>':'')+'唱收唱付：把找零與發票、商品一起交給客人，再按「確認付款」印單。</div>';
+ }
+ h+='</div><div style="display:flex;gap:8px;margin-top:10px">';
+ h+='<button class="btn" style="flex:1" onclick="closeOv()">'+(chg<0?"繼續收款":"知道了")+'</button>';
+ if(chg>=0)h+='<button class="btn" style="flex:1;border:2px solid #E8541E" onclick="closeOv();key(\'確認付款\')">確認付款</button>';
+ h+='</div></div></div>';
+ return h;
 }
 function payCard(){
  var amt=parseFloat(S.input)||due();
@@ -1240,6 +1275,7 @@ function ovHTML(){
  if(S.ov==="rich2")return rich2HTML();
  var h='<div class="ov" onclick="if(event.target===this)closeOv()">';
  if(S.ov==="picker")return h+pickerHTML()+'</div>';
+ if(S.ov==="chg")return h+chgHTML()+'</div>';
  if(S.ov==="gf")return h+flowHTML()+'</div>';
  if(S.ov==="fx"){
   h+='<div class="card2"><h3>匯率表</h3><div class="bd">';
