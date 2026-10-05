@@ -125,6 +125,42 @@ h1{font-size:17px;margin:0;letter-spacing:.5px}
 .fmsg.good{display:block;background:#12291F;border:1px solid #2E8B57;color:#B9E7CE}
 .card2.big2{min-width:420px;max-width:560px}
 .card2.big2 .bd{max-height:78vh;overflow:auto}
+.evr{position:absolute;left:0;top:0;width:980px;height:660px;background:#D6E2EE;font-family:inherit}
+.evrh{background:#1B3A8C;color:#DCE7F5;font-size:11px;padding:3px 8px}
+.evrbar{background:#F2F4F8;height:46px;display:flex;align-items:center;justify-content:flex-end;gap:10px;padding:0 16px;border-bottom:1px solid #B9C4D6}
+.evrbtn{background:#E6E9F2;border:1px solid #8A96B4;font-size:13px;padding:6px 20px;cursor:pointer;font-family:inherit;color:#16233F}
+.evrbtn:hover{background:#FFF6DF}
+.evrg{display:grid;gap:8px;padding:22px 100px}
+.evrk{height:92px;display:grid;place-items:center;font-size:25px;font-weight:700;color:#fff;letter-spacing:3px;cursor:pointer;background:linear-gradient(180deg,#E8952F 0%,#D9791C 100%);border:1px solid #F0B46A;line-height:1.05;text-align:center;text-shadow:0 1px 2px rgba(0,0,0,.25)}
+.evrk:hover{filter:brightness(1.12)}
+.evrk.g2{background:linear-gradient(180deg,#8FC44E 0%,#6FA32F 100%);border-color:#B4DC82}
+.evrk.home{background:linear-gradient(180deg,#F3A13A 0%,#E07B1E 100%);font-size:34px;letter-spacing:0}
+.evrk.off{opacity:.42}
+.evrs{position:absolute;left:0;bottom:0;width:980px;height:22px;background:#DDE3EE;font-size:10.5px;display:flex;align-items:center;gap:12px;padding:0 8px;color:#16233F}
+.evrs .on{background:#E9E24B;padding:0 5px;font-weight:700}
+.pq{position:absolute;background:#EDEFF5;border:1.5px solid #5A6686;box-shadow:0 10px 34px rgba(0,0,0,.45)}
+.pqh{background:#1B3A8C;color:#fff;font-size:11.5px;padding:3px 8px}
+.pqt{color:#1B3A8C;font-size:20px;font-weight:700;padding:9px 16px 6px}
+.pqr{display:flex;align-items:center;font-size:13px;color:#16233F;padding:3px 16px}
+.pqr label{width:84px;flex:0 0 auto}
+.pqv{flex:1;min-height:21px;background:#EDEFF5;font-weight:700;color:#13214A}
+.pqi{flex:1;height:23px;background:#fff;border:1px solid #8A96B4;padding:1px 6px;display:flex;align-items:center;font-size:13.5px;color:#13214A}
+.pqi i{width:1px;height:15px;background:#13214A;margin-left:1px;animation:cb 1s steps(1) infinite}
+@keyframes cb{50%{opacity:0}}
+.pqtb{margin:8px 16px 0;border:1px solid #8A96B4;background:#fff;font-size:11.5px}
+.pqtb .hd,.pqtb .rw{display:flex}
+.pqtb .hd span,.pqtb .rw span{padding:3px 6px;border-right:1px solid #C3CCDD;overflow:hidden;white-space:nowrap}
+.pqtb .hd{border-bottom:1px solid #8A96B4;color:#16233F}
+.pqtb .rw.sel{background:#2B4FC8;color:#fff}
+.pqk{position:absolute;display:grid;grid-template-columns:repeat(4,70px);grid-auto-rows:46px}
+.pqk button{border:1px solid #C3CCDD;background:#F7F9FC;font-size:17px;cursor:pointer;font-family:inherit;color:#16233F}
+.pqk button:hover{background:#FFF6DF}
+.pqb{display:flex;gap:10px;padding:10px 16px 12px}
+.pqb button{flex:1;border:1px solid #8A96B4;background:#E6E9F2;font-size:13px;padding:8px 2px;cursor:pointer;font-family:inherit;color:#16233F}
+.pqb button:hover{background:#FFF6DF}
+.kbd{display:grid;grid-template-columns:repeat(11,1fr);gap:3px;padding:7px 10px;background:#E4E8F0;border-top:1px solid #B9C4D6}
+.kbd button{height:30px;border:1px solid #C3CCDD;background:#fff;font-size:13px;cursor:pointer;font-family:inherit;color:#16233F}
+.kbd button:hover{background:#FFF6DF}
 </style>
 </head>
 <body>
@@ -493,6 +529,21 @@ var PRODUCTS=[
 var FX=[["USD","美元",31.45],["JPD","日幣",0.1937],["HKD","港幣",3.9],["KRW","韓元",0.02183],["CNY","人民幣",4.65],["EUR","歐元",35.33]];
 var BP={flight:"BR0023",dep:"2026/10/01",name:"CHU/WEIJEN",seat:"32A",gate:"D5"};
 
+/* ───── 實機功能選單 ───── */
+/* ── 實機 POS RICH 功能選單（依 SA-13 實機畫面）── */
+var RICH1=[["公告",1],["商品",1],["促銷",0],["VIP",0],["員購",0],["匯率",1],["優惠",0],
+           ["查核",1],["會員",0],["庫存",1],["銷退",0],["寄貨",1],["商品\n促銷",1],["商品\n條碼",1]];
+var RICH2={
+ "公告":["賣場公告","資訊公告"],
+ "商品":["商品即庫","調價記錄","促銷記錄","廠商貨號","香化批號","折扣表","不同尺寸","相同尺寸","贈品反查"],
+ "查核":["零錢兌換","POS簽核","營收投庫","補週轉金"],
+ "庫存":["調撥"],
+ "寄貨":["寄貨作業"],
+ "商品促銷":["商品促銷"],
+ "商品條碼":["一般商品條碼","屆期商品條碼"]
+};
+var PQ={code:"",p:null,kbd:false};
+
 /* ───── 狀態 ───── */
 var S={};
 function resetAll(){
@@ -771,8 +822,8 @@ var KEYHELP={
  "確認付款":"確認付款：不足歸零後按這顆完成交易、印單。",
  "確定(A+E)":"確定(A+E)：基本資料填齊後按這顆進交易畫面。",
  "取消(Esc)":"取消(Esc)：清掉基本資料重打。",
- "查價(F1)":"查價(F1)：只看價格，不會帶入商品。",
- "Pos Rich":"POS RICH：公告／商品查詢／完稅贈品／查核／庫存／寄貨等功能（見練習機教學頁）。",
+ "查價(F1)":"查價(F1)：開「商品價格查詢」視窗，輸入查詢編號按查詢(A+E)；只看價格，不會帶入商品。",
+ "Pos Rich":"POS RICH：進 EVR Web 功能選單（公告／商品／促銷／VIP／員購／匯率／優惠／查核／會員／庫存／銷退／寄貨／商品促銷／商品條碼）。",
  "加總合併刷卡":"加總合併刷卡：多筆交易合併成一張簽帳單時使用。",
  "匯率表":"匯率表：看各幣別即時匯率。",
  "刷登機證":"刷登機證：掃客人登機證 QR 帶入班機與出境日。",
@@ -800,8 +851,8 @@ function key0(k){
    S.scr="trade";S.input="";say("進入交易畫面。請點右邊「掃描商品條碼」加入商品，或用數字鍵打條碼按 Enter。");render();return;
   }
   if(k==="取消(Esc)"){say("取消本次登打，欄位清空。");S.cashier=S.seller=S.nation=S.flight=S.dep="";S.cashierNote=S.sellerName=S.nationName="";S.focus="cashier";S.panel="cashier";render();return}
-  if(k==="查價(F1)"){S.ov="plist";S.ovData="price";render();return}
-  if(k==="Pos Rich"){say("POS RICH：公告／商品查詢／完稅贈品／查核／庫存／寄貨等功能（見練習機教學頁）。");render();return}
+  if(k==="查價(F1)"){pqOpen();return}
+  if(k==="Pos Rich"){say("進入 EVR Web · POS RICH 功能選單。");richOpen();return}
   help(k,"⚠ 這顆是交易畫面的鍵，要先按「確定(A+E)」進交易畫面才用得到。　");return;
  }
  if(S.scr==="trade"){
@@ -1042,6 +1093,101 @@ function pickerHTML(){
 }
 function openPicker(){G.fl=null;S.ov="picker";render()}
 
+
+/* ═══ 商品價格查詢（查價 F1）═══ */
+function pqOpen(){PQ={code:"",p:null,kbd:false};S.ov="pq";render()}
+function pqNum(n){
+ if(n==="←"){PQ.code=PQ.code.slice(0,-1)}
+ else if(n==="Clr"){PQ.code="";PQ.p=null}
+ else if(n==="Ent"){pqGo();return}
+ else{PQ.code+=n}
+ render();
+}
+function pqKbd(c){PQ.code+=(c==="Space"?" ":c);render()}
+function pqGo(){
+ var c=PQ.code.trim();
+ if(!c){say("商品價格查詢：請先輸入查詢編號（商品條碼）。");render();return}
+ var p=PRODUCTS.filter(function(x){return x[0]===c||x[0].indexOf(c)===0})[0];
+ if(!p){PQ.p=null;say("商品價格查詢：查無編號 "+c+"（模擬機只有示範商品）。");render();return}
+ PQ.p=p;say("商品價格查詢："+p[1]+"　原價 NT$ "+money(p[2])+"（查詢不會帶入單身）。");render();
+}
+function pqHTML(){
+ var p=PQ.p;
+ var h='<div class="ov" onclick="if(event.target===this)closeOv()">';
+ h+='<div class="pq" style="width:720px"><div class="pqh">商品價格查詢</div>';
+ h+='<div style="display:flex">';
+ h+='<div style="flex:1;min-width:0"><div class="pqt">商品價格查詢</div>';
+ h+='<div class="pqr"><label>查詢編號：</label><div class="pqi">'+esc(PQ.code)+'<i></i></div></div>';
+ h+='<div class="pqr"><label>商品名稱：</label><div class="pqv">'+esc(p?p[1]:"")+'</div></div>';
+ h+='<div class="pqr"><label>商品編碼：</label><div class="pqv">'+esc(p?p[0]:"")+'</div></div>';
+ h+='<div class="pqr"><label>商品原價：</label><div class="pqv">'+(p?money(p[2]):"")+'</div><label style="width:88px;text-align:right;padding-right:8px">期間促銷價：</label><div class="pqv" style="flex:0 0 90px">'+(p?money(p[2]):"")+'</div></div>';
+ h+='<div class="pqtb"><div class="hd"><span style="width:56px">幣別</span><span style="width:84px">幣別名稱</span><span style="width:96px;text-align:right">原價</span><span style="width:110px;text-align:right">期間促銷價</span></div>';
+ if(p){
+  h+='<div class="rw sel"><span style="width:56px">TWD</span><span style="width:84px">台幣</span><span style="width:96px;text-align:right">'+money(p[2])+'</span><span style="width:110px;text-align:right">'+money(p[2])+'</span></div>';
+  FX.forEach(function(r){var v=(p[2]/r[2]).toFixed(2);
+   h+='<div class="rw"><span style="width:56px">'+r[0]+'</span><span style="width:84px">'+r[1]+'</span><span style="width:96px;text-align:right">'+v+'</span><span style="width:110px;text-align:right">'+v+'</span></div>';});
+ }else{h+='<div class="rw sel" style="height:20px"><span style="width:56px"></span><span style="width:84px"></span><span style="width:96px"></span><span style="width:110px"></span></div>';}
+ h+='</div>';
+ h+='<div class="pqb"><button onclick="closeOv()">取消(Esc)</button><button onclick="pqNum(\'Clr\')">清除(C+Bak)</button><button onclick="PQ.kbd=!PQ.kbd;render()">OpenKeypad</button><button onclick="pqGo()">查詢(A+E)</button></div>';
+ h+='</div>';
+ h+='<div style="flex:0 0 288px;padding:14px 14px 0 0"><div class="pqk" style="position:static">';
+ [["7"],["8"],["9"],["←"],["4"],["5"],["6"],["Clr"],["1"],["2"],["3"],[""],["0"],["00"],["."],[""]].forEach(function(k,i){
+  if(i===11){h+='<button style="grid-row:span 2" onclick="pqNum(\'Ent\')">Ent</button>';return}
+  if(i===15)return;
+  h+='<button onclick="pqNum(\''+k[0]+'\')">'+k[0]+'</button>';
+ });
+ h+='</div></div></div>';
+ if(PQ.kbd){
+  h+='<div class="kbd">';
+  "ASDFGHJKL".split("").forEach(function(c){h+='<button onclick="pqKbd(\''+c+'\')">'+c+'</button>'});
+  h+='<button onclick="pqNum(\'00\')">00</button><button onclick="pqNum(\'Ent\')">Ent</button>';
+  "ZXCVBNM".split("").forEach(function(c){h+='<button onclick="pqKbd(\''+c+'\')">'+c+'</button>'});
+  h+='<button style="grid-column:span 2" onclick="pqKbd(\'Space\')">Space</button><button onclick="pqNum(\'0\')">0</button><button onclick="pqNum(\'.\')">.</button>';
+  h+='</div>';
+ }
+ h+='</div>';
+ return h+'</div>';
+}
+
+/* ═══ EVR Web · POS RICH 功能選單 ═══ */
+function richOpen(){S.ov="rich1";S.ovData=null;render()}
+function richPick(name){
+ var n=name.replace(/\n/g,"");
+ if(n==="匯率"){S.ov="fx";render();return}
+ if(!RICH2[n]){say("「"+n+"」這個功能模擬機還沒收錄，實機上是 EVR Web 的另一個分頁。");S.ov=null;render();return}
+ S.ov="rich2";S.ovData=n;render();
+}
+function richSub(sub){
+ var f=FLOWS.filter(function(x){return x.name===sub||sub.indexOf(x.name)===0||x.name.indexOf(sub)===0})[0];
+ if(f){fStart(f.id);return}
+ say("「"+sub+"」的操作流程還沒收錄，之後拿到工具書內容再補。");render();
+}
+function evrHTML(inner,sub){
+ var h='<div class="evr"><div class="evrh">EVR Web網頁服務</div>';
+ h+='<div class="evrbar"><button class="evrbtn" onclick="'+(sub?'richOpen()':'closeOv()')+'">首頁</button><button class="evrbtn" onclick="render()">重新整理</button><button class="evrbtn" onclick="closeOv()">離開</button></div>';
+ h+=inner;
+ h+='<div class="evrs"><span style="flex:1"></span><span class="on">連線</span><span>使用者：'+esc(S.sellerName||"—")+'</span><span>'+nowStr()+'</span></div></div>';
+ return h;
+}
+function rich1HTML(){
+ var h='<div class="evrg" style="grid-template-columns:repeat(7,1fr)">';
+ RICH1.forEach(function(k){
+  h+='<div class="evrk'+(k[1]?"":" off")+'" onclick="richPick(\''+k[0].replace(/\n/g,"")+'\')">'+esc(k[0]).replace(/\n/g,"<br>")+'</div>';
+ });
+ return evrHTML(h+'</div>');
+}
+function rich2HTML(){
+ var cat=S.ovData,list=RICH2[cat]||[];
+ var n=Math.min(7,list.length+1);
+ var h='<div class="evrg" style="grid-template-columns:repeat('+n+',1fr);padding:22px 60px">';
+ h+='<div class="evrk home" onclick="richOpen()">⌂</div>';
+ list.forEach(function(s){
+  var lab=s.length>4?s.slice(0,Math.ceil(s.length/2))+"\n"+s.slice(Math.ceil(s.length/2)):s;
+  h+='<div class="evrk g2" onclick="richSub(\''+s+'\')">'+esc(lab).replace(/\n/g,"<br>")+'</div>';
+ });
+ return evrHTML(h+'</div>',1);
+}
+
 function num(n){
  if(n==="←BACK"){S.input=S.input.slice(0,-1)}else{S.input+=n}
  render();
@@ -1089,6 +1235,9 @@ function richDone(amt,otp){
 }
 /* ───── 浮動視窗 ───── */
 function ovHTML(){
+ if(S.ov==="pq")return pqHTML();
+ if(S.ov==="rich1")return rich1HTML();
+ if(S.ov==="rich2")return rich2HTML();
  var h='<div class="ov" onclick="if(event.target===this)closeOv()">';
  if(S.ov==="picker")return h+pickerHTML()+'</div>';
  if(S.ov==="gf")return h+flowHTML()+'</div>';
