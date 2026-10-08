@@ -169,6 +169,21 @@ h1{font-size:17px;margin:0;letter-spacing:.5px}
 .chg .ok{color:#1E7A4A}
 .chg .no{color:#B03A1E}
 .chg .nt{font-size:12px;color:#415072;line-height:1.7}
+.cpn{position:absolute;left:0;top:16px;width:980px;height:624px;background:#C9D4E6}
+.cpnh{background:#1B3A8C;color:#DCE7F5;font-size:11px;padding:3px 8px}
+.cpnt{font-size:17px;font-weight:700;color:#13214A;padding:8px 14px 4px}
+.cbox{background:#fff;border:1px solid #8A96B4;font-size:12px}
+.cbox .hd{display:flex;background:#E8EAF2;border-bottom:1px solid #8A96B4;font-weight:700}
+.cbox .rw{display:flex;border-bottom:1px solid #E2E7F0;height:20px;align-items:center}
+.cbox .rw.on{background:#2B4FC8;color:#fff}
+.cbox span{padding:0 7px;overflow:hidden;white-space:nowrap}
+.cnav{display:grid;grid-auto-rows:40px;gap:6px}
+.cnav button,.cbtn{border:1px solid #8A96B4;background:#E6E9F2;font-size:13px;cursor:pointer;font-family:inherit;color:#16233F;padding:8px 6px}
+.cnav button:hover,.cbtn:hover{background:#FFF6DF}
+.cmem{font-size:13.5px;color:#13214A;display:flex;gap:26px;align-items:baseline}
+.cmem b{font-weight:700}
+.cfoot{display:flex;gap:8px;padding:0 14px}
+.cfoot .cbtn{min-width:92px}
 </style>
 </head>
 <body>
@@ -539,6 +554,10 @@ var ACTS=[["A1","CKS東南亞專案"],["A2","樂高導客"],["A3","獨家泡麵�
           ["A4","RICH PARTY"],["A5","永續循環袋"],["A6","金酒影片贈小酒"]];
 var FX=[["USD","美元",31.45],["JPD","日幣",0.1928],["HKD","港幣",3.9],["KRW","韓元",0.02192],["CNY","人民幣",4.65],["EUR","歐元",35.04]];
 var BP={flight:"BR0023",dep:"2026/10/01",name:"CHU/WEIJEN",seat:"32A",gate:"D5"};
+/* 航班選擇表（依 SA-16 實機畫面） */
+var FLIGHTS=["BR0392","BR0212","BR0005","BR0384","HX0254","BR0868","OZ0713"];
+/* 會員點數：實機 700 點、10 點折 1 元 */
+var MEMBER={name:"示範會員",pts:700,rate:10};
 
 /* ───── 實機功能選單 ───── */
 /* ── 實機 POS RICH 功能選單（依 SA-13 實機畫面）── */
@@ -560,14 +579,16 @@ var S={};
 function resetAll(){
  S={scr:"login",cashier:"",cashierNote:"",seller:"",sellerName:"",pw:"",nation:"",nationName:"",flight:"",dep:"",
     focus:"cashier",panel:"guide",items:[],sel:-1,input:"",msg:[],pays:[],ov:null,ovData:null,done:null,
-    act:"",actName:"",merges:[],kpage:1};
+    act:"",actName:"",merges:[],kpage:1,allow:0,disc:0,pts:0,edc:1,cpnN:0,cpnAmt:0};
  say("歡迎使用 POS 模擬機。先點「收銀員」欄位選機台帳號。");
  render();
 }
 function say(t){S.msg.unshift(t);if(S.msg.length>14)S.msg.pop();}
 function esc(s){return String(s).replace(/[&<>]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;"}[c]})}
 function money(n){return Number(n).toLocaleString("en-US")}
-function total(){var t=0;S.items.forEach(function(i){t+=i.price*i.qty});return t}
+function gross(){var t=0;S.items.forEach(function(i){t+=i.price*i.qty});return t}
+function cut(){return (S.allow||0)+(S.disc||0)+(S.pts||0)}
+function total(){return Math.max(0,gross()-cut())}
 function paid(){var t=0;S.pays.forEach(function(p){t+=p.twd});return t}
 function due(){return Math.max(0,total()-paid())}
 
@@ -618,6 +639,7 @@ function gridHTML(top,height,gw){
  COLS.forEach(function(c){h+='<span style="width:'+c[1]+'px">'+c[0]+'</span>'});
  h+='</div>';
  h+='<div class="ab body" style="left:0;top:'+(top+20)+'px;width:'+gw+'px;height:'+(height-20)+'px;overflow:hidden">';
+ if(S.allow>0){h+='<div class="gr"><span style="width:34px"></span><span style="width:130px"></span><span style="width:230px">全部折讓</span><span style="width:64px;text-align:right">-'+money(S.allow)+'</span><span style="width:50px">100</span><span style="width:64px">0</span><span style="width:48px">1</span><span style="width:70px">0</span><span style="width:64px">'+esc(S.seller)+'</span><span style="width:56px"></span><span style="width:70px"></span></div>'}
  S.items.forEach(function(it,i){
   h+='<div class="gr'+(i===S.sel?' sel':'')+'" onclick="pickRow('+i+')">';
   var v=[i+1,it.code,it.name,money(it.price),"100",money(it.price),it.qty,money(it.price*it.qty),S.seller,"",""];
@@ -701,6 +723,11 @@ function panelHTML(){
   h+='<div class="prow" style="color:#B03A1E;cursor:default">※ 模擬用假名假工號；實機請選自己的工號</div>';
   return h+'</div>';
  }
+ if(S.panel==="flight"){
+  var h='<div class="pick" style="left:'+x+'px;top:'+y+'px;width:'+w+'px"><div class="pickh">航班選擇表：</div>';
+  FLIGHTS.forEach(function(f){h+='<div class="prow" style="font-size:17px;font-weight:700;justify-content:center" onclick="setFlight(\''+f+'\')">'+f+'</div>'});
+  return h+'<div class="prow" style="color:#B03A1E;font-size:12px;cursor:default">也可以按「刷登機證」掃客人的登機證 QR</div></div>';
+ }
  if(S.panel==="nation"){
   var h='<div class="pick" style="left:'+x+'px;top:'+y+'px;width:'+w+'px;max-height:300px;overflow:auto"><div class="pickh">國籍選擇表：</div>';
   NATIONS.forEach(function(c,i){h+='<div class="prow" onclick="setNation('+i+')"><b>'+c[0]+'</b><span>'+c[1]+'</span></div>'});
@@ -712,7 +739,7 @@ function guideText(){
  if(!S.cashier)return "請點「收銀員」欄位，選擇這台機器的帳號（大夜 66666／晚班 77777／早班 88888）。";
  if(!S.seller)return "請點「售貨員」欄位，從選擇表挑自己的工號。";
  if(!S.nation)return "請點「國籍」欄位選客人的國籍。密碼欄不用輸入。";
- if(!S.flight)return "請按右邊「刷登機證」，掃客人登機證上的 QR 碼帶入班機與出境日。";
+ if(!S.flight)return "請點「班機」欄位，從右邊航班選擇表挑一班；或按「刷登機證」掃客人登機證 QR。";
  return "資料齊全，按「確定(A+E)」進入交易畫面。";
 }
 var TRADE_K=[["重新\n登入","y"],["商品\n查詢",""],["營業員",""],["提貨\n註記",""],["商品\n刪除","y"],["酬賓券","p"],["贈品",""],["貴賓",""],["快速\n結帳","p"],["單筆\n折扣",""],["轉機\n註記",""],["會員\n功能","c"],["下一頁","b"],["單筆\n折讓","p"],["統編",""],["活動\n代碼",""]];
@@ -728,7 +755,7 @@ var PAY_R=[["清除","y"],["商品\n預覽","w"],["統編","w"],["確認\n付款
 function tabsHTML(pay){
  var h='<div class="ab tabs" style="left:0;top:420px;width:980px;height:26px">';
  h+='<span class="tab'+(pay?"":" on")+'">交 易</span><span class="tab'+(pay?" on":"")+'">付 款</span>';
- h+='<span style="margin-left:14px">交易品項：'+S.items.length+'</span><span style="margin-left:16px">商品數量：'+S.items.reduce(function(a,b){return a+b.qty},0)+'</span><span style="margin-left:16px">折讓金額：0</span>';
+ h+='<span style="margin-left:14px">交易品項：'+S.items.length+'</span><span style="margin-left:16px">商品數量：'+S.items.reduce(function(a,b){return a+b.qty},0)+'</span><span style="margin-left:16px">折讓金額：'+(cut()?"-"+money(cut()):"0")+'</span>';
  h+='<span style="margin-left:auto"></span>';
  h+='<span class="btn" style="padding:2px 8px">輸入區</span><span class="inbox" style="width:200px">'+esc(S.input)+'</span>';
  h+='</div>';
@@ -747,6 +774,96 @@ function scanHTML(){
  return h+'</div>';
 }
 function scanCode(i){var p=PRODUCTS[i];say("嗶——掃到條碼 "+p[0]+"。");addItem(p);gHit("a","add");}
+/* ═══ 優惠券輸入（結帳後的兩個畫面，依 SA-16 實機）═══ */
+function sumBox(rows,x,y,w){
+ var h='<div class="ab" style="left:'+x+'px;top:'+y+'px;width:'+w+'px"><div style="font-size:14px;font-weight:700;color:#13214A;padding:0 0 5px">交易匯總資訊</div>';
+ h+='<div class="cbox"><div class="hd"><span style="flex:1">資料名稱</span><span style="width:110px;text-align:right">金額</span></div>';
+ rows.forEach(function(r,i){
+  if(!r[0]){h+='<div class="rw" style="height:9px"><span style="flex:1"></span><span style="width:110px"></span></div>';return}
+  h+='<div class="rw'+(i===0?" on":"")+'"><span style="flex:1">'+esc(r[0])+'</span><span style="width:110px;text-align:right">'+esc(r[1])+'</span></div>';
+ });
+ return h+'</div></div>';
+}
+function cpnShell(title,inner){
+ return hdrHTML()+'<div class="cpn"><div class="cpnh">優惠券輸入</div><div class="cpnt">'+title+'</div>'+inner+'</div>'+statusHTML();
+}
+function cpnList(){
+ var h='<div class="ab" style="left:14px;top:46px;width:614px"><div class="cbox"><div class="hd"><span style="width:40px">No.</span><span style="flex:1">優惠券名稱</span><span style="width:150px">優惠券號</span><span style="width:110px;text-align:right">抵用金額</span></div>';
+ var n=0;
+ if(S.allow>0){n++;h+='<div class="rw on"><span style="width:40px">'+n+'</span><span style="flex:1">全部折讓</span><span style="width:150px"></span><span style="width:110px;text-align:right">-'+money(S.allow)+'</span></div>'}
+ if(S.disc>0){n++;h+='<div class="rw"><span style="width:40px">'+n+'</span><span style="flex:1">全部折扣</span><span style="width:150px"></span><span style="width:110px;text-align:right">-'+money(S.disc)+'</span></div>'}
+ if(S.pts>0){n++;h+='<div class="rw"><span style="width:40px">'+n+'</span><span style="flex:1">點換金</span><span style="width:150px"></span><span style="width:110px;text-align:right">-'+money(S.pts)+'</span></div>'}
+ h+='<div style="height:'+Math.max(20,150-n*20)+'px;background:#8F9DBC"></div></div></div>';
+ h+='<div class="ab cnav" style="left:640px;top:46px;width:84px">'
+  +'<button onclick="say(&quot;上頁：清單換頁。&quot;);render()">上頁</button><button onclick="say(&quot;上筆：往上選一筆。&quot;);render()">上筆</button>'
+  +'<button onclick="say(&quot;下筆：往下選一筆。&quot;);render()">下筆</button><button onclick="say(&quot;下頁：清單換頁。&quot;);render()">下頁</button></div>';
+ return h;
+}
+function cpn1HTML(){
+ var g=gross();
+ var h=cpnList();
+ h+=sumBox([["交易總金額",money(g)],["抵用後金額",money(total())],["",""],["09類商品",money(g)]],740,46,226);
+ h+='<div class="ab" style="left:14px;top:228px;font-size:13.5px;color:#13214A">優惠券使用合計：　　　　'+S.cpnN+' 張　　'+money(S.cpnAmt)+'</div>';
+ h+='<div class="ab" style="left:14px;top:256px;display:flex;align-items:center;gap:10px"><span style="font-size:13.5px;color:#13214A">輸入區：</span>'
+  +'<span class="inbox" style="width:280px">'+esc(S.input)+'</span>'
+  +'<button class="cbtn" onclick="key(&quot;ESG贈點&quot;)">ESG贈點</button><button class="cbtn" onclick="key(&quot;其他按鍵&quot;)">其他按鍵</button></div>';
+ h+='<div class="ab cfoot" style="left:0;top:306px;width:980px">'
+  +'<button class="cbtn" onclick="cpnBack()">上一步</button><span style="flex:1"></span>'
+  +'<button class="cbtn" onclick="key(&quot;酬賓券&quot;)">酬賓券</button>'
+  +'<button class="cbtn" onclick="key(&quot;刪除優惠券&quot;)">刪除優惠券</button>'
+  +'<button class="cbtn" style="border:2px solid #E8541E" onclick="cpnNext()">下一步</button></div>';
+ h+=keysHTML(360,TRADE_K,TRADE_R);
+ return cpnShell("優惠券使用明細",h);
+}
+function cpn2HTML(){
+ var g=gross(),left=MEMBER.pts-S.pts*MEMBER.rate;
+ var h=cpnList();
+ h+=sumBox([["商品總金額",money(g)],["滿額折讓金額",money(S.allow)],["抵用後金額",money(total())],["",""],["09類商品",money(g)],["",""],["未抵用前點數",money(MEMBER.pts)],["本次使用點數",money(S.pts*MEMBER.rate)],["剩餘累積點數",money(left)]],740,46,226);
+ h+='<div class="ab cmem" style="left:360px;top:232px"><span>會員姓名：<b>'+esc(MEMBER.name)+'</b></span><span>累積點數：<b>'+money(left)+'</b> 點</span></div>';
+ h+='<div class="ab cmem" style="left:360px;top:258px"><span>比例：<b>'+MEMBER.rate+' 點:1 元</b></span><span>可折金額：<b>'+money(Math.floor(left/MEMBER.rate))+'</b></span></div>';
+ h+='<div class="ab" style="left:14px;top:258px;display:flex;align-items:center;gap:10px"><span style="font-size:13.5px;color:#13214A">輸入區：</span>'
+  +'<span class="inbox" style="width:200px">'+esc(S.input)+'</span></div>';
+ h+='<div class="ab cfoot" style="left:0;top:306px;width:980px">'
+  +'<button class="cbtn" onclick="cpnBack()">上一步</button><span style="flex:1"></span>'
+  +'<button class="cbtn" onclick="allDisc()">全部折扣</button>'
+  +'<button class="cbtn" onclick="allAllow()">全部折讓</button>'
+  +'<button class="cbtn" onclick="clrCpn()">刪除優惠</button>'
+  +'<span style="width:24px"></span>'
+  +'<button class="cbtn" onclick="usePts()">點換金</button>'
+  +'<button class="cbtn" onclick="clrPts()">刪除點換金</button>'
+  +'<button class="cbtn" style="border:2px solid #E8541E" onclick="cpnNext()">下一步</button></div>';
+ h+=keysHTML(360,TRADE_K,TRADE_R);
+ return cpnShell("全部折扣折讓/點換金",h);
+}
+function cpnNext(){
+ if(S.scr==="cpn1"){S.scr="cpn2";S.input="";say("進入「全部折扣折讓/點換金」。要折就先打金額再按「全部折讓」；要用點數按「點換金」。沒有就按下一步。");render();return}
+ S.scr="pay";S.input="";say("進入付款畫面。先用數字鍵打收到的金額，再按幣別鍵。");render();
+}
+function cpnBack(){
+ if(S.scr==="cpn2"){S.scr="cpn1";S.input="";say("回到「優惠券使用明細」。");render();return}
+ S.scr="trade";S.input="";say("回到交易畫面。");render();
+}
+function allAllow(){
+ var a=parseFloat(S.input);
+ if(!a){say("全部折讓：先用數字鍵打要折掉的金額（例 200），再按「全部折讓」。");render();return}
+ if(a>gross()-S.disc-S.pts){say("折讓金額不能大於商品總金額。");render();return}
+ S.allow=a;S.input="";say("全部折讓 -"+money(a)+"，抵用後金額 NT$ "+money(total())+"。");render();
+}
+function allDisc(){
+ var p=parseFloat(S.input);
+ if(!p||p>=100){say("全部折扣：打折扣百分比（例 92 代表打 92 折），再按「全部折扣」。");render();return}
+ S.disc=Math.round(gross()*(100-p)/100);S.input="";
+ say("全部折扣 "+p+"％ → 折掉 NT$ "+money(S.disc)+"，抵用後金額 NT$ "+money(total())+"。");render();
+}
+function clrCpn(){S.allow=0;S.disc=0;S.input="";say("已刪除全部折扣／折讓。");render()}
+function usePts(){
+ var max=Math.floor(MEMBER.pts/MEMBER.rate);
+ if(S.pts>0){say("已經用過點換金了，要改請先按「刪除點換金」。");render();return}
+ var a=parseFloat(S.input)||max;
+ if(a>max){say("可折金額只有 "+max+" 元（"+MEMBER.pts+" 點 ÷ "+MEMBER.rate+"）。");render();return}
+ S.pts=a;S.input="";say("點換金折抵 NT$ "+money(a)+"（用掉 "+money(a*MEMBER.rate)+" 點），抵用後金額 NT$ "+money(total())+"。");render();
+}
+function clrPts(){S.pts=0;S.input="";say("已刪除點換金，點數退回。");render()}
 function payHTML(){
  var h=hdrHTML()+gridHTML(102,180,700);
  /* 匯率表 */
@@ -769,7 +886,7 @@ function payHTML(){
  h+='<div class="ab" style="left:700px;top:230px;width:280px;height:190px;background:#93A0BC"></div>';
  h+=tabsHTML(true)+keysHTML(452,PAY_K,PAY_R);
  h+='<div class="ab btn" style="left:686px;top:452px;width:90px;font-size:11px;padding:4px 2px" onclick="key(\'EDC連線切換\')">EDC連線切換</div>';
- h+='<div class="ab" style="left:782px;top:452px;width:190px;font-size:13px;font-weight:700;color:#13214A">EDC為連線狀態</div>';
+ h+='<div class="ab" style="left:782px;top:452px;width:190px;font-size:13px;font-weight:700;color:'+(S.edc?"#13214A":"#C0392B")+'">EDC為'+(S.edc?"連線":"離線")+'狀態</div>';
  h+=msgHTML(686,476,290,156,"即時訊息")+statusHTML();
  return h;
 }
@@ -785,6 +902,8 @@ function render(){
  var h="";
  if(S.scr==="login")h=loginHTML();
  else if(S.scr==="trade")h=tradeHTML();
+ else if(S.scr==="cpn1")h=cpn1HTML();
+ else if(S.scr==="cpn2")h=cpn2HTML();
  else if(S.scr==="pay")h=payHTML();
  else if(S.scr==="done")h=doneHTML();
  if(S.ov)h+=ovHTML();
@@ -796,6 +915,8 @@ function hintText(){
  if(G.t)return "<b>引導中</b>：橘框／發亮的那一個就是這一步要點的。想自己亂按可以按引導列的「結束」。";
  if(S.scr==="login")return "<b>新交易基本資料</b>：點欄位→右邊出現選擇表。密碼不用打，班機要按「刷登機證」掃 QR。資料齊了按 <b>確定(A+E)</b>。想照流程走就按上面的「📋 選流程」。";
  if(S.scr==="trade")return "<b>交易畫面</b>：右邊點商品條碼＝掃描加入，或用數字鍵打條碼後按 <b>Enter</b>；「商品查詢」只查資料、不會加入商品。點商品列可選取，再按「數量」或「商品刪除」。打完按 <b>結帳</b>。";
+ if(S.scr==="cpn1")return "<b>優惠券使用明細</b>：有酬賓券就按「酬賓券」輸入；沒有就直接按 <b>下一步</b>。";
+ if(S.scr==="cpn2")return "<b>全部折扣折讓／點換金</b>：先用數字鍵打金額再按「<b>全部折讓</b>」（打百分比按「全部折扣」）；會員點數按「<b>點換金</b>」。好了按 <b>下一步</b>。";
  if(S.scr==="pay")return "<b>付款畫面</b>：先用數字鍵在「輸入區」打<b>收到的金額</b>，再按幣別鍵（現金／美元／日幣／人民幣），畫面會跳出折合台幣與<b>要找多少台幣</b>。「不足」歸零後按 <b>確認付款</b>。";
  return "交易完成。按「下一筆交易」重來。";
 }
@@ -805,9 +926,10 @@ function focusF(id){
  if(id==="cashier")S.panel="cashier";
  else if(id==="seller")S.panel="seller";
  else if(id==="nation")S.panel="nation";
+ else if(id==="flight")S.panel="flight";
  else S.panel="guide";
  if(id==="pw")say("密碼欄不用輸入，直接跳下一欄。");
- if(id==="flight")say("班機不能用打的，請按「刷登機證」掃登機證 QR 碼。");
+ if(id==="flight")say("班機：右邊會出現「航班選擇表」，點一班帶入；也可以按「刷登機證」掃客人登機證 QR。");
  if(id==="dep"||id==="no1"||id==="card"||id==="pick2")say("這一欄是系統自動帶入／不需輸入。");
  render();
 }
@@ -844,8 +966,8 @@ var KEYHELP={
  "數量":"數量：先點一列商品、用數字鍵打數字，再按這顆改數量。",
  "清除":"清除：把下面輸入區的數字清掉。",
  "Enter":"Enter：把輸入區的條碼帶入成商品。",
- "結帳":"結帳：商品打完後按這顆進付款畫面。",
- "快速結帳":"快速結帳：直接跳到付款畫面（等同結帳）。",
+ "結帳":"結帳：商品打完後按這顆，會先進「優惠券使用明細」→「全部折扣折讓/點換金」→ 才到付款畫面。",
+ "快速結帳":"快速結帳：跳過優惠券／折扣折讓那兩個畫面，直接到付款畫面。",
  "單筆折扣":"單筆折扣：對選取的那一項扣百分比（%）。",
  "單筆折讓":"單筆折讓：對選取的那一項直接扣金額。",
  "會員功能":"會員功能：掃會員條碼，看行動支付碼 Y/N、聯名卡、載具與點數。",
@@ -909,9 +1031,13 @@ function key0(k){
   if(k==="下一頁"){S.kpage=(S.kpage===2?1:2);say("功能鍵換到第 "+S.kpage+" 頁。");render();return}
   if(k==="商品序號"){say("商品序號：單一商品要登記序號（例如手錶、名品）時用。這台模擬機先不做。");render();return}
   if(k==="IRICH卡輸入"){say("IRICH 卡輸入：手動打會員卡號，不想掃條碼時用。這台模擬機先不做。");render();return}
-  if(k==="結帳"||k==="快速結帳"){
+  if(k==="結帳"){
    if(!S.items.length){say("還沒有商品，不能結帳。");render();return}
-   S.scr="pay";S.input="";say("進入付款畫面。先按付款方式，再輸入金額。");render();return;
+   S.scr="cpn1";S.input="";say("進入「優惠券使用明細」。沒有券就直接按「下一步」。");render();return;
+  }
+  if(k==="快速結帳"){
+   if(!S.items.length){say("還沒有商品，不能結帳。");render();return}
+   S.scr="pay";S.input="";say("快速結帳：跳過優惠券畫面，直接到付款畫面。");render();return;
   }
   help(k);return;
  }
@@ -928,6 +1054,7 @@ function key0(k){
    /* 真機會先跳「應收／付款／是否進行結帳」，收外幣時這一步最容易抓到收錯 */
    S.ov="payq";render();return;
   }
+  if(k==="EDC連線切換"){S.edc=S.edc?0:1;say(S.edc?"EDC 已切回連線狀態，可以刷卡。":"EDC 已切成離線狀態（紅字）；離線時刷卡要走人工授權。");render();return}
   if(k==="商品預覽"){S.ov="preview";render();return}
   help(k);return;
  }
@@ -1439,6 +1566,10 @@ function ovHTML(){
  return h+'</div>';
 }
 function closeOv(){if(S.ov==="gf")G.fl=null;S.ov=null;S.ovData=null;render()}
+function setFlight(f){
+ S.flight=f;S.dep=BP.dep;S.focus="";S.panel="guide";
+ say("班機帶入 "+f+"（從航班選擇表選的）。出境日 "+BP.dep+"。");gHit("a","bp");render();
+}
 function scanBP(){S.flight=BP.flight;S.dep=BP.dep;S.ov=null;S.focus="";S.panel="guide";say("登機證掃描成功：班機 "+BP.flight+"、出境日 "+BP.dep+" 已帶入。");gHit("a","bp");render()}
 function showPrice(i){var p=PRODUCTS[i];say("查價："+p[1]+"　NT$ "+money(p[2]));closeOv()}
 function showInfo(i){var p=PRODUCTS[i];say("商品查詢："+p[1]+"｜條碼 "+p[0]+"｜單價 NT$ "+money(p[2])+"（查詢不會帶入單身）");gHit("a","info");closeOv()}
