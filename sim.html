@@ -562,7 +562,7 @@ var BP={flight:"BR0023",dep:"2026/10/01",name:"CHU/WEIJEN",seat:"32A",gate:"D5"}
 /* 航班選擇表（依 SA-16 實機畫面） */
 var FLIGHTS=["BR0392","BR0212","BR0005","BR0384","HX0254","BR0868","OZ0713"];
 /* 會員點數：實機 700 點、10 點折 1 元 */
-var MEMBER={name:"示範會員",pts:700,rate:10};
+var MEMBER={name:"示範會員",pts:700,rate:1};
 
 /* ───── 實機功能選單 ───── */
 /* ── 實機 POS RICH 功能選單（依 SA-13 實機畫面）── */
@@ -651,6 +651,12 @@ function gridHTML(top,height,gw){
   COLS.forEach(function(c,j){h+='<span style="width:'+c[1]+'px">'+esc(v[j])+'</span>'});
   h+='</div>';
  });
+ if(S.pts>0){
+  var pv=[S.items.length+1,"","點換金","-"+money(S.pts),"100","-"+money(S.pts),1,"-"+money(S.pts),S.seller,"","折扣"];
+  h+='<div class="gr" style="color:#B03A1E">';
+  COLS.forEach(function(c,j){h+='<span style="width:'+c[1]+'px">'+esc(pv[j])+'</span>'});
+  h+='</div>';
+ }
  h+='</div>';
  return h;
 }
@@ -842,7 +848,7 @@ function cpn2HTML(){
  return cpnShell("全部折扣折讓/點換金",h);
 }
 function cpnNext(){
- if(S.scr==="cpn1"){S.scr="cpn2";S.input="";say("進入「全部折扣折讓/點換金」。要折就先打金額再按「全部折讓」；要用點數按「點換金」。沒有就按下一步。");render();return}
+ if(S.scr==="cpn1"){S.scr="cpn2";S.input="";say("進入「全部折扣折讓/點換金」。要折就先打金額再按「全部折讓」；要用會員點數就打金額再按「點換金」。沒有就按下一步。");render();return}
  S.scr="pay";S.input="";say("進入付款畫面。先用數字鍵打收到的金額，再按幣別鍵。");render();
 }
 function cpnBack(){
@@ -866,8 +872,10 @@ function usePts(){
  var max=Math.floor(MEMBER.pts/MEMBER.rate);
  if(S.pts>0){say("已經用過點換金了，要改請先按「刪除點換金」。");render();return}
  var a=parseFloat(S.input)||max;
- if(a>max){say("可折金額只有 "+max+" 元（"+MEMBER.pts+" 點 ÷ "+MEMBER.rate+"）。");render();return}
- S.pts=a;S.input="";say("點換金折抵 NT$ "+money(a)+"（用掉 "+money(a*MEMBER.rate)+" 點），抵用後金額 NT$ "+money(total())+"。");render();
+ if(a>max){say("這位會員只剩 "+money(MEMBER.pts)+" 點，最多折 "+money(max)+" 元。");render();return}
+ S.pts=a;S.input="";
+ say("點換金 -"+money(a)+"：左上的優惠明細會多一筆 -"+money(a)+"。按「下一步」後，商品那一區的下一條也會出現 -"+money(a)+" 的點換金折扣，總額直接扣掉。");
+ render();
 }
 function clrPts(){S.pts=0;S.input="";say("已刪除點換金，點數退回。");render()}
 function payHTML(){
@@ -922,7 +930,7 @@ function hintText(){
  if(S.scr==="login")return "<b>新交易基本資料</b>：點欄位→右邊出現選擇表。密碼不用打，班機要按「刷登機證」掃 QR。資料齊了按 <b>確定(A+E)</b>。想照流程走就按上面的「📋 選流程」。";
  if(S.scr==="trade")return "<b>交易畫面</b>：右邊點商品條碼＝掃描加入，或用數字鍵打條碼後按 <b>Enter</b>；「商品查詢」只查資料、不會加入商品。點商品列可選取，再按「數量」或「商品刪除」。打完按 <b>結帳</b>。";
  if(S.scr==="cpn1")return "<b>優惠券使用明細</b>：有酬賓券就按「酬賓券」輸入；沒有就直接按 <b>下一步</b>。";
- if(S.scr==="cpn2")return "<b>全部折扣折讓／點換金</b>：先用數字鍵打金額再按「<b>全部折讓</b>」（打百分比按「全部折扣」）；會員點數按「<b>點換金</b>」。好了按 <b>下一步</b>。";
+ if(S.scr==="cpn2")return "<b>全部折扣折讓／點換金</b>：先用數字鍵打金額再按「<b>全部折讓</b>」（打百分比按「全部折扣」）；會員點數打金額再按「<b>點換金</b>」——左上明細會跳出 <b>-金額</b>，按 <b>下一步</b> 後商品下一條也會出現同樣的折扣，直接扣掉。";
  if(S.scr==="pay")return "<b>付款畫面</b>：先用數字鍵在「輸入區」打<b>收到的金額</b>，再按幣別鍵（現金／美元／日幣／人民幣），畫面會跳出折合台幣與<b>要找多少台幣</b>。「不足」歸零後按 <b>確認付款</b>。";
  return "交易完成。按「下一筆交易」重來。";
 }
