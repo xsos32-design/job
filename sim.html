@@ -194,6 +194,7 @@ h1{font-size:17px;margin:0;letter-spacing:.5px}
   <button id="zfit" class="on" onclick="zoomFit()">適合畫面</button>
   <button onclick="zoomSet(1)">＋</button>
   <button class="gbtn" onclick="openPicker()">📋 選流程</button>
+  <button id="qfill" onclick="quickFill()">⚡ 快速帶入</button>
   <span class="sp"></span>
   <button onclick="resetAll()">↺ 重新開始</button>
 </div>
@@ -227,6 +228,7 @@ function L(){return {scr:"login"};}
 function M1(k){return {scr:"menu1",ok:k,say:'按 <b>'+k+'</b> 鍵'};}
 function M2(cat,k){return {scr:"menu2",cat:cat,ok:k,say:'按 <b>'+k+'</b> 鍵'};}
 function F(o){o.scr="func";return o;}
+var FQ="";
 var FLOWS=[
 /* ── 公告 ── */
 {id:"f1",cat:"公告",name:"賣場公告",task:"查「可收入美金樣式」",steps:[L(),M1("公告"),M2("公告","賣場公告"),
@@ -933,6 +935,13 @@ function focusF(id){
  if(id==="dep"||id==="no1"||id==="card"||id==="pick2")say("這一欄是系統自動帶入／不需輸入。");
  render();
 }
+/* 快速帶入：一鍵填完登入四欄，直接練習打單與結帳 */
+function quickFill(){
+ if(S.scr!=="login"){say("快速帶入只能在「新交易基本資料」畫面用；要重來請按「重新開始」。");return}
+ setCashier("77777");setSeller("31024");setNation(0);S.flight=FLIGHTS[0];S.focus="";S.panel="guide";
+ say("已快速帶入：收銀員 77777、售貨員 31024、國籍 1、班機 "+S.flight+"。接著按「確定(A+E)」進打單畫面。");
+ closeOv();render();
+}
 function setCashier(code){
  var c=CASHIERS.filter(function(x){return x[0]===code})[0];
  S.cashier=c[0];S.cashierNote=c[1]+"（"+c[2]+"）";S.focus="seller";S.panel="seller";
@@ -1173,6 +1182,10 @@ function gStop(){G.t=null;gBand();say("已結束引導，回到自由操作。")
 var FDONE={};
 try{FDONE=JSON.parse(localStorage.getItem("posrich_done")||"{}")}catch(e){FDONE={}}
 function fsave(){try{localStorage.setItem("posrich_done",JSON.stringify(FDONE))}catch(e){}}
+var FHINT=true;
+try{FHINT=localStorage.getItem("posrich_hint")!=="0"}catch(e){FHINT=true}
+function hsave(){try{localStorage.setItem("posrich_hint",FHINT?"1":"0")}catch(e){}}
+function hToggle(){FHINT=!FHINT;hsave();render()}
 function stepOf(){var s=G.fl.steps[G.fi];
  if(s.scr==="login")return {scr:"login",title:"新交易基本資料",say:LOGIN.say,ok:LOGIN.ok,btns:LOGIN.btns,fields:LOGIN.fields};
  if(s.scr==="menu1")return {scr:"menu1",title:"POS RICH 功能列表（第一層）",say:s.say,ok:s.ok,btns:MENU1};
@@ -1189,7 +1202,14 @@ function fHit(i){
   if(G.fi>=G.fl.steps.length){FDONE[G.fl.id]=1;fsave();var nm=G.fl.cat+" · "+G.fl.name;G.fl=null;closeOv();say("🎉 走完「"+nm+"」流程。");render();return}
   render();var m=document.getElementById("fmsg");if(m){m.className="fmsg good";m.textContent="✓ 正確"}
  }else{
-  G.ferr++;var m=document.getElementById("fmsg");if(m){m.className="fmsg bad";m.textContent="✗ 不是這一鍵，發亮的那顆才是。"}
+  G.ferr++;
+  var tip=(typeof KEYHELP!=="undefined"&&KEYHELP[b])?KEYHELP[b]:"";
+  if(G.ferr>=2&&!FHINT){FHINT=true;hsave();render()}
+  var m=document.getElementById("fmsg");
+  if(m){m.className="fmsg bad";
+   m.innerHTML="✗ 「"+esc(b)+"」不是這一步要按的。"
+    +(tip?'<br><span style="opacity:.85">這顆鍵實際是：'+esc(tip)+'</span>':"")
+    +(FHINT?"<br>發亮的那顆才是。":'<br>再錯一次會自動給提示，或按上方「☀ 提示」。');}
  }
 }
 function fPrev(){if(G.fl&&G.fi>0){G.fi--;render()}}
@@ -1218,6 +1238,7 @@ function flowHTML(){
  var s=stepOf(),n=G.fl.steps.length;
  var h='<div class="card2 big2"><h3>'+esc(G.fl.cat)+' · '+esc(G.fl.name)+'　STEP '+(G.fi+1)+' / '+n+'</h3><div class="bd">';
  h+='<div class="fsay">'+s.say+'</div>';
+h+='<div style="margin:0 0 8px"><button class="btn" style="width:auto;padding:5px 12px;font-size:12px" onclick="hToggle()">'+(FHINT?"\u2600 \u63d0\u793a\uff1a\u958b\uff08\u6b63\u89e3\u6703\u767c\u4eae\uff09":"\u25CB \u63d0\u793a\uff1a\u95dc\uff08\u81ea\u5df1\u627e\u7b54\u6848\uff09")+'</button></div>';
  h+=picHTML(s);
  if(s.cap)h+='<div class="piccap">'+esc(s.cap)+'</div>';
  h+='<div class="fkeys">';
@@ -1226,7 +1247,7 @@ function flowHTML(){
   if(s.scr==="menu1")cls+=" o";else if(s.scr==="menu2")cls+=" g";
   else if(/確認|儲存|存檔|完成|確定|核銷|暫確/.test(b))cls+=" act";
   else if(/作廢|取消|清除/.test(b))cls+=" warn";
-  if(b===s.ok)cls+=" hint";
+  if(b===s.ok&&FHINT)cls+=" hint";
   h+='<button class="'+cls+'" onclick="fHit('+i+')">'+esc(b)+'</button>';
  });
  h+='</div><div id="fmsg" class="fmsg"></div>';
@@ -1236,21 +1257,29 @@ function flowHTML(){
   +'<button class="btn" style="width:80px" onclick="fStop()">關閉</button></div>';
  return h+'</div></div>';
 }
+function fqOk(f){if(!FQ)return true;var q=FQ.toLowerCase();
+ return (f.name+" "+(f.task||"")+" "+(f.cat||"")).toLowerCase().indexOf(q)>=0;}
+function fqSet(v){FQ=v;var e=document.getElementById("fq");var p=e?e.selectionStart:null;render();
+ var e2=document.getElementById("fq");if(e2){e2.focus();try{e2.setSelectionRange(p,p)}catch(x){}}}
 function pickerHTML(){
- var h='<div class="card2 big2"><h3>選一個流程</h3><div class="bd">';
+ var __dn=FLOWS.filter(function(f){return FDONE[f.id]}).length;
+ var h='<div class="card2 big2"><h3>選一個流程　<span style="font-size:12px;font-weight:400;opacity:.8">工具書進度 '+__dn+' / '+FLOWS.length+'</span></h3><div class="bd">';
  h+='<div class="tiny" style="margin-bottom:6px">上半：直接在這台模擬機上做。下半：POS RICH 功能工具書的操作流程。</div>';
+ h+='<input id="fq" placeholder="搜流程名稱或關鍵字（調撥、屆期、寄貨……）" oninput="fqSet(this.value)" value="'+esc(FQ)+'" style="width:100%;box-sizing:border-box;padding:8px 10px;margin-bottom:8px;border:1px solid #8A96B4;border-radius:7px;font-size:14px;font-family:inherit">';
  h+='<div class="flowlist">';
  var cats=[],seen={};
  TASKS.forEach(function(f){if(!seen[f.cat]){seen[f.cat]=1;cats.push(f.cat)}});
  cats.forEach(function(c){
+  if(!TASKS.filter(function(f){return f.cat===c&&fqOk(f)}).length)return;
   h+='<div class="catname"><span>'+esc(c)+'（在機器上實作）</span></div>';
-  TASKS.filter(function(f){return f.cat===c}).forEach(function(f){
+  TASKS.filter(function(f){return f.cat===c&&fqOk(f)}).forEach(function(f){
    h+='<button class="fbtn" onclick="gStart(\''+f.id+'\')"><span class="dot" style="background:#E8541E"></span><span class="grow">'+esc(f.name)+'<small>'+esc(f.task)+'</small></span></button>';
   });
  });
  var fc=[],fs={};FLOWS.forEach(function(f){if(!fs[f.cat]){fs[f.cat]=1;fc.push(f.cat)}});
  fc.forEach(function(c){
-  var list=FLOWS.filter(function(f){return f.cat===c}),dn=list.filter(function(f){return FDONE[f.id]}).length;
+  var list=FLOWS.filter(function(f){return f.cat===c&&fqOk(f)}),dn=list.filter(function(f){return FDONE[f.id]}).length;
+  if(!list.length)return;
   h+='<div class="catname"><span>'+esc(c)+'</span><b>'+dn+' / '+list.length+'</b></div>';
   list.forEach(function(f){
    h+='<button class="fbtn'+(FDONE[f.id]?" done":"")+'" onclick="fStart(\''+f.id+'\')"><span class="dot"></span><span class="grow">'+esc(f.name)+'<small>'+esc(f.task)+'</small></span></button>';
@@ -1259,7 +1288,7 @@ function pickerHTML(){
  h+='</div><button class="btn" style="margin-top:10px;width:90px" onclick="closeOv()">關閉</button></div></div>';
  return h;
 }
-function openPicker(){G.fl=null;S.ov="picker";render()}
+function openPicker(){G.fl=null;FQ="";S.ov="picker";render()}
 
 
 /* ═══ 商品價格查詢（查價 F1）═══ */
