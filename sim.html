@@ -546,7 +546,7 @@ function wrapZ(x){return '<div class="pwrap" onclick="this.classList.toggle(\'zo
 /* ───── 資料 ───── */
 var CASHIERS=[["66666","POS用_桃園L9","大夜用"],["77777","POS用_桃園L2","晚班用"],["88888","POS用_桃園K6","早班用"]];
 var SELLERS=[["31024","陳怡君"],["31588","林志明"],["32077","王美玲"],["32416","張家豪"],["33095","李淑芬"],["33742","黃雅婷"],["34180","吳建宏"],["34623","劉冠廷"]];
-var NATIONS=[["1","中華民國"],["—","中國大陸"],["—","日本"],["—","韓國"],["—","香港"],["—","澳門"],["—","新加坡"],["—","馬來西亞"],["—","泰國"],["—","越南"],["—","菲律賓"],["—","印尼"],["—","美國"]];
+var NATIONS=[["1","中華民國"],["2","大陸港澳"],["3","日本"],["4","韓國"],["42","泰國"],["44","越南"],["46","菲律賓"]];
 var PRODUCTS=[
  ["2831568702520","Mac 110 Proof 12Y 0.75L",3680],
  ["2727130811205","Under Bag milk 100g",270],
@@ -734,9 +734,10 @@ function panelHTML(){
   return h+'<div class="prow" style="color:#B03A1E;font-size:12px;cursor:default">也可以按「刷登機證」掃客人的登機證 QR</div></div>';
  }
  if(S.panel==="nation"){
-  var h='<div class="pick" style="left:'+x+'px;top:'+y+'px;width:'+w+'px;max-height:300px;overflow:auto"><div class="pickh">國籍選擇表：</div>';
+  var h='<div class="pick" style="left:'+x+'px;top:'+y+'px;width:'+w+'px;max-height:320px;overflow:auto"><div class="pickh">旅客國別選擇表：</div>';
   NATIONS.forEach(function(c,i){h+='<div class="prow" onclick="setNation('+i+')"><b>'+c[0]+'</b><span>'+c[1]+'</span></div>'});
-  return h+'<div class="prow" style="color:#B03A1E">※ 除中華民國＝1 外，代碼待補</div></div>';
+  h+='<div class="prow" style="justify-content:center;font-weight:700" onclick="natNext()">下頁</div>';
+  return h+'<div class="prow" style="color:#B03A1E;font-size:12px;cursor:default">※ 這是第一頁的 7 個國別（照實機）。其他國別在實機按「下頁」翻頁。</div></div>';
  }
  return '<div class="pick" style="left:'+x+'px;top:'+y+'px;width:'+w+'px;height:200px"><div class="pickh">導引訊息框：</div><div style="padding:8px 10px;font-size:12.5px;line-height:1.8;color:#1B2A52">'+esc(guideText())+'</div></div>';
 }
@@ -955,6 +956,7 @@ function setSeller(code){
  S.seller=c[0];S.sellerName=c[1];S.focus="nation";S.panel="nation";
  say("售貨員帶入 "+c[0]+" "+c[1]+"。密碼不用輸入，接著選國籍。");gHit("f","seller");render();
 }
+function natNext(){say("實機這裡會翻到第二頁，列出其他國別代碼；這台模擬機只收錄第一頁的 7 個（1 中華民國／2 大陸港澳／3 日本／4 韓國／42 泰國／44 越南／46 菲律賓）。拿到下頁的照片就補上。");render();}
 function setNation(i){
  var c=NATIONS[i];S.nation=c[0];S.nationName=c[1];S.focus="flight";S.panel="guide";
  say("國籍帶入 "+c[0]+" "+c[1]+"。接著按「刷登機證」。");gHit("f","nation");render();
