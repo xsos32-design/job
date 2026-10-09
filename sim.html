@@ -29,7 +29,10 @@ h1{font-size:17px;margin:0;letter-spacing:.5px}
 .hdr{background:#C6CBEE}
 .hd{font-size:12px;line-height:17px}
 .tot{background:#5A5FD2;color:#fff}
-.tot b{font-size:19px}
+.tot b{font-size:17px;line-height:18px}
+.totr{display:flex;justify-content:space-between;align-items:baseline;height:18px;line-height:18px;white-space:nowrap;overflow:hidden}
+.totr b{flex:0 0 auto}
+.totr span{flex:0 0 auto}
 .gh{background:#E8EAF2;border-bottom:1px solid #9FAEC6;display:flex;align-items:center;font-weight:700;font-size:11.5px}
 .gh span,.gr span{padding:0 4px;overflow:hidden;white-space:nowrap}
 .gr{display:flex;align-items:center;font-size:11.5px;height:22px;cursor:pointer}
@@ -624,11 +627,11 @@ function hdrHTML(){
  var chg=paid()-total();
  h+='<div class="ab tot" style="left:700px;top:16px;width:280px;height:44px;padding:4px 8px">';
  if(chg>0&&(S.scr==="pay"||S.scr==="done")){
-  h+='<div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:15px;font-weight:700">找零：</span><span style="font-size:12px;color:#E7E9FF">新台幣：</span><b>'+money(chg)+'</b></div>';
-  h+='<div style="display:flex;justify-content:space-between;align-items:baseline;color:#E7E9FF"><span style="font-size:13px;font-weight:700">總金額：</span><b style="font-size:16px">'+money(total())+'</b></div></div>';
+  h+='<div class="totr"><span style="font-size:13px;font-weight:700">找零：</span><span style="font-size:11px;color:#E7E9FF">新台幣</span><b>'+money(chg)+'</b></div>';
+  h+='<div class="totr" style="color:#E7E9FF"><span style="font-size:12px;font-weight:700">總金額：</span><b style="font-size:15px">'+money(total())+'</b></div></div>';
  }else{
-  h+='<div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:15px;font-weight:700">TOTAL：</span><b>'+money(total())+'</b></div>';
-  h+='<div style="display:flex;justify-content:space-between;align-items:baseline;color:#E7E9FF"><span style="font-size:13px;font-weight:700">不足：</span><b style="font-size:16px">'+money(due())+'</b></div></div>';
+  h+='<div class="totr"><span style="font-size:13px;font-weight:700">TOTAL：</span><b>'+money(total())+'</b></div>';
+  h+='<div class="totr" style="color:#E7E9FF"><span style="font-size:12px;font-weight:700">不足：</span><b style="font-size:15px">'+money(due())+'</b></div></div>';
  }
  h+='<div class="ab hdr" style="left:700px;top:60px;width:280px;height:42px;padding:3px 8px"><div class="hd" style="font-size:11.5px">會員編號：　　　會員姓名：　　集點卡號：</div>'
    +'<button class="btn" style="position:absolute;right:6px;top:4px;padding:2px 6px;font-size:11px" onclick="key(\'會員功能\')">會員功能&lt;</button></div>';
