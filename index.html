@@ -26,6 +26,22 @@ nav.crumbs{display:flex;flex-wrap:wrap;align-items:center;gap:4px;font-size:13px
 .crumb.active{color:var(--seal);font-weight:800}
 .sep{opacity:.5}
 .stamp{font-size:11.5px;color:var(--sub);padding-top:6px;letter-spacing:.3px}
+.qbox{position:relative;margin:10px 0 2px}
+.qbox input{width:100%;box-sizing:border-box;background:var(--inkSoft);border:1px solid var(--line);border-radius:10px;padding:10px 34px 10px 34px;font-size:15px;color:var(--ink);font-family:inherit}
+.qbox input::placeholder{color:var(--sub)}
+.qbox .qi{position:absolute;left:11px;top:10px;font-size:14px;color:var(--sub)}
+.qbox .qc{position:absolute;right:6px;top:6px;background:none;border:none;color:var(--sub);font-size:16px;cursor:pointer;padding:3px 7px}
+#qres{margin:8px 0 2px}
+.qhit{display:block;width:100%;text-align:left;background:var(--card);border:1px solid var(--line);border-left:3px solid var(--seal);border-radius:9px;padding:9px 11px;margin-bottom:6px;cursor:pointer;font-family:inherit}
+.qhit .qt{font-size:14px;font-weight:700;color:var(--ink)}
+.qhit .qp{font-size:11px;color:var(--sub);margin-top:2px}
+.qhit .qm{font-size:12px;color:var(--gold);margin-top:3px;line-height:1.5}
+.qnone{font-size:13px;color:var(--sub);padding:8px 2px}
+.mypin{display:flex;align-items:center;gap:10px;width:100%;box-sizing:border-box;background:var(--sealSoft);border:1px solid var(--seal);border-radius:12px;padding:12px 14px;margin-bottom:12px;cursor:pointer;font-family:inherit;text-align:left}
+.mypin .mt{font-size:15px;font-weight:800;color:var(--ink);flex:1}
+.mypin .ms{font-size:11px;color:var(--seal);font-weight:700}
+.pinbtn{background:none;border:1px solid var(--line);border-radius:18px;padding:5px 12px;font-size:12px;color:var(--sub);cursor:pointer;font-family:inherit;margin-bottom:12px}
+.pinbtn.on{border-color:var(--seal);color:var(--seal);font-weight:700}
 .back{display:inline-flex;align-items:center;gap:4px;margin-bottom:14px;background:none;border:1px solid var(--line);border-radius:20px;padding:6px 14px;font-size:13px;color:var(--ink);cursor:pointer;font-weight:600}
 .lead{font-size:13px;color:var(--sub);margin-bottom:8px;font-weight:600}
 .cards{display:grid;gap:10px}
@@ -161,8 +177,8 @@ details.fx ol{padding-left:20px}
 <header><span class="logo">韋</span><div>
 <div class="h-title">SA晚班 · 工作執掌</div>
 <div class="h-sub">點別 → 機位 → 符號 → 職掌／規則</div></div></header>
-<div class="stamp">最後更新：2026-10-08 · v7.0</div>
-<nav class="crumbs" id="crumbs"></nav><div id="backwrap"></div><div id="view"></div>
+<div class="stamp">最後更新：2026-10-09 · v7.1</div>
+<div class="qbox"><span class="qi">⌕</span><input id="q" type="search" placeholder="搜尋符號、工作、規則……" oninput="doSearch()" autocomplete="off"><button class="qc" onclick="clrQ()">✕</button></div><div id="qres"></div><nav class="crumbs" id="crumbs"></nav><div id="backwrap"></div><div id="view"></div>
 </div>
 <script>
 const RULES={"neichang": {"title": "內場規則", "items": ["打單不可出來卡位。", "依照排隊順序結帳，不可挑客挑籃子。", "離店須主動告知內場同事動向。", "無班機時最少 1 號須留守，不可完全空櫃。", "下班機所有內場人員要待機，不可有空櫃。", "結帳打單不可帶客人出櫃檯挑選商品，如客人要選購商品，須交由卡位最後一位的外場人員服務。", "內場打單人員，若有加推酒類或巧克力，多推的那個才能打自己的扣。", "客人要是因為加推商品而換調原本選購的商品，金額沒超過調換商品，無論瓶數必須打原本的人的扣，並主動告知 CODE 卡本人。", "非菸類（酒、巧克力）如有 CODE 卡，結帳須打 CODE 卡人的工號，不可吃 CODE。", "香菸無論有無 CODE 卡，都是結帳人員打自己的 CODE。", "引導手須離店時，須告知另一位 1 號，並請 1 號代替引導手，1 號機台暫時空櫃。"]}, "waiyan": {"title": "外菸規則", "items": ["主動服務菸區客人，不可被動等客人詢問。", "不可幫其他同仁遞 CODE 卡給客人。", "不可跟酒區待機人員聊天。", "離店須主動告知外菸同事動向，下班機外菸要待機，不可空櫃。", "班機空檔需跟 1 號一起補菸，不可讓香菸空櫃。", "如接到非菸類商品，服務完請帶客人至排隊動線，或者外酒看到立即上前接續服務，禁止幫外酒 HOLD 客。"]}, "pos2140": {"title": "POS 規則", "items": ["下班機無排隊客人，可出來卡位接客人。", "離店回店上時如現場有客人排隊，須立即進 POS 打單，不可在外場接客人。", "排隊時服務完手邊客人，將客人送進排隊動線後，須立刻進 POS 打單，不可在外場接客人。", "若 1.2.3 號櫃台無客人，客人結帳香菸可請內場的人員幫忙結帳，結帳非菸類商品須帶到自己櫃台自打自收。", "非菸類（酒、巧克力）如有 CODE 卡，結帳須打 CODE 卡人的工號，不可吃 CODE。", "香菸無論有無 CODE 卡，都是結帳人員打自己的 CODE。", "14:05 起如需協助客人結帳，請先舉手示意再協助。"]}, "pos2153": {"title": "POS 規則", "items": ["下班機無排隊客人，可出來卡位接客人。", "離店回店上時如現場有客人排隊，須立即進 POS 打單，不可在外場接客人。", "排隊時服務完手邊客人，將客人送進排隊動線後，須立刻進 POS 打單，不可在外場接客人。", "若無 1.2 號櫃台無客人，客人結帳香菸可請內場的人員幫忙結帳，結帳非菸類商品須帶到自己櫃台自打自收。", "非菸類（酒、巧克力）如有 CODE 卡，結帳須打 CODE 卡人的工號，不可吃 CODE。", "香菸無論有無 CODE 卡，都是結帳人員打自己的 CODE。", "引導手告知無排隊時即可出來卡位，同時間顧客進場排隊由 1、2、3 協助結帳。"]}, "zhaofeng": {"title": "兆豐規則", "items": ["自打自收，如遇排隊則在 POS 順接，不可挑客結帳。", "兆豐結帳、EDC 單、店收的都要記錄，並寫對應正序(T/N)。", "單據每 20 張用一個訂書針裝訂。"]}, "waichang2140": {"title": "外場酒區規則", "items": ["L1～L4 外場不用進去打單（不卡 POS），全程在外場接客人。", "服務客人完畢後，放完 CODE 卡，須自行把客人送進排隊動線裡面，才能接下一組客人。如遇到未把客人送進排隊動線即離開，則該筆業績算結帳人員的。", "須主動留意班機動態，本店外場無客人才可跑店，但本店若下班機，服務完手邊客人須主動回到本店。", "服務完客人須留意店上無無人服務旅客，才可排隊卡位接客人。", "客人進店須立即上前服務，不可挑客。", "不可撒 CODE 卡，不能遞 CODE 卡給正在排隊隊伍的客人，也不能請外菸幫忙丟 CODE 卡。", "離開排隊卡位 5 分鐘以上，回來須重新卡位。", "卡位暫離，下班機須自行回來，不用其他人叫，如客人進店錯過卡位順序，則須重新卡位。", "客於排隊時要求加購商品協助服務的商品可夾 CODE，籃子內無 CODE 卡可丟卡。", "客人結完帳再進店都要接待，不可挑客。", "等客人須跟至少一位其他外場同事告知，等客人時不可接待其他顧客，未告知或接其他客人者卡 1 順接。", "跑店時人到店上才可卡位，不可請同事幫卡。", "客人到結帳櫃台外場服務就結束，後續顧客在櫃台加購之商品皆算結帳人員的。"]}, "waichang2153": {"title": "外場酒區規則", "items": ["L1～L4 外場不用進去打單（不卡 POS），全程在外場接客人。", "服務客人完畢後，放完 CODE 卡，須自行把客人送進排隊動線裡面，才能接下一組客人。如遇到未把客人送進排隊動線即離開，則該筆業績算結帳人員的。", "須主動留意班機動態，本店外場無客人才可跑店，但本店若下班機，服務完手邊客人須主動回到本店。", "服務完客人須留意店上無無人服務旅客，才可排隊卡位接客人。", "客人進店須立即上前服務，不可挑客。", "不可撒 CODE 卡，不能遞 CODE 卡給正在排隊隊伍的客人，也不能請外菸幫忙丟 CODE 卡。", "離開排隊卡位 5 分鐘以上，回來須重新卡位。", "卡位暫離，下班機須自行回來，不用其他人叫，如客人進店錯過卡位順序，則須重新卡位。", "客於排隊時要求加購商品協助服務的商品可夾 CODE，籃子內無 CODE 卡可丟卡。", "客人結完帳再進店只要有看商品都要接待，不可挑客。", "等客人須跟至少一位其他外場同事告知，不可接新客人，如接了其他客人，視同放棄等待機會。", "跑店時人到店上才可卡位，不可請同事幫卡。", "客人到結帳櫃台外場服務就結束，後續顧客在櫃台加購之商品皆算結帳人員的。"]}, "l9_2140": {"title": "L9 規則", "items": ["不綁店的酒區外場，酒、巧可丟 CODE、菸不丟。", "服務客人完畢後，放完 CODE 卡，須自行把客人送進排隊動線裡面，才能接下一組客人。如遇到未把客人送進排隊動線即離開，則該筆業績算結帳人員的。", "客人進店只要有看商品須立即上前服務，不可挑客。", "銷售時沒有服務的客人（菸區或組長接待的客人），商品已放籃子，不能再丟 CODE 卡。", "不可撒 CODE 卡，不能遞 CODE 卡給正在排隊隊伍的客人，也不能請外菸幫忙丟 CODE 卡。"]}, "l9_2153": {"title": "L9 規則", "items": ["不綁店的酒區外場。", "服務客人完畢後，放完 CODE 卡，須自行把客人送進排隊動線裡面，才能接下一組客人。如遇到未把客人送進排隊動線即離開，則該筆業績算結帳人員的。", "服務完客人須留意店上無無人服務旅客，才可排隊卡位接客人。", "客人進店只要有看商品須立即上前服務，不可挑客。", "不可撒 CODE 卡，不能遞 CODE 卡給正在排隊隊伍的客人，也不能請外菸幫忙丟 CODE 卡。"]}};
@@ -224,6 +240,7 @@ var ARROW='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wid
 function branchHTML(n){
  const home=n.label===TREE.label;
  let h='';
+ if(home)h+=pinCard();
  if(home&&typeof HOME_REMINDERS!=="undefined"&&HOME_REMINDERS.length){h+='<div class="home-remind">'+HOME_REMINDERS.map(x=>"📌 "+esc(x)).join("<br>")+'</div>';}
  if(!home)h+='<div class="lead">'+esc(n.label)+' — 請選擇</div>';
  const G2=["常用表單","快速查詢"];
@@ -303,6 +320,8 @@ var PACK=[["100 元","紙鈔 · 一捆","10,000"],["50 元","硬幣盒","3,000"]
 function packTbl(){return '<table class="rtbl ptbl"><tr><th>面額</th><th>包裝</th><th>金額</th></tr>'+PACK.map(function(r){return '<tr><td class="rcat">'+esc(r[0])+'</td><td class="rrule">'+esc(r[1])+'</td><td class="pamt">'+esc(r[2])+'</td></tr>';}).join("")+'</table>';}
 function leafHTML(c){
  let h='<div class="badges"><span class="b-sym">'+esc(c.sym)+'</span><span class="b-pos">'+((c.pos==="外場"||c.pos==="L9")?esc(c.pos):"POS "+esc(c.pos))+'</span></div>';
+var __cur=current(),__pin=getPin(),__on=!!(__pin&&__cur&&__pin.id===__cur.id);
+if(__cur&&__cur.id)h+='<button class="pinbtn'+(__on?" on":"")+'" onclick="setPin(\''+__cur.id+'\',\''+String(__cur.label).replace(/'/g,"")+'\')">'+(__on?"\u2605 \u5df2\u8a2d\u70ba\u6211\u7684\u7b26\u865f\uff08\u9ede\u4e00\u4e0b\u53d6\u6d88\uff09":"\u2606 \u8a2d\u70ba\u6211\u7684\u7b26\u865f")+'</button>';
  var CY=/每週|雙數月|單數月|每月|盤點：|屆期/;
  var dly=c.tasks.filter(function(x){return !CY.test(x)}),cyc=c.tasks.filter(function(x){return CY.test(x)});
  h+=sec("📋","每日工作",dly.length?numTbl("工作項目",dly):'<div class="none">本符號無固定每日項目</div>');
@@ -424,5 +443,33 @@ function findById(id,n){n=n||TREE;if(n.children){for(const c of n.children){if(c
 function go(id){const n=findById(id);if(n)path.push(n);render()}
 function back(){path.pop();render()}
 function jump(i){path=i<0?[]:path.slice(0,i+1);render()}
+/* ── 搜尋 ── */
+var IDX=[];
+function txtOf(n){var a=[n.label||"",n.sub||""];var c=n.content;
+ if(c){a.push(c.sym||"");a.push(c.pos?("POS "+c.pos):"");(c.tasks||[]).forEach(function(x){a.push(x)});(c.timing||[]).forEach(function(x){a.push(x)});(c.proc||[]).forEach(function(x){a.push(x)});
+  (c.ruleKeys||[]).forEach(function(k){if(RULES[k]){a.push(RULES[k].title);(RULES[k].items||[]).forEach(function(x){a.push(x)})}});}
+ if(n.note)a.push(String(n.note));
+ return a.join(" \u0001 ");}
+(function buildIdx(n,anc){ (n.children||[]).forEach(function(c){ if(c.header)return; var p=anc.concat([c]);
+  if(c.children&&c.children.length){buildIdx(c,p)} else {IDX.push({id:c.id,label:c.label,path:p.slice(0,-1).map(function(x){return x.label}),txt:txtOf(c)})} }); })(TREE,[]);
+function goTo(id){var found=null;(function w(n,anc){ if(found)return; (n.children||[]).forEach(function(c){ if(found||c.header)return; var p=anc.concat([c]); if(c.id===id){found=p;return} if(c.children)w(c,p) }) })(TREE,[]);
+ if(found){path=found;clrQ();render()}}
+function doSearch(){var q=($("q").value||"").trim().toLowerCase();var r=$("qres");
+ if(q.length<1){r.innerHTML="";return}
+ var hits=[];
+ IDX.forEach(function(n){var L=n.label.toLowerCase(),T=n.txt.toLowerCase();var inL=L.indexOf(q)>=0,inT=T.indexOf(q)>=0;if(!inL&&!inT)return;
+  var snip="";if(!inL){var parts=n.txt.split("\u0001");for(var i=0;i<parts.length;i++){if(parts[i].toLowerCase().indexOf(q)>=0){snip=parts[i].trim();break}}}
+  hits.push({n:n,s:inL?0:1,snip:snip})});
+ hits.sort(function(a,b){return a.s-b.s});
+ if(!hits.length){r.innerHTML='<div class="qnone">找不到「'+esc(q)+'」。試試符號（B6、T$）或關鍵字（盤點、換錢、屆期）。</div>';return}
+ var h="";hits.slice(0,25).forEach(function(x){h+='<button class="qhit" onclick="goTo(\''+x.n.id+'\')"><div class="qt">'+esc(deico(x.n.label))+'</div>'+(x.n.path.length?'<div class="qp">'+esc(deico(x.n.path.join(" › ")))+'</div>':"")+(x.snip?'<div class="qm">'+esc(x.snip.length>70?x.snip.slice(0,70)+"…":x.snip)+'</div>':"")+'</button>'});
+ if(hits.length>25)h+='<div class="qnone">共 '+hits.length+' 筆，先顯示前 25 筆。</div>';
+ r.innerHTML=h;}
+function clrQ(){var e=$("q");if(e)e.value="";var r=$("qres");if(r)r.innerHTML="";}
+/* ── 我的符號 ── */
+function getPin(){try{return JSON.parse(localStorage.getItem("sa_mysym")||"null")}catch(e){return null}}
+function setPin(id,label){try{var p=getPin();if(p&&p.id===id){localStorage.removeItem("sa_mysym")}else{localStorage.setItem("sa_mysym",JSON.stringify({id:id,label:label}))}}catch(e){}render()}
+function pinCard(){var p=getPin();if(!p)return "";
+ return '<button class="mypin" onclick="goTo(\''+p.id+'\')"><span class="mt">'+esc(deico(p.label))+'</span><span class="ms">我的符號 ›</span></button>';}
 render();
 </script></body></html>
