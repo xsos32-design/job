@@ -19,6 +19,19 @@ h1{font-size:17px;margin:0;letter-spacing:.5px}
 .bar button.on{background:#2E1C18;border-color:var(--seal);color:var(--gold)}
 .bar .sp{flex:1}
 .hint{font-size:12px;color:var(--sub);margin:0 0 8px;line-height:1.6}
+.qchip{display:inline-flex;align-items:center;gap:5px;background:var(--inkSoft);border:1px solid var(--line);color:var(--sub);border-radius:18px;padding:4px 11px;font-size:11.5px;cursor:pointer;font-family:inherit;margin:0 0 8px}
+@media(max-width:760px){
+ .top{padding:8px 10px 0}
+ .logo{width:28px;height:28px;font-size:14px}
+ header h1{font-size:18px}
+ .tag{display:none}
+ header{margin-bottom:6px}
+ .bar{flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;padding-bottom:3px;margin-bottom:6px;scrollbar-width:none}
+ .bar::-webkit-scrollbar{display:none}
+ .bar button{flex:0 0 auto;padding:6px 10px;font-size:12px}
+ .hint{font-size:12px;margin:0 0 6px}
+ .foot{margin:8px auto 16px;font-size:11px;line-height:1.6}
+}
 .hint b{color:var(--gold)}
 #wrap{overflow:auto;background:#0A0D12;border:1px solid var(--line);border-radius:10px;padding:6px}
 #stageBox{transform-origin:top left}
@@ -202,13 +215,14 @@ h1{font-size:17px;margin:0;letter-spacing:.5px}
   <button onclick="zoomSet(1)">＋</button>
   <button class="gbtn" onclick="openPicker()">📋 選流程</button>
   <button id="qfill" onclick="quickFill()">⚡ 快速帶入</button>
+  <button id="flwBtn" class="on" onclick="flwToggle()">🔍 跟步驟放大</button>
   <span class="sp"></span>
   <button onclick="resetAll()">↺ 重新開始</button>
 </div>
 <p class="hint" id="hint"></p>
 </div>
 <div class="top" style="padding-top:0">
-<p class="hint" id="mtip" style="display:none">一開啟就自動縮到<b>剛好符合你的畫面寬度</b>，不用左右滑。手機<b>橫放</b>會大一截；要再放大按 ＋，想回到整台可見按<b>適合畫面</b>。</p>
+<button class="qchip" id="mchip" style="display:none" onclick="var e=document.getElementById('mtip');e.style.display=e.style.display==='none'?'block':'none';tellHeight()">？ 畫面大小怎麼調</button><p class="hint" id="mtip" style="display:none">一開啟就自動縮到<b>剛好符合你的畫面寬度</b>，不用左右滑。手機<b>橫放</b>會大一截；要再放大按 ＋，想回到整台可見按<b>適合畫面</b>。</p>
 </div>
 <div id="wrapOuter"><div id="wrap"><div id="stageBox"><div id="stage"></div></div></div><div id="gband"></div></div>
 <script src="posframe.js"></script>
@@ -440,7 +454,7 @@ var FLOWS=[
 {id:"p7",cat:"結帳・付款方式",name:"電子／行動支付",task:"分清楚四類電子支付",steps:[L(),
  F({title:"付款畫面",say:'按 <b>電子支付</b> 鍵',ok:"電子支付",btns:PAYKEYS}),
  F({title:"四類分別",say:'記住分類後按 <b>完成</b>',ok:"完成",btns:["完成"],cap:"1-10-07～1-10-10。悠遊卡／一卡通：手冊列為電子票券，但目前門市不收，收款前先問組長",
-   pic:{k:"list",title:"電子類付款方式",lines:["第三方支付：支付寶、微信、韓亞、LINEPAY、街口支付","電子票券：悠遊卡、一卡通（門市目前不收，待確認）","行動支付：GOOGLE PAY、APPLE PAY、SAMSUNG PAY 等","LINKPAY：SP 下單網、移地銷售展售會用；保稅稅放訂單、含藥美白不可稅放使用"]}})]},
+   pic:{k:"list",title:"電子類付款方式",lines:["第三方支付：支付寶、微信、韓亞、LINEPAY、街口支付","電子票券：悠遊卡、一卡通 → 門市一律不收（面板雖有標誌，請改用現金或信用卡）","行動支付：GOOGLE PAY、APPLE PAY、SAMSUNG PAY 等","LINKPAY：SP 下單網、移地銷售展售會用；保稅稅放訂單、含藥美白不可稅放使用"]}})]},
 /* ── 結帳全流程（實機照片，SA-34 實拍） ── */
 {id:"c1",cat:"結帳・實機流程",name:"結帳全流程",task:"從登入到確認付款走完一筆",steps:[
  F({title:"售貨員選擇表",say:'售貨員欄按下去會跳出選擇表，選自己的工號——按 <b>31024 陳怡君</b>',ok:"31024 陳怡君",btns:["31024 陳怡君","31588 林志明","32077 王美玲","32416 張家豪"],
@@ -624,6 +638,22 @@ function applyZoom(){
  tellHeight();
 }
 function tellHeight(){if(top===self)return;try{var w=document.getElementById('wrapOuter')||document.getElementById('wrap');var h=Math.ceil(w.getBoundingClientRect().bottom+(window.pageYOffset||0))+10;parent.postMessage({simh:h},'*')}catch(e){}}
+var FOLLOW=true;
+try{FOLLOW=localStorage.getItem("posrich_follow")!=="0"}catch(e){FOLLOW=true}
+function flwToggle(){FOLLOW=!FOLLOW;try{localStorage.setItem("posrich_follow",FOLLOW?"1":"0")}catch(e){}
+ var b=document.getElementById("flwBtn");if(b)b.classList.toggle("on",FOLLOW);
+ if(!FOLLOW){ZOOM=null;document.getElementById("zfit").classList.add("on");}else if(gOn()&&innerWidth<760){ZOOM=0.78;document.getElementById("zfit").classList.remove("on");}
+ applyZoom();followStep();}
+function gOn(){return !!(G.t||G.fl)}
+function followStep(){
+ if(!FOLLOW||!gOn()||innerWidth>=760)return;
+ var wrap=document.getElementById("wrap");
+ var el=document.querySelector("#stage .k.hi, #stage .btn.hi, #stage .inp.need, #stage .bc.hi, #stage .fk.hint");
+ if(!el)return;
+ var wr=wrap.getBoundingClientRect(),er=el.getBoundingClientRect();
+ wrap.scrollLeft+=(er.left+er.width/2)-(wr.left+wr.width/2);
+ wrap.scrollTop+=(er.top+er.height/2)-(wr.top+wr.height/2);
+}
 function zoomFit(){ZOOM=null;document.getElementById('zfit').classList.add('on');applyZoom()}
 function zoomSet(d){var cur=ZOOM||fitK();ZOOM=Math.max(.3,Math.min(2,cur+d*0.15));document.getElementById('zfit').classList.remove('on');applyZoom()}
 window.addEventListener('resize',applyZoom);
@@ -940,6 +970,7 @@ function render(){
  document.getElementById('stage').innerHTML=h;
  document.getElementById('hint').innerHTML=hintText();
  applyZoom();
+ followStep();
 }
 function hintText(){
  if(G.t)return "<b>引導中</b>：步驟說明在機器<b>正下方</b>，不會擋住畫面；橘框／發亮的那一個就是這一步要點的。";
@@ -1163,7 +1194,6 @@ var TASKS=[
  {n:{a:"add"},s:'要真的加入商品，是點右邊的<b>商品條碼</b>掃描'}]}
 ];
 var G={t:null,i:0,fl:null,fi:0,ferr:0};
-function gActive(){return !!G.t}
 function gKeyWanted(){if(!G.t)return null;var st=G.t.steps[G.i];return st&&st.n.k?st.n.k:null}
 function gFieldWanted(){if(!G.t)return null;var st=G.t.steps[G.i];return st&&st.n.f?st.n.f:null}
 function gScanWanted(){if(!G.t)return false;var st=G.t.steps[G.i];return !!(st&&st.n.a==="add")}
@@ -1216,6 +1246,7 @@ function gBand(){
 function gStart(id){
  var t=TASKS.filter(function(x){return x.id===id})[0];if(!t)return;
  resetAll();G.t=t;G.i=0;closeOv();
+ if(FOLLOW&&innerWidth<760){ZOOM=0.78;document.getElementById("zfit").classList.remove("on");}
  say("開始流程「"+t.name+"」："+t.steps[0].s.replace(/<[^>]+>/g,""));
  gBand();render();
 }
@@ -1647,7 +1678,7 @@ function scanBP(){S.flight=BP.flight;S.dep=BP.dep;S.ov=null;S.focus="";S.panel="
 function showPrice(i){var p=PRODUCTS[i];say("查價："+p[1]+"　NT$ "+money(p[2]));closeOv()}
 function showInfo(i){var p=PRODUCTS[i];say("商品查詢："+p[1]+"｜條碼 "+p[0]+"｜單價 NT$ "+money(p[2])+"（查詢不會帶入單身）");gHit("a","info");closeOv()}
 if(top!==self){var _h=document.querySelector('header');if(_h)_h.style.display='none';var _f=document.querySelector('.foot');if(_f)_f.style.display='none';document.querySelector('.top').style.paddingTop='0';document.body.style.background='transparent';}
-if(innerWidth<760){document.getElementById('mtip').style.display='block';}
+if(innerWidth<760){document.getElementById('mchip').style.display='inline-flex';}
 resetAll();
 setTimeout(tellHeight,80);window.addEventListener("load",tellHeight);
 </script>
