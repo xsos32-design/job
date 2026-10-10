@@ -92,8 +92,8 @@ h1{font-size:17px;margin:0;letter-spacing:.5px}
 .bcc{font-size:10.5px;color:#415072}
 .gbtn{background:#2E1C18;border-color:var(--seal);color:var(--gold)}
 #wrapOuter{position:relative}
-#gband{position:absolute;left:10px;right:10px;top:10px;z-index:30;padding:7px 10px;border-radius:9px;background:rgba(34,19,15,.88);border:1px solid var(--seal);font-size:13px;line-height:1.5;display:none;box-shadow:0 8px 22px rgba(0,0,0,.5);pointer-events:none}
-#gband.mini{right:auto;padding:4px 8px}
+#gband{margin:8px 0 0;padding:8px 11px;border-radius:9px;background:#2E1C18;border:1px solid var(--seal);font-size:13.5px;line-height:1.55;display:none}
+#gband.mini{padding:5px 9px;font-size:12.5px}
 #gband .gh{display:flex;align-items:center;gap:8px}
 #gband .gt{color:var(--gold);font-weight:700;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #gband .gs{display:block;margin-top:3px}
@@ -623,7 +623,7 @@ function applyZoom(){
  document.getElementById('stageBox').style.width=(980*k)+'px';
  tellHeight();
 }
-function tellHeight(){if(top===self)return;try{var w=document.getElementById('wrap');var h=Math.ceil(w.getBoundingClientRect().bottom+(window.pageYOffset||0))+10;parent.postMessage({simh:h},'*')}catch(e){}}
+function tellHeight(){if(top===self)return;try{var w=document.getElementById('wrapOuter')||document.getElementById('wrap');var h=Math.ceil(w.getBoundingClientRect().bottom+(window.pageYOffset||0))+10;parent.postMessage({simh:h},'*')}catch(e){}}
 function zoomFit(){ZOOM=null;document.getElementById('zfit').classList.add('on');applyZoom()}
 function zoomSet(d){var cur=ZOOM||fitK();ZOOM=Math.max(.3,Math.min(2,cur+d*0.15));document.getElementById('zfit').classList.remove('on');applyZoom()}
 window.addEventListener('resize',applyZoom);
@@ -942,7 +942,7 @@ function render(){
  applyZoom();
 }
 function hintText(){
- if(G.t)return "<b>引導中</b>：步驟說明貼在機器畫面上，<b>不會擋到點選</b>（可以直接點它底下的欄位）；看不清楚按 ▴ 收起。";
+ if(G.t)return "<b>引導中</b>：步驟說明在機器<b>正下方</b>，不會擋住畫面；橘框／發亮的那一個就是這一步要點的。";
  if(S.scr==="login")return "<b>新交易基本資料</b>：點欄位→右邊出現選擇表。密碼不用打，班機要按「刷登機證」掃 QR。資料齊了按 <b>確定(A+E)</b>。想照流程走就按上面的「📋 選流程」。";
  if(S.scr==="trade")return "<b>交易畫面</b>：右邊點商品條碼＝掃描加入，或用數字鍵打條碼後按 <b>Enter</b>；「商品查詢」只查資料、不會加入商品。點商品列可選取，再按「數量」或「商品刪除」。打完按 <b>結帳</b>。";
  if(S.scr==="cpn1")return "<b>優惠券使用明細</b>：有酬賓券就按「酬賓券」輸入；沒有就直接按 <b>下一步</b>。";
@@ -1211,6 +1211,7 @@ function gBand(){
   +'<button title="回上一步" onclick="gBack()">↩<span class="lb"> 上一步</span></button>'
   +'<button title="結束引導" onclick="gStop()">✕<span class="lb"> 結束</span></button></span></div>'
   +'<span class="gs">'+G.t.steps[G.i].s+'</span>';
+ tellHeight();
 }
 function gStart(id){
  var t=TASKS.filter(function(x){return x.id===id})[0];if(!t)return;
