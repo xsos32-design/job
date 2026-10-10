@@ -92,14 +92,14 @@ h1{font-size:17px;margin:0;letter-spacing:.5px}
 .bcc{font-size:10.5px;color:#415072}
 .gbtn{background:#2E1C18;border-color:var(--seal);color:var(--gold)}
 #wrapOuter{position:relative}
-#gband{position:absolute;left:10px;right:10px;top:10px;z-index:30;padding:7px 10px;border-radius:9px;background:rgba(34,19,15,.96);border:1px solid var(--seal);font-size:13px;line-height:1.5;display:none;box-shadow:0 8px 22px rgba(0,0,0,.5)}
+#gband{position:absolute;left:10px;right:10px;top:10px;z-index:30;padding:7px 10px;border-radius:9px;background:rgba(34,19,15,.88);border:1px solid var(--seal);font-size:13px;line-height:1.5;display:none;box-shadow:0 8px 22px rgba(0,0,0,.5);pointer-events:none}
 #gband.mini{right:auto;padding:4px 8px}
 #gband .gh{display:flex;align-items:center;gap:8px}
 #gband .gt{color:var(--gold);font-weight:700;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #gband .gs{display:block;margin-top:3px}
 #gband .gx{display:flex;gap:5px;flex:0 0 auto}
 @media(max-width:560px){#gband{font-size:12px;padding:6px 8px}#gband button{padding:3px 7px}#gband .lb{display:none}}
-#gband button{background:var(--inkSoft);border:1px solid var(--line);color:var(--sub);border-radius:7px;font-size:12px;padding:4px 9px;cursor:pointer;font-family:inherit}
+#gband button{background:var(--inkSoft);border:1px solid var(--line);color:var(--sub);border-radius:7px;font-size:12px;padding:4px 9px;cursor:pointer;font-family:inherit;pointer-events:auto}
 .k.hi{outline:3px solid #E8541E;outline-offset:-1px;animation:gpulse 1.1s infinite}
 .inp.need{border:2px solid #E8541E;animation:gpulse 1.1s infinite}
 .bc.hi{outline:3px solid #E8541E}
@@ -942,7 +942,7 @@ function render(){
  applyZoom();
 }
 function hintText(){
- if(G.t)return "<b>引導中</b>：步驟說明直接貼在機器畫面上；橘框／發亮的那一個就是這一步要點的。擋到畫面按 ▴ 收起。";
+ if(G.t)return "<b>引導中</b>：步驟說明貼在機器畫面上，<b>不會擋到點選</b>（可以直接點它底下的欄位）；看不清楚按 ▴ 收起。";
  if(S.scr==="login")return "<b>新交易基本資料</b>：點欄位→右邊出現選擇表。密碼不用打，班機要按「刷登機證」掃 QR。資料齊了按 <b>確定(A+E)</b>。想照流程走就按上面的「📋 選流程」。";
  if(S.scr==="trade")return "<b>交易畫面</b>：右邊點商品條碼＝掃描加入，或用數字鍵打條碼後按 <b>Enter</b>；「商品查詢」只查資料、不會加入商品。點商品列可選取，再按「數量」或「商品刪除」。打完按 <b>結帳</b>。";
  if(S.scr==="cpn1")return "<b>優惠券使用明細</b>：有酬賓券就按「酬賓券」輸入；沒有就直接按 <b>下一步</b>。";
@@ -1191,7 +1191,8 @@ function gHit(kind,val){
  gBand();
 }
 var GMIN=false;
-function gMin(){GMIN=!GMIN;gBand()}
+try{GMIN=localStorage.getItem("posrich_gmin")==="1"}catch(e){GMIN=false}
+function gMin(){GMIN=!GMIN;try{localStorage.setItem("posrich_gmin",GMIN?"1":"0")}catch(e){}gBand()}
 function gBand(){
  var b=document.getElementById("gband");
  if(!G.t){b.style.display="none";b.className="";b.innerHTML="";return}
