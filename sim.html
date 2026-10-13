@@ -15,20 +15,33 @@ header{display:flex;align-items:center;gap:10px;margin-bottom:8px}
 h1{font-size:17px;margin:0;letter-spacing:.5px}
 .tag{font-size:11.5px;color:var(--sub);margin:2px 0 0}
 .bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
-.bar button{padding:7px 11px;border-radius:8px;border:1px solid var(--line);background:var(--inkSoft);color:var(--sub);font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit}
+.bar button{padding:0 13px;min-height:44px;border-radius:10px;border:1px solid var(--line);background:var(--inkSoft);color:var(--sub);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;transition:background .12s,border-color .12s,transform .08s}
+.bar button:active{transform:scale(.96)}
 .bar button.on{background:#2E1C18;border-color:var(--seal);color:var(--gold)}
+.bar .big{background:var(--seal);border-color:var(--seal);color:#fff;font-size:14px;padding:0 17px}
+.bar .big:active{filter:brightness(.9)}
+.bi{width:16px;height:16px;flex:none}
+.zseg{display:inline-flex;align-items:center;border:1px solid var(--line);background:var(--inkSoft);border-radius:10px;overflow:hidden}
+.zseg button{border:none;border-radius:0;background:none;min-width:46px;min-height:44px;justify-content:center;padding:0;font-size:18px;color:var(--sub)}
+.zseg button:active{transform:none;background:rgba(255,255,255,.05)}
+.zseg #zfit{min-width:108px;font-size:12.5px;border-left:1px solid var(--line);border-right:1px solid var(--line)}
+.zseg button.on{background:#2E1C18;color:var(--gold)}
+button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 .bar .sp{flex:1}
 .hint{font-size:12px;color:var(--sub);margin:0 0 8px;line-height:1.6}
-.qchip{display:inline-flex;align-items:center;gap:5px;background:var(--inkSoft);border:1px solid var(--line);color:var(--sub);border-radius:18px;padding:4px 11px;font-size:11.5px;cursor:pointer;font-family:inherit;margin:0 0 8px}
+.qchip{display:inline-flex;align-items:center;gap:6px;background:var(--inkSoft);border:1px solid var(--line);color:var(--sub);border-radius:20px;padding:0 14px;min-height:38px;font-size:12.5px;cursor:pointer;font-family:inherit;margin:0 0 8px}
 @media(max-width:760px){
  .top{padding:8px 10px 0}
  .logo{width:28px;height:28px;font-size:14px}
  header h1{font-size:18px}
  .tag{display:none}
  header{margin-bottom:6px}
- .bar{flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;padding-bottom:3px;margin-bottom:6px;scrollbar-width:none}
- .bar::-webkit-scrollbar{display:none}
- .bar button{flex:0 0 auto;padding:6px 10px;font-size:12px}
+ .bar{flex-wrap:wrap;gap:7px;margin-bottom:6px}
+ .bar button{flex:0 0 auto;padding:0 11px;font-size:12.5px}
+ .bar .ico .lb{display:none}
+ .bar .ico{padding:0 13px}
+ .zseg #zfit{min-width:96px}
  .hint{font-size:12px;margin:0 0 6px}
  .foot{margin:8px auto 16px;font-size:11px;line-height:1.6}
 }
@@ -94,6 +107,7 @@ h1{font-size:17px;margin:0;letter-spacing:.5px}
  background-blend-mode:difference;border:3px solid #fff;outline:1px solid #111}
 .foot{max-width:1020px;margin:10px auto 40px;padding:0 12px;font-size:11.5px;color:var(--sub);text-align:center;line-height:1.8}
 .foot a{color:var(--gold)}
+.foot .homelink{display:inline-flex;align-items:center;min-height:44px;padding:0 18px;margin-top:6px;border:1px solid var(--line);background:var(--inkSoft);border-radius:22px;text-decoration:none;font-size:13.5px;font-weight:700}
 .tiny{font-size:11px;color:#415072}
 .scanp{background:#EDEFF5;border:1px solid #9FAEC6;overflow:auto;padding:6px}
 .scantip{font-size:11px;color:#415072;line-height:1.5;margin-bottom:6px}
@@ -210,23 +224,23 @@ h1{font-size:17px;margin:0;letter-spacing:.5px}
 <div class="top">
 <header><div class="logo">韋</div><div><h1>打單模擬器</h1><p class="tag">POS 打單教材就是這一台・依 SA-34 實機版面重繪・自由點選＋流程引導</p></div></header>
 <div class="bar">
-  <button onclick="zoomSet(-1)">－</button>
-  <button id="zfit" class="on" onclick="zoomFit()">適合畫面</button>
-  <button onclick="zoomSet(1)">＋</button>
-  <button class="gbtn" onclick="openPicker()">📋 選流程</button>
-  <button id="qfill" onclick="quickFill()">⚡ 快速帶入</button>
-  <button id="flwBtn" class="on" onclick="flwToggle()">🔍 跟步驟放大</button>
+  <button class="big" onclick="openPicker()"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M9 12h6"/><path d="M9 16h6"/></svg>選流程</button>
+  <button id="qfill" onclick="quickFill()"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg>快速帶入</button>
   <span class="sp"></span>
-  <button onclick="resetAll()">↺ 重新開始</button>
+  <button id="flwBtn" class="on ico" onclick="flwToggle()" title="跟步驟放大"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/><path d="M11 8v6"/><path d="M8 11h6"/></svg><span class="lb">跟步驟放大</span></button>
+  <button class="ico" onclick="resetAll()" title="重新開始"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg><span class="lb">重新開始</span></button>
+</div>
+<div class="bar">
+  <div class="zseg"><button onclick="zoomSet(-1)" aria-label="縮小">－</button><button id="zfit" class="on" onclick="zoomFit()">適合畫面</button><button onclick="zoomSet(1)" aria-label="放大">＋</button></div>
 </div>
 <p class="hint" id="hint"></p>
 </div>
 <div class="top" style="padding-top:0">
-<button class="qchip" id="mchip" style="display:none" onclick="var e=document.getElementById('mtip');e.style.display=e.style.display==='none'?'block':'none';tellHeight()">？ 畫面大小怎麼調</button><p class="hint" id="mtip" style="display:none">一開啟就自動縮到<b>剛好符合你的畫面寬度</b>，不用左右滑。手機<b>橫放</b>會大一截；要再放大按 ＋，想回到整台可見按<b>適合畫面</b>。</p>
+<button class="qchip" id="mchip" style="display:none" onclick="var e=document.getElementById('mtip');e.style.display=e.style.display==='none'?'block':'none';tellHeight()"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>畫面大小怎麼調</button><p class="hint" id="mtip" style="display:none">一開啟就自動縮到<b>剛好符合你的畫面寬度</b>，不用左右滑。手機<b>橫放</b>會大一截；要再放大按 ＋，想回到整台可見按<b>適合畫面</b>。</p>
 </div>
 <div id="wrapOuter"><div id="wrap"><div id="stageBox"><div id="stage"></div></div></div><div id="gband"></div></div>
 <script src="posframe.js"></script>
-<div class="foot">資料來源：昇恆昌 e 學院「POS RICH 功能工具書」、「結帳 POS 機操作流程 1-10 付款方式」；畫面依 SA-34 實機版面重繪<br><a href="./">← 回 SA晚班 · 工作執掌</a></div>
+<div class="foot">資料來源：昇恆昌 e 學院「POS RICH 功能工具書」、「結帳 POS 機操作流程 1-10 付款方式」；畫面依 SA-34 實機版面重繪<br><a class="homelink" href="./">‹ 回 SA晚班 · 工作執掌</a></div>
 
 <script>
 /* ───── POS RICH 功能流程（來源：功能工具書） ───── */
@@ -241,7 +255,7 @@ var MENU2={
 var PAYKEYS=["返回銷售","現金","信用卡","匯率表","付款刪除","美元","電子支付","RICH Pay","上一頁","人民幣","酬賓券","禮券","下一頁","日幣","桃園消費券","其他付款","清除","商品預覽","統編","確認付款"];
 var TRADEKEYS=["重新登入","商品查詢","營業員","提貨註記","商品刪除","酬賓券","贈品","貴賓","快速結帳","單筆折扣","轉機註記","會員功能","下一頁","單筆折讓","統編","活動代碼","數量","清除","Enter","結帳"];
 var LOGIN={say:'在「新交易基本資料」畫面輸入售貨員工號、密碼，按 <b>POS RICH</b> 鍵',ok:"Pos Rich",
- fields:[["售貨員工號","27679"],["密碼","••••"],["國籍","1 中華民國"],["班機","BR0706"]],
+ fields:[["售貨員工號","31024"],["密碼","••••"],["國籍","1 中華民國"],["班機","BR0706"]],
  btns:["查價F1","交易作廢","暫存取消","確定A+E","會員登錄F9","Pos Rich","其他功能","取消Esc"]};
 
 function L(){return {scr:"login"};}
@@ -339,7 +353,7 @@ var FLOWS=[
  F({title:"調撥",say:'按 <b>新增</b> 鍵',ok:"新增",btns:["新增","查詢","離開"]}),
  F({title:"調撥 · 稅別",say:'選擇調撥稅別——按 <b>保稅</b>',ok:"保稅",btns:["保稅","完稅"]}),
  F({title:"調撥 · 輸入",say:'輸入撥入庫／調轉人工號後按 <b>儲存</b>。調轉到外點要在備註欄輸入收貨單位的庫別代碼',ok:"儲存",btns:["儲存","清除","離開"],
-   fields:[["撥入庫","RT1"],["調轉人工號","27679"],["備註","（外點才填庫別代碼）"]]}),
+   fields:[["撥入庫","RT1"],["調轉人工號","31024"],["備註","（外點才填庫別代碼）"]]}),
  F({title:"調撥 · 明細",say:'輸入商品條碼／箱號／數量後按 <b>新增明細</b>',ok:"新增明細",btns:["新增明細","取消暫確","離開"],
    fields:[["商品條碼","2727130811"],["箱號","1"],["數量","6"]]}),
  F({title:"調撥 · 暫確",say:'項次內容數量正確後按 <b>暫確</b>（要改就按取消暫確，會有提醒視窗）',ok:"暫確",btns:["暫確","取消暫確"]}),
@@ -359,7 +373,7 @@ var FLOWS=[
 {id:"f18",cat:"商品條碼",name:"一般條碼申請",task:"申請一般商品條碼",steps:[L(),M1("商品條碼"),
  F({title:"商品條碼",say:'確認要申請哪一種——按 <b>一般條碼</b>',ok:"一般條碼",btns:["一般條碼","屆期條碼"]}),
  F({title:"一般條碼 · 新增單號",say:'在申請人欄位輸入申請工號後按 <b>新增</b>，會自動取得單號',ok:"新增",btns:["新增","查詢","清除"],
-   fields:[["申請人","27679"],["稅別","保稅／完稅"]]}),
+   fields:[["申請人","31024"],["稅別","保稅／完稅"]]}),
  F({title:"一般條碼 · 輸入",say:'輸入商品條碼及申請數量後按 <b>新增</b>（下一步再選類型）',ok:"新增",btns:["新增","作廢"],
    fields:[["商品條碼","2727130811"],["數量","5"],["進貨年月 / AGE CODE","可擇一"]],
    out:"商品條碼可輸入國際碼與品號，不能輸入廠商貨號"}),
@@ -372,7 +386,7 @@ var FLOWS=[
 {id:"f19",cat:"商品條碼",name:"屆期條碼申請",task:"幫屆期商品申請折扣條碼",steps:[L(),M1("商品條碼"),
  F({title:"商品條碼",say:'按 <b>屆期條碼</b>',ok:"屆期條碼",btns:["一般條碼","屆期條碼"]}),
  F({title:"屆期條碼 · 新增單號",say:'申請人欄位輸入申請工號後按 <b>新增</b> 取得單號',ok:"新增",btns:["新增","查詢","清除"],
-   fields:[["申請人","27679"],["稅別","屆期保／完稅"]]}),
+   fields:[["申請人","31024"],["稅別","屆期保／完稅"]]}),
  F({title:"屆期條碼 · 輸入",say:'輸入商品條碼、數量後按 <b>新增</b>',ok:"新增",btns:["新增","作廢"],
    fields:[["商品條碼","2727130811"],["數量","3"]],
    out:"商品條碼可輸入國際碼與品號，不能輸入廠商貨號"}),
@@ -631,7 +645,7 @@ function fitK(){
 function applyZoom(){
  var k=ZOOM||fitK();
  var zb=document.getElementById('zfit');
- if(zb)zb.textContent=ZOOM?"適合畫面":"適合畫面 "+Math.round(k*100)+"%";
+ if(zb)zb.textContent=ZOOM?(Math.round(k*100)+"%　↺適合"):("適合畫面 "+Math.round(k*100)+"%");
  document.getElementById('stageBox').style.transform='scale('+k+')';
  document.getElementById('wrap').style.height=(660*k+14)+'px';
  document.getElementById('stageBox').style.width=(980*k)+'px';
@@ -661,7 +675,7 @@ window.addEventListener('resize',applyZoom);
 /* ───── 版面 ───── */
 function hdrHTML(){
  var c=S.cashier?S.cashier+"　"+S.cashierNote:"";
- var h='<div class="ab tt" style="left:0;top:0;width:980px">[主畫面]　版本：2.0.0.650　門市：SA SA　機台：SA-34　IP：192.168.33.14</div>';
+ var h='<div class="ab tt" style="left:0;top:0;width:980px">[主畫面]　版本：2.0.0.650　門市：SA SA　機台：SA-34　IP：10.0.0.1</div>';
  h+='<div class="ab hdr" style="left:0;top:16px;width:700px;height:86px;padding:4px 8px">';
  h+='<div class="hd">交易日期：2026/10/01(四)　　　　序號：2295155　　　　<span style="color:#C0392B;font-weight:700">銷貨單號：3402295155</span></div>';
  h+='<div class="hd">歸帳日期：2026/10/01　　　　店：SA　SA　機：34　　　活動代碼：'+esc(S.act?S.act+" "+S.actName:"")+'</div>';
@@ -974,7 +988,7 @@ function render(){
 }
 function hintText(){
  if(G.t)return "<b>引導中</b>：步驟說明在機器<b>正下方</b>，不會擋住畫面；橘框／發亮的那一個就是這一步要點的。";
- if(S.scr==="login")return "<b>新交易基本資料</b>：點欄位→右邊出現選擇表。密碼不用打，班機要按「刷登機證」掃 QR。資料齊了按 <b>確定(A+E)</b>。想照流程走就按上面的「📋 選流程」。";
+ if(S.scr==="login")return "<b>新交易基本資料</b>：點欄位→右邊出現選擇表。密碼不用打，班機要按「刷登機證」掃 QR。資料齊了按 <b>確定(A+E)</b>。想照流程走就按上面紅色的 <b>選流程</b>。";
  if(S.scr==="trade")return "<b>交易畫面</b>：右邊點商品條碼＝掃描加入，或用數字鍵打條碼後按 <b>Enter</b>；「商品查詢」只查資料、不會加入商品。點商品列可選取，再按「數量」或「商品刪除」。打完按 <b>結帳</b>。";
  if(S.scr==="cpn1")return "<b>優惠券使用明細</b>：有酬賓券就按「酬賓券」輸入；沒有就直接按 <b>下一步</b>。";
  if(S.scr==="cpn2")return "<b>全部折扣折讓／點換金</b>：先用數字鍵打金額再按「<b>全部折讓</b>」（打百分比按「全部折扣」）；會員點數打金額再按「<b>點換金</b>」——左上明細會跳出 <b>-金額</b>，按 <b>下一步</b> 後商品下一條也會出現同樣的折扣，直接扣掉。";
