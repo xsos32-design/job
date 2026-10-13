@@ -174,7 +174,15 @@ details.fx ol{padding-left:20px}
 .opt .arr{color:var(--sub);display:flex;align-items:center}
 .gblk{counter-reset:gi}
 .gblk+.gblk{border-top:1px solid var(--line)}
-.gcat{background:var(--sealSoft);color:var(--seal);font-weight:800;font-size:12.5px;letter-spacing:.6px;padding:8px 11px;line-height:1.5}
+.gcat{background:var(--sealSoft);color:var(--seal);font-weight:800;font-size:13px;letter-spacing:.6px;padding:8px 11px;line-height:1.5}
+details.gblk>summary.gcat{cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;min-height:44px;box-sizing:border-box}
+details.gblk>summary.gcat::-webkit-details-marker{display:none}
+details.gblk>summary.gcat::after{content:"＋";margin-left:auto;color:var(--sub);font-weight:700;font-size:15px}
+details.gblk[open]>summary.gcat::after{content:"－"}
+details.gblk[open]>summary.gcat{border-bottom:1px solid var(--line)}
+.gcat .gn{background:var(--inkSoft);border:1px solid var(--edge);color:var(--sub);font-size:11.5px;font-weight:700;padding:2px 8px;flex:none}
+.rbar{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.rbar .rhint{font-size:12.5px;color:var(--sub)}
 .gitem{counter-increment:gi;position:relative;padding:9px 12px 9px 32px;line-height:1.7;font-size:13px;border-top:1px solid var(--line)}
 .gitem::before{content:counter(gi);position:absolute;left:11px;top:9px;min-width:14px;color:var(--seal);font-weight:800;font-size:11px;opacity:.85}
 .glist.plain .gitem{padding-left:12px}
@@ -205,7 +213,7 @@ details.fx ol{padding-left:20px}
 <header><span class="logo">韋</span><div>
 <div class="h-title">SA晚班 · 工作執掌</div>
 <div class="h-sub">點別 → 機位 → 符號 → 職掌／規則</div></div></header>
-<div class="stamp">最後更新：2026-10-13 · v9.3</div>
+<div class="stamp">最後更新：2026-10-13 · v9.4</div>
 <div class="qbox"><span class="qi">⌕</span><input id="q" type="search" placeholder="搜尋符號、工作、規則……" oninput="doSearch()" autocomplete="off"><button class="qc" onclick="clrQ()">✕</button></div><div id="qres"></div><nav class="crumbs" id="crumbs"></nav><div id="backwrap"></div><div id="view"></div>
 </div>
 <button id="totop" title="回到頂端" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
@@ -314,7 +322,17 @@ function ckTbl(sid,arr){var done=ckGet(),n=0;
 function numTbl(head,arr){let t='<div class="nlist">';arr.forEach(x=>{t+='<div class="nitem">'+esc(x)+'</div>';});return t+'</div>';}
 function fldTbl(h1,rows){let t='<table class="rtbl"><tr><th class="rcat">'+h1+'</th><th>填寫</th></tr>';rows.forEach(r=>{t+='<tr><td class="rcat">'+esc(r[0])+'</td><td class="rrule">'+esc(r[1])+'</td></tr>';});return t+'</table>';}
 function formHTML(n){let h='<div class="note-title">'+esc(n.title||n.label)+'</div>';if(n.svg&&FORMSVG[n.svg])h+=sec("🖼️",n.svgtitle||"單據示意圖",'<div class="fsvg">'+FORMSVG[n.svg]+'</div><div class="fsvg-cap">'+esc(n.svgcap||"橘色字＝要手寫的內容")+'</div>');if(n.svgset)h+=sec("🖼️","步驟簡圖",n.svgset.map(k=>'<div class="fsvg">'+FORMSVG[k]+'</div>').join('<div style="height:10px"></div>'));if(n.intro)h+='<div class="note-meta">'+esc(n.intro)+'</div>';if(n.fields)h+=sec("📋","欄位填寫",fldTbl("欄位",n.fields));if(n.intro2)h+=sec("✍️","填寫方式",'<div class="rrule">'+esc(n.intro2)+'</div>');if(n.cases)h+=sec("🔀","情況",fldTbl("情況",n.cases));if(n.procs)h+=sec("🔢","操作流程",grpTbl("項目","步驟",n.procs.map(x=>({cat:x.h,items:x.items}))));if(n.steps)h+=sec("✍️","空白處寫上",numTbl("項目",n.steps));if(n.notes)h+=sec("⚠️","提醒","<ul>"+n.notes.map(x=>"<li>"+esc(x)+"</li>").join("")+"</ul>");return h;}
-function grpTbl(h1,h2,groups,plain){let t='<div class="glist'+(plain?' plain':'')+'">';groups.forEach(g=>{t+='<div class="gblk"><div class="gcat">'+esc(g.cat)+'</div>';g.items.forEach(it=>{t+='<div class="gitem">'+esc(it)+'</div>';});t+='</div>';});return t+'</div>';}
+function ruleOpen(){try{return JSON.parse(localStorage.getItem("sa_rules")||"[]")}catch(e){return []}}
+function ruleTog(cat,on){var a=ruleOpen(),i=a.indexOf(cat);if(on&&i<0)a.push(cat);if(!on&&i>=0)a.splice(i,1);try{localStorage.setItem("sa_rules",JSON.stringify(a))}catch(e){}}
+function ruleAll(){var ds=[].slice.call(document.querySelectorAll("#view details.gblk"));if(!ds.length)return;
+ var want=ds.some(function(d){return !d.open});
+ ds.forEach(function(d){d.open=want;ruleTog(d.getAttribute("data-cat"),want)});
+ var b=document.getElementById("ruleAllBtn");if(b)b.textContent=want?"全部收合":"全部展開";}
+function ruleBar(n){var op=ruleOpen().length;return '<div class="rbar"><button id="ruleAllBtn" class="pinbtn" style="margin-bottom:0" onclick="ruleAll()">'+(op?"全部收合":"全部展開")+'</button><span class="rhint">'+n+' 類・點標題展開</span></div>';}
+function grpTbl(h1,h2,groups,plain,coll){let t='<div class="glist'+(plain?' plain':'')+'">';var op=coll?ruleOpen():null;groups.forEach(g=>{
+  if(coll){var on=op.indexOf(g.cat)>=0;t+='<details class="gblk" data-cat="'+esc(g.cat)+'"'+(on?' open':'')+' ontoggle="ruleTog(this.getAttribute(\'data-cat\'),this.open)"><summary class="gcat">'+esc(g.cat)+'<span class="gn">'+g.items.length+'</span></summary>';}
+  else{t+='<div class="gblk"><div class="gcat">'+esc(g.cat)+'</div>';}
+  g.items.forEach(it=>{t+='<div class="gitem">'+esc(it)+'</div>';});t+=coll?'</details>':'</div>';});return t+'</div>';}
 function timeTbl(arr){let t='<table class="rtbl"><tr><th class="tcat">時段</th><th>內容</th></tr>';var re=/^(\d{1,2}:\d{2}(?:[-~]\d{1,2}:\d{2})?)\s*([\s\S]*)$/;arr.forEach(v=>{var ind=v.startsWith("　");var s=v.trim();var m=s.match(re);var tm=m?m[1]:"";var ct=m?m[2]:s;t+='<tr><td class="tcat">'+esc(tm)+'</td><td class="rrule"'+(ind?' style="padding-left:18px;color:var(--sub)"':'')+'>'+esc(ct)+'</td></tr>';});return t+'</table>';}
 function wrapCJK(t,n){var W=function(s){var w=0;for(var j=0;j<s.length;j++){w+=s.charCodeAt(j)>255?1:0.55;}return w;};var AW=/[0-9A-Za-z.%:\/-]/,NS=/[）)」』】〉》，。、；：！？]/;var out=[],cur="";for(var i=0;i<t.length;i++){cur+=t[i];if(W(cur)>=n){while(t[i+1]&&NS.test(t[i+1])){cur+=t[i+1];i++;}var nx=t[i+1];if(nx&&AW.test(nx)&&AW.test(cur[cur.length-1])){var p=cur.length-1;while(p>0&&AW.test(cur[p-1]))p--;if(p>0&&W(cur.slice(0,p))>=n*0.5){out.push(cur.slice(0,p));cur=cur.slice(p);continue;}}out.push(cur);cur="";}}if(cur)out.push(cur);return out;}
 function timeSVG(arr){
@@ -381,7 +399,7 @@ if(__cur&&__cur.id)h+='<button class="pinbtn'+(__on?" on":"")+'" onclick="setPin
   h+=sec("🕐","時段 / 站位",sv?'<div class="fsvg tl">'+sv+'</div><div class="fsvg-cap">橘點＝時間點；虛線下方為不分時段的提醒</div>':timeTbl(c.timing));
  }
  if(c.proc&&c.proc.length){h+=sec("💰","帳後",numTbl("步驟",c.proc))}
-var grp=c.ruleKeys.map(k=>({cat:RULES[k].title.replace("規則",""),items:RULES[k].items}));if(c.pos!=="外場"&&c.pos!=="L9"){CASHIER.forEach(g=>grp.push(g));}var rt=grpTbl("分類","規則",grp);h+=sec("📜","規則",rt);
+var grp=c.ruleKeys.map(k=>({cat:RULES[k].title.replace("規則",""),items:RULES[k].items}));if(c.pos!=="外場"&&c.pos!=="L9"){CASHIER.forEach(g=>grp.push(g));}h+=sec("📜","規則",ruleBar(grp.length)+grpTbl("分類","規則",grp,false,true));
 if(c.pos!=="外場"&&c.pos!=="L9"){h+='<details class="fx"><summary>💱 外幣收受</summary><div class="fxbody"><div class="fxnote">＊ '+esc(FX.note)+'</div>'+numTbl("步驟",FX.steps)+'</div></details>';h+='<details class="fx"><summary>🗑️ 作廢代號</summary><div class="fxbody">'+numTbl("作廢原因",VOID)+'</div></details>';var cg=[{cat:"通則",items:CURRENCY.general}].concat(CURRENCY.items.map(it=>({cat:it[0],items:it[1]})));h+='<details class="fx"><summary>🚫 不收幣別／版本</summary><div class="fxbody">'+grpTbl("幣別","內容",cg)+'</div></details>';var ct='<table class="rtbl" style="font-size:12px"><tr><th>卡別</th><th>碼數</th><th>開頭</th><th>防偽</th></tr>'+CARD.types.map(t=>'<tr><td class="rcat">'+esc(t[0])+'</td><td class="rrule">'+esc(t[1])+'</td><td class="rrule">'+esc(t[2])+'</td><td class="rrule">'+esc(t[3])+'</td></tr>').join("")+'</table>';var cgrp=[{cat:"銀聯卡",items:CARD.unionpay},{cat:"收授規範",items:CARD.rules},{cat:"可疑處理",items:CARD.suspect},{cat:"感應／其他",items:CARD.sense}];h+='<details class="fx"><summary>💳 信用卡</summary><div class="fxbody">'+ct+grpTbl("分類","內容",cgrp)+'</div></details>';h+='<details class="fx"><summary>🧾 旅行支票 T/C</summary><div class="fxbody">'+numTbl("注意事項",TC)+'</div></details>';h+='<details class="fx"><summary>📅 屆期抄寫</summary><div class="fxbody">'+grpTbl("分類","內容",EXPIRY.map(s=>({cat:s.h,items:s.items})))+'</div></details>';h+='<details class="fx"><summary>📦 盤點作業</summary><div class="fxbody">'+grpTbl("分類","內容",STOCK.map(s=>({cat:s.h,items:s.items})))+'</div></details>';}
  return h;
 }
@@ -486,7 +504,7 @@ function coverHTML(){
   h+='</div>';
  });
  let rk=[];coverSel.forEach(id=>findById(id).content.ruleKeys.forEach(k=>{if(rk.indexOf(k)<0)rk.push(k);}));
- rk.forEach(k=>{h+=sec("📜",RULES[k].title,"<ol>"+RULES[k].items.map(x=>"<li>"+esc(x)+"</li>").join("")+"</ol>");});
+ if(rk.length){var rg=rk.map(k=>({cat:RULES[k].title.replace("規則",""),items:RULES[k].items}));h+=sec("📜","規則",ruleBar(rg.length)+grpTbl("分類","規則",rg,false,true));}
  let anyM=coverSel.some(id=>{var c=findById(id).content;return c.pos!=="外場"&&c.pos!=="L9";});
  if(anyM)h+=extrasHTML();
  return h;
