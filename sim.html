@@ -271,6 +271,8 @@ function L(){return {scr:"login"};}
 function M1(k){return {scr:"menu1",ok:k,say:'按 <b>'+k+'</b> 鍵'};}
 function M2(cat,k){return {scr:"menu2",cat:cat,ok:k,say:'按 <b>'+k+'</b> 鍵'};}
 function F(o){o.scr="func";return o;}
+function R1(k){var x=M1(k);x.pic={k:"rich",t:k};return x;}
+function R2(cat,k){var x=M2(cat,k);x.pic={k:"rich",g:true,cat:cat,t:k};return x;}
 var FQ="";
 var FLOWS=[
 /* ── 公告 ── */
@@ -358,21 +360,21 @@ var FLOWS=[
    pic:{k:"paper",title:"收款明細表",lines:["歸帳日：2026/09/30","庫別／機台：SA / __","新台幣：__________","美金：__________","日幣：__________","人民幣：__________","合計：__________","收款人簽名：________"]}})]},
 
 /* ── 庫存 ── */
-{id:"f16",cat:"庫存",name:"調撥保稅",task:"把商品調撥到別的庫別（保稅）",steps:[L(),M1("庫存"),M2("庫存","調撥保稅"),
+{id:"f16",cat:"庫存",name:"調撥保稅",task:"把商品調撥到別的庫別（保稅）",steps:[L(),R1("庫存"),R2("庫存","調撥保稅"),
  F({title:"調撥保稅 · 步驟1",say:'先按 <b>新增</b> 開一張新單（查詢＝叫出舊單、清除＝清空畫面）。右上「稅別」會顯示 <b>保稅</b>，因為是從「調撥保稅」進來的。',ok:"新增",btns:["查詢","新增","清除"],
-   pic:{k:"trf",hi:"新增",rows:[{l:"撥出庫",v:"SA",l2:"撥入庫",v2:""},{l:"挑貨單號",v:"",l2:"挑貨人",v2:""},{l:"調撥日",v:"2026/10/15",l2:"狀態",v2:"",grey2:true},{l:"單號",v:"",full:true,grey:true},{l:"備註",v:"",full:true,save:true},{l:"備註2",v:"",full:true},{l:"備註3",v:"",full:true}]}}),
+   pic:{k:"trf",hi:"新增",v:{}}}),
  F({title:"調撥保稅 · 撥入庫",say:'撥出庫固定是 <b>SA</b>；游標會跳到 <b>撥入庫</b>，輸入收貨單位的庫別代碼（例：<b>SJ</b>）。畫面下方有螢幕鍵盤（ABC／#+=／隱藏鍵盤）＋右邊數字鍵 Back／Clear／Ent。',ok:"SJ",btns:["SJ","RT1","RT2","隱藏鍵盤"],
-   pic:{k:"trf",focus:"撥入庫",rows:[{l:"撥出庫",v:"SA",l2:"撥入庫",v2:""},{l:"挑貨單號",v:"",l2:"挑貨人",v2:""},{l:"調撥日",v:"2026/10/15",l2:"狀態",v2:"",grey2:true},{l:"單號",v:"",full:true,grey:true},{l:"備註",v:"",full:true,save:true},{l:"備註2",v:"",full:true},{l:"備註3",v:"",full:true}]}}),
+   pic:{k:"trf",focus:"撥入庫",v:{}}}),
  F({title:"調撥保稅 · 挑貨單號",say:'輸入 <b>挑貨單號</b>（挑貨單上的號碼，例：22126）。',ok:"22126",btns:["22126","22127","Clear"],
-   pic:{k:"trf",focus:"挑貨單號",rows:[{l:"撥出庫",v:"SA",l2:"撥入庫",v2:"SJ"},{l:"挑貨單號",v:"",l2:"挑貨人",v2:""},{l:"調撥日",v:"2026/10/15",l2:"狀態",v2:"",grey2:true},{l:"單號",v:"",full:true,grey:true},{l:"備註",v:"",full:true,save:true},{l:"備註2",v:"",full:true},{l:"備註3",v:"",full:true}]}}),
+   pic:{k:"trf",focus:"挑貨單號",v:{into:"SJ"}}}),
  F({title:"調撥保稅 · 挑貨人",say:'<b>挑貨人</b>填自己的工號（示範用 31024）。',ok:"31024",btns:["31024","Clear","Ent"],
-   pic:{k:"trf",focus:"挑貨人",rows:[{l:"撥出庫",v:"SA",l2:"撥入庫",v2:"SJ"},{l:"挑貨單號",v:"22126",l2:"挑貨人",v2:""},{l:"調撥日",v:"2026/10/15",l2:"狀態",v2:"",grey2:true},{l:"單號",v:"",full:true,grey:true},{l:"備註",v:"",full:true,save:true},{l:"備註2",v:"",full:true},{l:"備註3",v:"",full:true}]}}),
+   pic:{k:"trf",focus:"挑貨人",v:{into:"SJ",pick:"22126"}}}),
  F({title:"調撥保稅 · 備註",say:'調轉到外點時，<b>備註</b>欄填收貨單位的庫別代碼／櫃號（例：003）。備註2、備註3 沒用到就空白。',ok:"003",btns:["003","Clear","略過"],
-   pic:{k:"trf",focus:"備註",rows:[{l:"撥出庫",v:"SA",l2:"撥入庫",v2:"SJ"},{l:"挑貨單號",v:"22126",l2:"挑貨人",v2:"31024"},{l:"調撥日",v:"2026/10/15",l2:"狀態",v2:"",grey2:true},{l:"單號",v:"",full:true,grey:true},{l:"備註",v:"",full:true,save:true},{l:"備註2",v:"",full:true},{l:"備註3",v:"",full:true}]}}),
+   pic:{k:"trf",focus:"備註",v:{into:"SJ",pick:"22126",who:"31024"}}}),
  F({title:"調撥保稅 · 儲存",say:'四個欄位確認無誤後按 <b>儲存</b>；<b>單號</b>和<b>狀態</b>會由系統帶出來。',ok:"儲存",btns:["儲存","清除","離開"],cap:"單號、狀態是灰色欄位，不用自己打",
-   pic:{k:"trf",hi:"儲存",rows:[{l:"撥出庫",v:"SA",l2:"撥入庫",v2:"SJ"},{l:"挑貨單號",v:"22126",l2:"挑貨人",v2:"31024"},{l:"調撥日",v:"2026/10/15",l2:"狀態",v2:"",grey2:true},{l:"單號",v:"",full:true,grey:true},{l:"備註",v:"003",full:true,save:true},{l:"備註2",v:"",full:true},{l:"備註3",v:"",full:true}]}}),
+   pic:{k:"trf",hi:"儲存",v:{into:"SJ",pick:"22126",who:"31024",memo:"003"}}}),
  F({title:"調撥保稅 · 單已建立",say:'看到單號與狀態出現就代表存檔成功，接著輸入明細。按 <b>下一步</b>',ok:"下一步",btns:["下一步"],
-   pic:{k:"trf",rows:[{l:"撥出庫",v:"SA",l2:"撥入庫",v2:"SJ"},{l:"挑貨單號",v:"22126",l2:"挑貨人",v2:"31024"},{l:"調撥日",v:"2026/10/15",l2:"狀態",v2:"暫存",grey2:true},{l:"單號",v:"TR26101500123",full:true,grey:true},{l:"備註",v:"003",full:true,save:true},{l:"備註2",v:"",full:true},{l:"備註3",v:"",full:true}]}}),
+   pic:{k:"trf",v:{into:"SJ",pick:"22126",who:"31024",memo:"003",no:"TR26101500123",st:"暫存"}}}),
  F({title:"調撥 · 明細",say:'輸入商品條碼／箱號／數量後按 <b>新增明細</b>',ok:"新增明細",btns:["新增明細","取消暫確","離開"],
    fields:[["商品條碼","2727130811"],["箱號","1"],["數量","6"]]}),
  F({title:"調撥 · 暫確",say:'項次內容數量正確後按 <b>暫確</b>（要改就按取消暫確，會有提醒視窗）',ok:"暫確",btns:["暫確","取消暫確"]}),
@@ -518,37 +520,6 @@ var FLOWS=[
 function xe(s){return String(s).replace(/[&<>]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;"}[c]})}
 function sv(h,inner){return '<svg viewBox="0 0 300 '+h+'" class="pic" preserveAspectRatio="xMidYMid meet" role="img">'+inner+'</svg>'}
 function bar(title,w){return '<rect x="0" y="0" width="300" height="18" fill="#153A6B"/><text x="8" y="12.5" font-size="9" font-weight="700" fill="#DCE7F5">'+xe(title)+'</text><text x="292" y="12.5" font-size="8" fill="#8FA9CC" text-anchor="end">SA 練習</text>'}
-function trfSVG(o){
- var rows=o.rows||[],f=o.focus||"",hi=o.hi||"",y0=40,rh=15,h=y0+rows.length*rh+8;
- var s='<rect width="300" height="'+h+'" fill="#DDE3EE"/>';
- s+='<rect x="0" y="0" width="300" height="9" fill="#2B3FA8"/><text x="4" y="6.8" font-size="5.5" fill="#D8E0FF">EVR Web\u7db2\u9801\u670d\u52d9</text>';
- s+='<rect x="0" y="9" width="300" height="14" fill="#3B3B3B"/>';
- s+='<rect x="4" y="11" width="10" height="10" rx="2" fill="#E07B2A"/><rect x="16" y="11" width="10" height="10" rx="2" fill="#E07B2A"/>';
- s+='<text x="150" y="20" font-size="10" font-weight="700" fill="#FFFFFF" text-anchor="middle">'+xe(o.title||"\u8abf\u64a5\u4fdd\u7a05")+'</text>';
- s+='<text x="296" y="15" font-size="5.5" fill="#CFCFCF" text-anchor="end">31024\u3000RT2</text>';
- s+='<text x="296" y="21" font-size="5.5" fill="#CFCFCF" text-anchor="end">17\u3000SA</text>';
- s+='<text x="3" y="32" font-size="5" fill="#44506B">\u6b65\u9a5f1</text>';
- s+='<rect x="19" y="25" width="26" height="10" fill="#C9CFE8" stroke="#8A96B4"/><text x="32" y="32" font-size="6.5" fill="#13214A" text-anchor="middle">\u55ae\u865f</text>';
- s+='<rect x="47" y="25" width="90" height="10" fill="#FFFFFF" stroke="#8A96B4"/>';
- [["\u67e5\u8a62",139,"#1B5FC8"],["\u65b0\u589e",162,"#1E9E4A"],["\u6e05\u9664",185,"#C0392B"]].forEach(function(b){
-  s+='<rect x="'+b[1]+'" y="25" width="22" height="10" fill="'+b[2]+'" stroke="'+(hi===b[0]?"#E8952F":b[2])+'" stroke-width="'+(hi===b[0]?2:1)+'"/>';
-  s+='<text x="'+(b[1]+11)+'" y="32" font-size="6.5" fill="#FFFFFF" text-anchor="middle">'+xe(b[0])+'</text>';});
- s+='<rect x="213" y="25" width="26" height="10" fill="#EDEFF5" stroke="#8A96B4"/><text x="226" y="32" font-size="6.5" fill="#13214A" text-anchor="middle">\u7a05\u5225</text>';
- s+='<rect x="240" y="25" width="28" height="10" fill="#C9CFE8" stroke="#8A96B4"/><text x="254" y="32" font-size="6.5" fill="#13214A" text-anchor="middle">'+xe(o.tax||"\u4fdd\u7a05")+'</text>';
- s+='<text x="3" y="'+(y0+8)+'" font-size="5" fill="#44506B">\u6b65\u9a5f2</text>';
- var cell=function(lx,fx,fw,y,l,v,grey){
-  var fo=(f===l);
-  var r='<rect x="'+lx+'" y="'+y+'" width="34" height="12" fill="#E3E8F3" stroke="#8A96B4"/><text x="'+(lx+17)+'" y="'+(y+8.5)+'" font-size="6.5" fill="#13214A" text-anchor="middle">'+xe(l)+'</text>';
-  r+='<rect x="'+fx+'" y="'+y+'" width="'+fw+'" height="12" fill="'+(grey?"#BFC7D8":"#FFFFFF")+'" stroke="'+(fo?"#E8952F":"#8A96B4")+'" stroke-width="'+(fo?2:1)+'"/>';
-  r+='<text x="'+(fx+4)+'" y="'+(y+8.5)+'" font-size="6.5" fill="#13214A">'+xe(v||"")+'</text>';
-  return r;};
- rows.forEach(function(r,i){var y=y0+i*rh;
-  if(r.full){s+=cell(19,55,r.save?160:245,y,r.l,r.v,r.grey);
-   if(r.save)s+='<rect x="221" y="'+y+'" width="44" height="12" fill="#1B5FC8" stroke="'+(hi==="\u5132\u5b58"?"#E8952F":"#1B5FC8")+'" stroke-width="'+(hi==="\u5132\u5b58"?2:1)+'"/><text x="243" y="'+(y+8.5)+'" font-size="7" fill="#FFFFFF" text-anchor="middle">\u5132\u5b58</text>';}
-  else{s+=cell(19,55,74,y,r.l,r.v,r.grey)+cell(150,186,79,y,r.l2,r.v2,r.grey2);}
- });
- return sv(h,s);
-}
 function winSVG(o){
  var f=o.fields||[],n=f.length,note=o.note?String(o.note).split("\n").slice(0,3):[],h=26+n*20+note.length*11+10;
  var s=bar(o.title||"");
@@ -1327,8 +1298,10 @@ function hsave(){try{localStorage.setItem("posrich_hint",FHINT?"1":"0")}catch(e)
 function hToggle(){FHINT=!FHINT;hsave();render()}
 function stepOf(){var s=G.fl.steps[G.fi];
  if(s.scr==="login")return {scr:"login",title:"新交易基本資料",say:LOGIN.say,ok:LOGIN.ok,btns:LOGIN.btns,fields:LOGIN.fields};
- if(s.scr==="menu1")return {scr:"menu1",title:"POS RICH 功能列表（第一層）",say:s.say,ok:s.ok,btns:MENU1};
- if(s.scr==="menu2")return {scr:"menu2",title:s.cat+"（第二層）",say:s.say,ok:s.ok,btns:MENU2[s.cat]||[]};
+ if(s.scr==="menu1")return {scr:"menu1",title:"POS RICH 功能列表（第一層）",say:s.say,ok:s.ok,pic:s.pic,
+  btns:s.pic?RICH1.map(function(y){return y[0].replace(/\n/g,"")}):MENU1};
+ if(s.scr==="menu2")return {scr:"menu2",title:s.cat+"（第二層）",say:s.say,ok:s.ok,pic:s.pic,
+  btns:(s.pic?RICH2[s.cat]:MENU2[s.cat])||[]};
  return s;}
 function fStart(id){
  var f=FLOWS.filter(function(x){return x.id===id})[0];if(!f)return;
@@ -1367,7 +1340,8 @@ function picHTML(s){
  if(p.k==="pos")return wrapZ(posSVG(p));
  if(p.k==="dlg")return wrapZ(dlgSVG(p));
  if(p.k==="cpn")return wrapZ(cpnSVG(p));
- if(p.k==="trf")return trfSVG(p);
+ if(p.k==="trf")return wrapZ(trfSVG(p));
+ if(p.k==="rich"){var kk=p.g?(RICH2[p.cat]||[]):RICH1.map(function(y){return y[0]});return wrapZ(richMenuSVG({g:p.g,keys:kk,t:p.t}));}
  if(p.k==="win")return winSVG(p);
  if(p.k==="phone")return phoneSVG(p);
  if(p.k==="alert")return alertSVG(p);
