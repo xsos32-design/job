@@ -88,7 +88,7 @@ function posSVG(o){
  /* 狀態列 */
  s+=R(1,H-10,W-2,9,"#DDE3EE");
  s+=R(480,H-10,22,9,"#E9E24B");s+=T(491,H-3.4,"連線",{s:5.8,a:"middle"});
- s+=T(510,H-3.4,"使用者：鐘嘉瑜",{s:6});s+=T(594,H-3.4,o.time||"AM 04:15:03",{s:6,a:"end"});
+ s+=T(510,H-3.4,"使用者：31024 陳怡君",{s:6});s+=T(594,H-3.4,o.time||"AM 04:15:03",{s:6,a:"end"});
  return sv2(W,H,s);
 }
 var TRADE_KEYS=[["重新\n登入","y"],["商品\n查詢","n"],["營業員","n"],["提貨\n註記","n"],["商品\n刪除","y"],["酬賓券","p"],["贈品","n"],["貴賓","n"],["快速\n結帳","p"],["單筆\n折扣","n"],["轉機\n註記","n"],["會員\n功能","c"],["下一頁","b"],["單筆\n折讓","p"],["統編","n"],["活動\n代碼","n"]];
@@ -143,7 +143,7 @@ function dlgSVG(o){
  /* 螢幕鍵盤 */
  s+=kbdSVG(dx+10,dy+dh+8,360);
  s+=R(1,H-10,W-2,9,"#DDE3EE");s+=R(480,H-10,22,9,"#E9E24B");s+=T(491,H-3.4,"連線",{s:5.8,a:"middle"});
- s+=T(510,H-3.4,"使用者：鐘嘉瑜",{s:6});s+=T(594,H-3.4,o.time||"AM 04:14:34",{s:6,a:"end"});
+ s+=T(510,H-3.4,"使用者：31024 陳怡君",{s:6});s+=T(594,H-3.4,o.time||"AM 04:14:34",{s:6,a:"end"});
  return sv2(W,H,s);
 }
 function kbdSVG(x0,y0,w){
@@ -187,6 +187,98 @@ function cpnSVG(o){
   if(on)s+='<circle cx="'+(b[1]+b[2]-5)+'" cy="207" r="3.6" fill="#E8541E"/>';});
  s+=kbdSVG(14,236,380);
  s+=R(1,H-10,W-2,9,"#DDE3EE");s+=R(480,H-10,22,9,"#E9E24B");s+=T(491,H-3.4,"連線",{s:5.8,a:"middle"});
- s+=T(510,H-3.4,"使用者：鐘嘉瑜",{s:6});s+=T(594,H-3.4,o.time||"AM 04:15:09",{s:6,a:"end"});
+ s+=T(510,H-3.4,"使用者：31024 陳怡君",{s:6});s+=T(594,H-3.4,o.time||"AM 04:15:09",{s:6,a:"end"});
+ return sv2(W,H,s);
+}
+
+/* ── EVR Web 網頁服務畫面（依實機照片重繪，風格與打單機一致）── */
+function evrTop(W){
+ var s=R(0,0,W,10,"#2B3FA8")+T(5,7.5,"EVR Web\u7db2\u9801\u670d\u52d9",{s:6,f:"#D8E0FF"});
+ s+=R(0,10,W,22,"#D8DDEA");
+ s+=R(430,14,48,14,"#E9ECF4","#8A96B4",0.8)+T(454,23.5,"\u9996\u9801",{s:7,a:"middle"});
+ s+=R(482,14,60,14,"#E9ECF4","#8A96B4",0.8)+T(512,23.5,"\u91cd\u65b0\u6574\u7406",{s:7,a:"middle"});
+ s+=R(546,14,48,14,"#E9ECF4","#8A96B4",0.8)+T(570,23.5,"\u96e2\u958b",{s:7,a:"middle"});
+ return s;
+}
+function evrFoot(W,H,time){
+ return R(0,H-11,W,11,"#DDE3EE")+R(470,H-9.5,24,8,"#D7E05A")+T(482,H-3.2,"\u9023\u7dda",{s:5.5,a:"middle"})
+  +T(500,H-3.2,"\u4f7f\u7528\u8005\uff1a31024 \u9673\u6021\u541b",{s:6})+T(596,H-3.2,time||"PM 04:50:12",{s:6,a:"end"});
+}
+function richMenuSVG(o){
+ var W=600,H=400,keys=o.keys||[],g=!!o.g;
+ var cols=g?(keys.length+1):7;
+ var tw=g?78:76,th=g?64:46,gap=6;
+ var x0=g?28:16,y0=g?48:52;
+ var s=R(0,0,W,H,"#E6EAF4","#7A86A8",1)+evrTop(W),i0=0;
+ if(g){s+=R(x0,y0,tw,th,"#E07B2A","#C96A1E",0.8);
+  s+='<path d="M'+(x0+tw/2)+' '+(y0+16)+' l-17 15 h7 v15 h20 v-15 h7 z" fill="#FFFFFF"/>';i0=1;}
+ keys.forEach(function(k,i){
+  var c=(i+i0)%cols,r=Math.floor((i+i0)/cols);
+  var x=x0+c*(tw+gap),y=y0+r*(th+gap),hit=(String(k)===String(o.t));
+  s+=R(x,y,tw,th,g?"#8CC63F":"#D9A441",hit?"#FFFFFF":(g?"#A6D45E":"#E6BE6B"),hit?2.6:0.8);
+  var ls=String(k).split("\n");
+  ls.forEach(function(ln,j){
+   s+=T(x+tw/2,y+th/2+(j-(ls.length-1)/2)*15+5,ln,{s:g?14:13,a:"middle",f:"#FFFFFF",w:1});});
+  if(hit)s+='<path d="M'+(x+tw/2)+' '+(y+th+3)+' l-5 8 h10 z" fill="#C0392B"/>';
+ });
+ s+=evrFoot(W,H,o.time);
+ return sv2(W,H,s);
+}
+function kbKey(x,y,w,h,lab,fs){
+ return R(x,y,w,h,"#EDF0F7","#AEB8CE",0.8)+T(x+w/2,y+h/2+(fs||10)/3,lab,{s:fs||10,a:"middle"});
+}
+function trfSVG(o){
+ var W=600,H=400,f=o.focus||"",hi=o.hi||"",v=o.v||{};
+ var s=R(0,0,W,H,"#E6EAF4","#7A86A8",1)+evrTop(W);
+ /* 標題列 */
+ s+=R(0,32,W,26,"#3B3B3B");
+ s+=R(8,35,20,20,"#E07B2A","#C96A1E",0.8)+'<path d="M18 40 l-7 6 h3 v6 h8 v-6 h3 z" fill="#FFFFFF"/>';
+ s+=R(32,35,20,20,"#E07B2A","#C96A1E",0.8)+'<path d="M48 50 a9 9 0 1 0 -9 -9 h5 l-7 7 -7 -7 h5 a13 13 0 1 1 13 13 z" fill="#FFFFFF"/>';
+ s+=T(300,51,o.title||"\u8abf\u64a5\u4fdd\u7a05",{s:17,a:"middle",f:"#FFFFFF",w:1});
+ s+=T(560,44,"31024",{s:7,f:"#CFCFCF",a:"end"})+T(596,44,"RT2",{s:7,f:"#CFCFCF",a:"end"});
+ s+=T(560,54,"17",{s:7,f:"#CFCFCF",a:"end"})+T(596,54,"SA",{s:7,f:"#CFCFCF",a:"end"});
+ /* 步驟1 */
+ s+=R(0,58,W,20,"#C2CADD");
+ s+=T(4,71,"\u6b65\u9a5f1",{s:6,f:"#44506B"});
+ s+=R(24,60,44,16,"#D8DEEC","#8A96B4",0.8)+T(46,71.5,"\u55ae\u865f",{s:9,a:"middle"});
+ s+=R(70,60,200,16,"#FFFFFF","#8A96B4",0.8)+T(75,71.5,v.no||"",{s:9});
+ [["\u67e5\u8a62",274,"#1B5FC8"],["\u65b0\u589e",316,"#1E9E4A"],["\u6e05\u9664",358,"#C0392B"]].forEach(function(b){
+  s+=R(b[1],60,40,16,b[2],hi===b[0]?"#FFD24A":b[2],hi===b[0]?2.6:0.8);
+  s+=T(b[1]+20,71.5,b[0],{s:9,a:"middle",f:"#FFFFFF",w:1});
+  if(hi===b[0])s+='<path d="M'+(b[1]+20)+' 80 l-5 8 h10 z" fill="#C0392B"/>';});
+ s+=R(406,60,46,16,"#EDEFF5","#8A96B4",0.8)+T(429,71.5,"\u7a05\u5225",{s:9,a:"middle"});
+ s+=R(454,60,56,16,"#C2C9DC","#8A96B4",0.8)+T(482,71.5,o.tax||"\u4fdd\u7a05",{s:9,a:"middle",f:"#4A5468"});
+ /* 步驟2 */
+ s+=T(4,100,"\u6b65\u9a5f2",{s:6,f:"#44506B"});
+ var cell=function(x,y,lw,fw,l,val,grey){
+  var fo=(f===l);
+  var r=R(x,y,lw,16,"#E3E8F3","#8A96B4",0.8)+T(x+lw/2,y+11.5,l,{s:9,a:"middle"});
+  r+=R(x+lw,y,fw,16,grey?"#BFC7D8":"#FFFFFF",fo?"#E8952F":"#8A96B4",fo?2.4:0.8);
+  r+=T(x+lw+5,y+11.5,val||"",{s:9});
+  if(fo)r+='<path d="M'+(x+lw+fw+8)+' '+(y+8)+' l10 -5 v10 z" fill="#E8952F"/>';
+  return r;};
+ s+=cell(24,92,50,66,"\u64a5\u51fa\u5eab","SA")+cell(142,92,50,66,"\u64a5\u5165\u5eab",v.into)
+   +cell(260,92,58,70,"\u6311\u8ca8\u55ae\u865f",v.pick)+cell(390,92,42,70,"\u55ae\u865f",v.no,true);
+ s+=cell(24,112,50,66,"\u8abf\u64a5\u65e5","2026/10/15")+cell(142,112,50,66,"\u6311\u8ca8\u4eba",v.who)
+   +cell(260,112,42,86,"\u72c0\u614b",v.st,true);
+ s+=cell(24,132,50,290,"\u5099\u8a3b",v.memo);
+ s+=R(392,132,52,16,"#1B5FC8",hi==="\u5132\u5b58"?"#FFD24A":"#1B5FC8",hi==="\u5132\u5b58"?2.6:0.8)
+   +T(418,143.5,"\u5132\u5b58",{s:9,a:"middle",f:"#FFFFFF",w:1});
+ if(hi==="\u5132\u5b58")s+='<path d="M418 152 l-5 8 h10 z" fill="#C0392B"/>';
+ s+=cell(24,152,50,290,"\u5099\u8a3b2","")+cell(24,172,50,290,"\u5099\u8a3b3","");
+ /* 螢幕鍵盤 */
+ s+=R(16,208,568,174,"#DCE2EE","#AEB8CE",0.8);
+ s+=kbKey(24,214,44,22,"ABC",9)+kbKey(100,214,44,22,"#+=",9);
+ s+=T(300,230,"\u96b1\u85cf\u9375\u76e4",{s:11,a:"middle",f:"#2B3A5A",w:1});
+ var row=function(ks,x,y,w){var r="";ks.forEach(function(k,i){r+=kbKey(x+i*(w+2),y,w,30,k,12)});return r;};
+ s+=row(["Q","W","E","R","T","Y","U","I","O","P"],24,244,38);
+ s+=row(["A","S","D","F","G","H","J","K","L"],44,278,38);
+ s+=row(["Z","X","C","V","B","N","M"],24,312,38);
+ s+=kbKey(316,312,96,30,"SPACE",10);
+ s+=row(["7","8","9"],430,244,34)+kbKey(532,244,50,30,"Back",9);
+ s+=row(["4","5","6"],430,278,34)+kbKey(532,278,50,30,"Clear",9);
+ s+=row(["1","2","3"],430,312,34)+kbKey(532,312,50,64,"Ent",10);
+ s+=row(["0","00","."],430,346,34);
+ s+=evrFoot(W,H,o.time);
  return sv2(W,H,s);
 }
