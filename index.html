@@ -27,7 +27,7 @@ nav.crumbs{display:flex;flex-wrap:wrap;align-items:center;gap:4px;font-size:13px
 .crumb{background:none;border:none;cursor:pointer;padding:9px 6px;font-size:13.5px;color:var(--sub);font-weight:500;line-height:1.1}
 .crumb.active{color:var(--seal);font-weight:800}
 .sep{opacity:.5}
-.stamp{font-size:11.5px;color:#a08e55;padding-top:6px;letter-spacing:.1em;font-family:var(--mono);font-weight:700}
+.stamp{font-size:11.5px;color:#a08e55;padding-top:6px;letter-spacing:.1em;font-family:var(--mono);font-weight:700}.pbnr{display:block;width:100%;height:clamp(74px,25vw,148px);background:var(--paper) center 45%/cover no-repeat;-webkit-mask-image:linear-gradient(#000 58%,transparent);mask-image:linear-gradient(#000 58%,transparent);margin:4px 0 -14px;pointer-events:none;position:relative}.pbnr::after{content:"";position:absolute;left:0;right:0;bottom:26%;height:1px;background:linear-gradient(90deg,transparent,var(--seal),transparent);opacity:.45}@media print{.pbnr{display:none}}
 .qbox{position:relative;margin:10px 0 2px}
 .qbox input{width:100%;box-sizing:border-box;background:var(--inkSoft);border:1px solid var(--line);border-radius:0;padding:10px 34px 10px 34px;font-size:15px;color:var(--ink);font-family:inherit}
 .qbox input::placeholder{color:var(--sub)}
@@ -237,7 +237,7 @@ details.gblk[open]>summary.gcat{border-bottom:1px solid var(--line)}
 <header><span class="logo">韋</span><div>
 <div class="h-title">SA晚班 · 工作執掌</div>
 <div class="h-sub">點別 → 機位 → 符號 → 職掌／規則</div></div></header>
-<div class="stamp">最後更新：2026-10-16 · v10.4</div>
+<div class="stamp">最後更新：2026-10-17 · v10.5</div>
 <div class="qbox"><span class="qi">⌕</span><input id="q" type="search" placeholder="搜尋符號、工作、規則……" oninput="doSearch()" autocomplete="off"><button class="qc" onclick="clrQ()">✕</button></div><div id="qres"></div><nav class="crumbs" id="crumbs"></nav><div id="backwrap"></div><div id="view"></div>
 </div>
 <script>if("serviceWorker" in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})})}</script>
@@ -294,12 +294,14 @@ setInterval(function(){if(path.length)return;var e=document.querySelector(".hcar
  else if(e&&!n){e.remove();}
  else if(!e&&n){render();}},30000);
 window.addEventListener("scroll",function(){var b=$("totop");if(b)b.className=(window.pageYOffset>700)?"show":"";},{passive:true});
+var PBNR={"onshift":"onshift","offshift":"offshift","newbie":"newbie","payways":"payways","dayflow":"dayflow","tips":"tips","posmap":"posmap","nations":"nations","agrade":"agrade","2140":"s2140","2153":"s2153"};
+function bnrHTML(id){var k=PBNR[id];return k?'<div class="pbnr" aria-hidden="true" style="background-image:url(kvp/'+k+'.webp)"></div>':""}
 function render(){
  const cur=current();
  let cb='<button class="crumb '+(path.length===0?"active":"")+'" onclick="jump(-1)">🏠 點別</button>';
  path.forEach((n,i)=>{cb+='<span class="sep">›</span><button class="crumb '+(i===path.length-1?"active":"")+'" onclick="jump('+i+')">'+esc(n.label)+'</button>'});
  $("crumbs").innerHTML=deico(cb);
- $("backwrap").innerHTML=path.length?'<button class="back" onclick="back()">‹ 上一層</button>':"";
+ var __bid=(path.length===0)?"home":(current().id||"");$("backwrap").innerHTML=bnrHTML(__bid)+(path.length?'<button class="back" onclick="back()">‹ 上一層</button>':"");
  var __st='';for(var __i=0;__i<path.length;__i++){var __x=String(path[__i].id||'');if(__x.indexOf('2140')===0){__st='2140';break}if(__x.indexOf('2153')===0){__st='2153';break}}
  if(__st)document.body.setAttribute('data-store',__st);else document.body.removeAttribute('data-store');
  var __aid=(path.length===0)?'home':(cur.id||'');
