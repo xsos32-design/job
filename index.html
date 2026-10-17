@@ -237,7 +237,7 @@ details.gblk[open]>summary.gcat{border-bottom:1px solid var(--line)}
 <header><span class="logo">韋</span><div>
 <div class="h-title">SA晚班 · 工作執掌</div>
 <div class="h-sub">點別 → 機位 → 符號 → 職掌／規則</div></div></header>
-<div class="stamp">最後更新：2026-10-17 · v10.5</div>
+<div class="stamp">最後更新：2026-10-17 · v10.6</div>
 <div class="qbox"><span class="qi">⌕</span><input id="q" type="search" placeholder="搜尋符號、工作、規則……" oninput="doSearch()" autocomplete="off"><button class="qc" onclick="clrQ()">✕</button></div><div id="qres"></div><nav class="crumbs" id="crumbs"></nav><div id="backwrap"></div><div id="view"></div>
 </div>
 <script>if("serviceWorker" in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})})}</script>
@@ -344,8 +344,8 @@ function ckKey(){var d=new Date();return "sa_ck_"+d.getFullYear()+"-"+(d.getMont
 function wkKey(){var d=new Date(),s=new Date(d);s.setDate(d.getDate()-d.getDay());return "sa_wk_"+s.getFullYear()+"-"+(s.getMonth()+1)+"-"+s.getDate();}
 function ckGet(w){try{var pre=w?"sa_wk_":"sa_ck_",k=w?wkKey():ckKey();for(var i=localStorage.length-1;i>=0;i--){var n=localStorage.key(i);if(n&&n.indexOf(pre)===0&&n!==k)localStorage.removeItem(n);}return JSON.parse(localStorage.getItem(k)||"[]");}catch(e){return []}}
 function ckSet(a,w){try{localStorage.setItem(w?wkKey():ckKey(),JSON.stringify(a))}catch(e){}}
-function ckTog(id,w){var a=ckGet(w),i=a.indexOf(id);if(i<0)a.push(id);else a.splice(i,1);ckSet(a,w);render();}
-function ckClr(w){ckSet([],w);render();}
+function ckTog(id,w){var y=window.pageYOffset||document.documentElement.scrollTop||0;var a=ckGet(w),i=a.indexOf(id);if(i<0)a.push(id);else a.splice(i,1);ckSet(a,w);render();window.scrollTo(0,y);}
+function ckClr(w){var y=window.pageYOffset||document.documentElement.scrollTop||0;ckSet([],w);render();window.scrollTo(0,y);}
 function ckOrd(arr){var a=arr.map(function(x,i){var t=timesIn(String(x));return {x:x,i:i,t:t.length?t[0]:-1}});
  a.sort(function(p,q){if(p.t<0&&q.t<0)return p.i-q.i;if(p.t<0)return 1;if(q.t<0)return -1;return (p.t-q.t)||(p.i-q.i)});
  return a;}
