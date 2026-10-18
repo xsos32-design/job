@@ -17,7 +17,7 @@
  ], c='', t='';
  for(var i=0;i<M.length;i++){ if(M[i][0].test(p)){k=M[i][1];c=M[i][2];t=M[i][3]||'';break;} }
  if(!k) return;
- var src=location.origin+'/job/kv/'+k+'.webp?v=1';
+ var src=location.origin+'/job/kv/'+k+'.webp?v=2';
  function go(){
   if(document.getElementById('xwkv')) return;
   var s=document.createElement('style');
