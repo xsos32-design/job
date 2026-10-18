@@ -160,6 +160,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .fk.act{background:#2E8B57;border-color:#6ED09B}
 .fk.warn{background:#9B3226;border-color:#D07C6E}
 .fk.hint{outline:2px solid #FFD36A;animation:gpulse 1.1s infinite}
+.fskip{background:#161e29;border-left:3px solid #ffc53d;color:#c3cad4;font-size:12.5px;line-height:1.6;padding:8px 10px;margin:0 0 8px}.fskip b{color:#ffc53d}
 .fsay{background:#1A2E52;border:1px solid #2E8B57;color:#DCE7F5;border-radius:0;padding:8px 10px;font-size:13px;margin:0 0 8px}
 .fsay b{color:#FFD36A}
 .fmsg{font-size:12.5px;padding:6px 10px;border-radius:0;margin-top:8px;display:none}
@@ -1228,7 +1229,7 @@ var TASKS=[
  {n:{a:"info"},s:'點清單裡任一筆 —— 注意它<b>不會</b>把商品打進單身'},
  {n:{a:"add"},s:'要真的加入商品，是點右邊的<b>商品條碼</b>掃描'}]}
 ];
-var G={t:null,i:0,fl:null,fi:0,ferr:0};
+var G={t:null,i:0,fl:null,fi:0,ferr:0,logged:false,skip:false};
 function gKeyWanted(){if(!G.t)return null;var st=G.t.steps[G.i];return st&&st.n.k?st.n.k:null}
 function gFieldWanted(){if(!G.t)return null;var st=G.t.steps[G.i];return st&&st.n.f?st.n.f:null}
 function gScanWanted(){if(!G.t)return false;var st=G.t.steps[G.i];return !!(st&&st.n.a==="add")}
@@ -1305,11 +1306,15 @@ function stepOf(){var s=G.fl.steps[G.fi];
  return s;}
 function fStart(id){
  var f=FLOWS.filter(function(x){return x.id===id})[0];if(!f)return;
- G.fl=f;G.fi=0;G.ferr=0;S.ov="gf";render();
+ G.fl=f;G.ferr=0;
+ G.skip=!!(G.logged&&f.steps[0]&&f.steps[0].scr==="login"&&f.steps.length>1);
+ G.fi=G.skip?1:0;
+ S.ov="gf";render();
 }
 function fHit(i){
  var s=stepOf(),b=(s.btns||[])[i];
  if(b===s.ok){
+  if(s.scr==="login")G.logged=true;
   G.fi++;
   if(G.fi>=G.fl.steps.length){FDONE[G.fl.id]=1;fsave();var nm=G.fl.cat+" · "+G.fl.name;G.fl=null;closeOv();say("🎉 走完「"+nm+"」流程。");render();return}
   render();var m=document.getElementById("fmsg");if(m){m.className="fmsg good";m.textContent="✓ 正確"}
@@ -1351,6 +1356,7 @@ function picHTML(s){
 function flowHTML(){
  var s=stepOf(),n=G.fl.steps.length;
  var h='<div class="card2 big2"><h3>'+esc(G.fl.cat)+' · '+esc(G.fl.name)+'　STEP '+(G.fi+1)+' / '+n+'</h3><div class="bd">';
+ if(G.skip&&G.fi===1)h+='<div class="fskip">登入步驟同前：在「新交易基本資料」輸入工號密碼後按 <b>Pos Rich</b>，已經幫你跳過。要重做按下面「‹ 上一步」。</div>';
  h+='<div class="fsay">'+s.say+'</div>';
 h+='<div style="margin:0 0 8px"><button class="btn" style="width:auto;padding:5px 12px;font-size:12px" onclick="hToggle()">'+(FHINT?"\u2600 \u63d0\u793a\uff1a\u958b\uff08\u6b63\u89e3\u6703\u767c\u4eae\uff09":"\u25CB \u63d0\u793a\uff1a\u95dc\uff08\u81ea\u5df1\u627e\u7b54\u6848\uff09")+'</button></div>';
  h+=picHTML(s);
