@@ -35,6 +35,17 @@ h1{font-size:17px;margin:0;letter-spacing:.18em;font-family:var(--mono);font-wei
 button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 .bar .sp{flex:1}
+.bar .big2b{background:var(--inkSoft);border-color:var(--gold);color:var(--gold);font-size:14px;padding:0 15px;font-weight:800}
+.bar .big2b.on{background:#3a2c08;border-color:var(--gold);color:var(--gold);box-shadow:0 0 14px -4px rgba(255,197,61,.85)}
+.sbig{display:block;width:100%;box-sizing:border-box;text-align:left;background:#E6E9F2;border:1px solid #8A96B4;border-left:5px solid #2E8B57;color:#16233F;font-family:inherit;padding:11px 13px;margin-bottom:9px;cursor:pointer;min-height:56px}
+.sbig:hover{background:#FFF6DF}
+.sbig b{display:block;font-size:15.5px;font-weight:800;margin-bottom:2px}
+.sbig i{display:block;font-style:normal;font-size:12.5px;color:#4A5873;line-height:1.5}
+.sbig.b2{border-left-color:#1B5FC8}
+.sbig.b3{border-left-color:#E8952F}
+body.kmode #stage .k,body.kmode #stage .btn{box-shadow:inset 0 0 0 2px rgba(255,197,61,.55)}
+body.kmode #stage .inp{box-shadow:inset 0 0 0 2px rgba(255,197,61,.35)}
+#hmBtn{margin-right:8px}
 .hint{font-size:12px;color:var(--sub);margin:0 0 8px;line-height:1.6}
 .qchip{display:inline-flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--edge);color:var(--sub);border-radius:0;padding:0 14px;min-height:38px;font-size:12.5px;cursor:pointer;font-family:inherit;margin:0 0 8px}
 @media(max-width:760px){
@@ -236,22 +247,22 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 <div class="bar">
   <button class="big" onclick="openPicker()"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M9 12h6"/><path d="M9 16h6"/></svg>選流程</button>
   <button id="qfill" onclick="quickFill()"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg>快速帶入</button>
-  <span class="sp"></span>
-  <button id="flwBtn" class="on ico" onclick="flwToggle()" title="跟步驟放大"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/><path d="M11 8v6"/><path d="M8 11h6"/></svg><span class="lb">跟步驟放大</span></button>
-  <button class="ico" onclick="resetAll()" title="重新開始"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg><span class="lb">重新開始</span></button>
+  <button id="kmBtn" class="big2b" onclick="kmToggle()"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>按鍵說明</button>
 </div>
 <div class="bar">
   <div class="zseg"><button onclick="zoomSet(-1)" aria-label="縮小">－</button><button id="zfit" class="on" onclick="zoomFit()">適合畫面</button><button onclick="zoomSet(1)" aria-label="放大">＋</button></div>
+  <button id="flwBtn" class="on ico" onclick="flwToggle()" title="跟步驟放大"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/><path d="M11 8v6"/><path d="M8 11h6"/></svg><span class="lb">跟步驟放大</span></button>
+  <button class="ico" onclick="resetAll()" title="重新開始"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg><span class="lb">重新開始</span></button>
 </div>
 <p class="hint" id="hint"></p>
 </div>
 <div class="top" style="padding-top:0">
-<button class="qchip" id="mchip" style="display:none" onclick="var e=document.getElementById('mtip');e.style.display=e.style.display==='none'?'block':'none';tellHeight()"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>畫面大小怎麼調</button><p class="hint" id="mtip" style="display:none">一開啟就自動縮到<b>剛好符合你的畫面寬度</b>，不用左右滑。手機<b>橫放</b>會大一截；要再放大按 ＋，想回到整台可見按<b>適合畫面</b>。</p>
+<button class="qchip" id="hmBtn" onclick="hmTog()" style="display:none"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M4 12h16"/><path d="M4 17h10"/></svg>詳細說明</button><p class="hint" id="hintmore" style="display:none"></p><button class="qchip" id="mchip" style="display:none" onclick="var e=document.getElementById('mtip');e.style.display=e.style.display==='none'?'block':'none';tellHeight()"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>畫面大小怎麼調</button><p class="hint" id="mtip" style="display:none">一開啟就自動縮到<b>剛好符合你的畫面寬度</b>，不用左右滑。手機<b>橫放</b>會大一截；要再放大按 ＋，想回到整台可見按<b>適合畫面</b>。</p>
 </div>
 <div id="wrapOuter"><div id="wrap"><div id="stageBox"><div id="stage"></div></div></div><div id="gband"></div></div>
 <script src="posframe.js"></script>
 <script>if("serviceWorker" in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})})}</script>
-<div class="foot">資料來源：昇恆昌 e 學院「POS RICH 功能工具書」、「結帳 POS 機操作流程 1-10 付款方式」；畫面依 SA-34 實機版面重繪<br><a class="homelink" href="./">‹ 回 SA晚班 · 工作執掌</a></div>
+<div class="foot">資料來源：昇恆昌 e 學院「POS RICH 功能工具書」、「結帳 POS 機操作流程 1-10 付款方式」；畫面依 SA-34 實機版面重繪 · v11.3<br><a class="homelink" href="./">‹ 回 SA晚班 · 工作執掌</a></div>
 
 <script>
 /* ───── POS RICH 功能流程（來源：功能工具書） ───── */
@@ -625,6 +636,30 @@ function flwToggle(){FOLLOW=!FOLLOW;try{localStorage.setItem("posrich_follow",FO
  var b=document.getElementById("flwBtn");if(b)b.classList.toggle("on",FOLLOW);
  if(!FOLLOW){ZOOM=null;document.getElementById("zfit").classList.add("on");}else if(gOn()&&innerWidth<760){ZOOM=0.78;document.getElementById("zfit").classList.remove("on");}
  applyZoom();followStep();}
+var HMORE=false;
+function hmTog(){HMORE=!HMORE;var e=document.getElementById("hintmore");if(e)e.style.display=HMORE?"block":"none";tellHeight();}
+/* ── 按鍵說明模式：點什麼都只解釋，不執行 ── */
+var KMODE=false,KSEL=null;
+var FLDHELP={cashier:["收銀員","這台機器的固定帳號（大夜 66666／晚班 77777／早班 88888），不是你的工號。點一下右邊會跳選擇表。"],
+ seller:["售貨員","打你自己的工號；這一筆算誰的業績就打誰的。香菸一律打自己的。"],
+ pw:["密碼","不用輸入，直接跳下一欄。"],
+ nation:["國籍","客人的國別代碼，點一下右邊跳選擇表（1 中華民國／2 大陸港澳／3 日本／4 韓國…）。"],
+ no1:["號碼1","不用輸入，系統欄位。"],card:["購物卡","不用輸入，系統欄位。"],
+ flight:["班機","按右邊「刷登機證」掃客人登機證 QR，或從航班選擇表點一班。"],
+ dep:["出境日","掃登機證後自動帶入，不用打。"],pick2:["提貨點","不用輸入，系統欄位。"]};
+function kmOn(){KMODE=true;KSEL=null;if(G.fl)fStop();if(G.t)gStop();
+ document.body.classList.add("kmode");var b=document.getElementById("kmBtn");if(b)b.classList.add("on");
+ gBand();render();}
+function kmOff(){KMODE=false;KSEL=null;document.body.classList.remove("kmode");
+ var b=document.getElementById("kmBtn");if(b)b.classList.remove("on");gBand();render();}
+function kmToggle(){KMODE?kmOff():kmOn()}
+function kHelp(t,x){KSEL=[t,x||(typeof KEYHELP!=="undefined"&&KEYHELP[t])||"這一顆還沒寫說明，拿到資料再補上。"];gBand();render();}
+function kmBand(b){
+ b.style.display="block";b.className="";
+ b.innerHTML='<div class="gh"><span class="gt">按鍵說明模式</span><span class="gx">'
+  +'<button title="關閉" onclick="kmOff()">✕<span class="lb"> 關閉</span></button></span></div>'
+  +'<span class="gs">'+(KSEL?('<b>'+esc(KSEL[0])+'</b>　'+esc(KSEL[1])):'點機器上<b>任何一顆鍵或欄位</b>，這裡就會說明它是幹嘛的；這個模式下不會真的執行。')+'</span>';
+ tellHeight();}
 function gOn(){return !!(G.t||G.fl)}
 function followStep(){
  if(!FOLLOW||!gOn()||innerWidth>=760)return;
@@ -635,6 +670,8 @@ function followStep(){
  wrap.scrollLeft+=(er.left+er.width/2)-(wr.left+wr.width/2);
  wrap.scrollTop+=(er.top+er.height/2)-(wr.top+wr.height/2);
 }
+function centreStage(){var w=document.getElementById("wrap");if(!w)return;
+ w.scrollLeft=Math.max(0,(w.scrollWidth-w.clientWidth)/2);w.scrollTop=0;}
 function zoomFit(){ZOOM=null;document.getElementById('zfit').classList.add('on');applyZoom()}
 function zoomSet(d){var cur=ZOOM||fitK();ZOOM=Math.max(.3,Math.min(2,cur+d*0.15));document.getElementById('zfit').classList.remove('on');applyZoom()}
 window.addEventListener('resize',applyZoom);
@@ -950,22 +987,28 @@ function render(){
  else if(S.scr==="done")h=doneHTML();
  if(S.ov)h+=ovHTML();
  document.getElementById('stage').innerHTML=h;
- document.getElementById('hint').innerHTML=hintText();
+ var __h=String(hintText()).split("‖");
+ document.getElementById('hint').innerHTML=__h[0];
+ var __mb=document.getElementById('hmBtn'),__mp=document.getElementById('hintmore');
+ if(__mb&&__mp){if(__h.length>1){__mb.style.display="inline-flex";__mp.innerHTML=__h[1];__mp.style.display=HMORE?"block":"none";}
+  else{__mb.style.display="none";__mp.style.display="none";}}
  applyZoom();
  followStep();
 }
 function hintText(){
+ if(KMODE)return "<b>按鍵說明模式</b>：點機器上任何一顆鍵或欄位，下面就告訴你它是幹嘛的。‖這個模式下不會真的執行動作，可以放心亂點。看完按上面「按鍵說明」關掉就回到正常操作。";
  if(G.fl)return "<b>流程中</b>：步驟說明在機器<b>正下方</b>；<b>橘框發亮</b>的那一格／那一顆就是這一步要按的。按錯會在下面告訴你。";
  if(G.t)return "<b>引導中</b>：步驟說明在機器<b>正下方</b>，不會擋住畫面；橘框／發亮的那一個就是這一步要點的。";
- if(S.scr==="login")return "<b>新交易基本資料</b>：點欄位→右邊出現選擇表。密碼不用打，班機要按「刷登機證」掃 QR。資料齊了按 <b>確定(A+E)</b>。想照流程走就按上面紅色的 <b>選流程</b>。";
- if(S.scr==="trade")return "<b>交易畫面</b>：右邊點商品條碼＝掃描加入，或用數字鍵打條碼後按 <b>Enter</b>；「商品查詢」只查資料、不會加入商品。點商品列可選取，再按「數量」或「商品刪除」。打完按 <b>結帳</b>。";
- if(S.scr==="cpn1")return "<b>優惠券使用明細</b>：有酬賓券就按「酬賓券」輸入；沒有就直接按 <b>下一步</b>。";
+ if(S.scr==="login")return "<b>新交易基本資料</b>：點欄位 → 右邊出現選擇表，資料齊了按 <b>確定(A+E)</b>。‖密碼不用打，班機要按「刷登機證」掃 QR。想照流程走按上面的 <b>選流程</b>；想直接練打單按 <b>快速帶入</b>。"; 
+ if(S.scr==="trade")return "<b>交易畫面</b>：右邊點商品條碼＝掃描加入，打完按 <b>結帳</b>。‖也可以用數字鍵打條碼後按 <b>Enter</b>；「商品查詢」只查資料、不會加入商品。點商品列可選取，再按「數量」或「商品刪除」。"; 
+ if(S.scr==="cpn1")return "<b>優惠券使用明細</b>：沒有券就直接按 <b>下一步</b>。‖有酬賓券就先按「酬賓券」輸入券號再下一步。"; 
  if(S.scr==="cpn2")return "<b>全部折扣折讓／點換金</b>：先用數字鍵打金額再按「<b>全部折讓</b>」（打百分比按「全部折扣」）；會員點數打金額再按「<b>點換金</b>」——左上明細會跳出 <b>-金額</b>，按 <b>下一步</b> 後商品下一條也會出現同樣的折扣，直接扣掉。";
- if(S.scr==="pay")return "<b>付款畫面</b>：先用數字鍵在「輸入區」打<b>收到的金額</b>，再按幣別鍵（現金／美元／日幣／人民幣），畫面會跳出折合台幣與<b>要找多少台幣</b>。「不足」歸零後按 <b>確認付款</b>。";
+ if(S.scr==="pay")return "<b>付款畫面</b>：先用數字鍵打<b>收到的金額</b>，再按幣別鍵。‖現金／美元／日幣／人民幣都一樣，畫面會跳出折合台幣與<b>要找多少台幣</b>。「不足」歸零後按 <b>確認付款</b>。"; 
  return "交易完成。按「下一筆交易」重來。";
 }
 /* ───── 互動 ───── */
 function focusF(id){
+ if(KMODE){var f=FLDHELP[id];kHelp(f?f[0]:"欄位",f?f[1]:"這一欄是系統自動帶入／不需輸入。");return}
  S.focus=id;
  if(id==="cashier")S.panel="cashier";
  else if(id==="seller")S.panel="seller";
@@ -1047,7 +1090,7 @@ var KEYHELP={
  "其他付款":"其他付款：旅行支票(TC)等走這裡。"
 };
 function help(k,pre){say((pre||"")+(KEYHELP[k]||("「"+k+"」在這台模擬機沒有做動作。")));render()}
-function key(k){if(G.fl&&fKey(k))return;key0(k);gHit("k",k);gBand();}
+function key(k){if(KMODE){kHelp(k);return}if(G.fl&&fKey(k))return;key0(k);gHit("k",k);gBand();}
 function key0(k){
  /* 共用 */
  if(k==="匯率表"){S.ov="fx";render();return}
@@ -1208,6 +1251,7 @@ try{GMIN=localStorage.getItem("posrich_gmin")==="1"}catch(e){GMIN=false}
 function gMin(){GMIN=!GMIN;try{localStorage.setItem("posrich_gmin",GMIN?"1":"0")}catch(e){}gBand()}
 function gBand(){
  var b=document.getElementById("gband");
+ if(KMODE)return kmBand(b);
  if(G.fl)return fBand(b);
  if(!G.t){b.style.display="none";b.className="";b.innerHTML="";return}
  b.style.display="block";
@@ -1398,6 +1442,20 @@ function pickerHTML(){
  return h;
 }
 function openPicker(){G.fl=null;G.fmsg="";FQ="";S.ov="picker";gBand();render()}
+function openStart(){if(G.fl)fStop();if(G.t)gStop();if(KMODE)kmOff();S.ov="start";render()}
+function startHTML(){
+ var n=(typeof TASKS!=="undefined"?TASKS.length:0)+(typeof FLOWS!=="undefined"?FLOWS.length:0);
+ return '<div class="card2 big2"><h3>要做什麼？</h3><div class="bd">'
+  +'<button class="sbig" onclick="closeOv();openPicker()"><b>① 照流程學</b>'
+   +'<i>'+n+' 個流程一步一步帶你按，該按的那一顆會發亮，按錯會告訴你那顆鍵實際是幹嘛的。</i></button>'
+  +'<button class="sbig b2" onclick="startFree()"><b>② 自己練打單</b>'
+   +'<i>基本資料幫你填好，直接進交易畫面自由操作：掃商品、改數量、結帳、收錢。</i></button>'
+  +'<button class="sbig b3" onclick="startKey()"><b>③ 這顆鍵是幹嘛的</b>'
+   +'<i>點機器上任何一顆鍵或欄位，下面就告訴你它的作用；這個模式不會真的執行。</i></button>'
+  +'<button class="btn" style="margin-top:4px;width:130px" onclick="closeOv()">直接進機器</button>'
+  +'</div></div>';}
+function startFree(){closeOv();quickFill();key0("確定(A+E)");}
+function startKey(){closeOv();kmOn();}
 
 
 /* ═══ 商品價格查詢（查價 F1）═══ */
@@ -1504,6 +1562,7 @@ function rich2HTML(){
 }
 
 function num(n){
+ if(KMODE){kHelp(/BACK/.test(n)?"退格":"數字鍵 "+n,/BACK/.test(n)?"退格：把輸入區最後一個字刪掉。":"數字鍵：打在下面的「輸入區」。輸入區的數字可以當商品條碼（按 Enter）、數量（按 數量）或收到的金額（按 幣別鍵）。");return}
  if(n==="<<BACK"||n==="←BACK"){S.input=S.input.slice(0,-1)}else{S.input+=n}
  render();
 }
@@ -1669,6 +1728,7 @@ function ovHTML(){
  if(S.ov==="rich2")return rich2HTML();
  if(S.ov==="fn")return fnHTML();
  var h='<div class="ov" onclick="if(event.target===this)closeOv()">';
+ if(S.ov==="start")return h+startHTML()+'</div>';
  if(S.ov==="picker")return h+pickerHTML()+'</div>';
  if(S.ov==="chg")return h+chgHTML()+'</div>';
  if(S.ov==="act")return h+actHTML()+'</div>';
@@ -1723,6 +1783,8 @@ function showInfo(i){var p=PRODUCTS[i];say("商品查詢："+p[1]+"｜條碼 "+p
 if(top!==self){var _h=document.querySelector('header');if(_h)_h.style.display='none';var _f=document.querySelector('.foot');if(_f)_f.style.display='none';document.querySelector('.top').style.paddingTop='0';document.body.style.background='transparent';}
 if(innerWidth<760){document.getElementById('mchip').style.display='inline-flex';}
 resetAll();
+if(innerWidth<760){ZOOM=0.78;document.getElementById("zfit").classList.remove("on");}
+S.ov="start";render();applyZoom();centreStage();
 setTimeout(tellHeight,80);window.addEventListener("load",tellHeight);
 </script>
 </body>
