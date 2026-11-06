@@ -257,7 +257,7 @@ function trfSVG(o){
   r+=T(x+lw+5,y+11.5,val||"",{s:9});
   if(fo)r+='<path d="M'+(x+lw+fw+8)+' '+(y+8)+' l10 -5 v10 z" fill="#E8952F"/>';
   return r;};
- s+=cell(24,92,50,66,"\u64a5\u51fa\u5eab","SA")+cell(142,92,50,66,"\u64a5\u5165\u5eab",v.into)
+ s+=cell(24,92,50,66,"\u64a5\u51fa\u5eab",v.from||"SA")+cell(142,92,50,66,"\u64a5\u5165\u5eab",v.into)
    +cell(260,92,58,70,"\u6311\u8ca8\u55ae\u865f",v.pick)+cell(390,92,42,70,"\u55ae\u865f",v.no,true);
  s+=cell(24,112,50,66,"\u8abf\u64a5\u65e5","2026/10/15")+cell(142,112,50,66,"\u6311\u8ca8\u4eba",v.who)
    +cell(260,112,42,86,"\u72c0\u614b",v.st,true);
