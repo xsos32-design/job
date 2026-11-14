@@ -262,7 +262,7 @@ body.kmode #stage .inp{box-shadow:inset 0 0 0 2px rgba(255,197,61,.35)}
 <div id="wrapOuter"><div id="wrap"><div id="stageBox"><div id="stage"></div></div></div><div id="gband"></div></div>
 <script src="posframe.js"></script>
 <script>if("serviceWorker" in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})})}</script>
-<div class="foot">資料來源：昇恆昌 e 學院「POS RICH 功能工具書」、「結帳 POS 機操作流程 1-10 付款方式」；畫面依 SA-34 實機版面重繪 · v11.4<br><a class="homelink" href="./">‹ 回 SA晚班 · 工作執掌</a></div>
+<div class="foot">資料來源：昇恆昌 e 學院「POS RICH 功能工具書」、「結帳 POS 機操作流程 1-10 付款方式」；畫面依 SA-34 實機版面重繪 · v11.5<br><a class="homelink" href="./">‹ 回 SA晚班 · 工作執掌</a></div>
 
 <script>
 /* ───── POS RICH 功能流程（來源：功能工具書） ───── */
@@ -280,7 +280,7 @@ var LOGIN={say:'在「新交易基本資料」畫面輸入售貨員工號、密�
  fields:[["售貨員工號","31024"],["密碼","••••"],["國籍","1 中華民國"],["班機","BR0706"]],
  btns:["查價F1","交易作廢","暫存取消","確定A+E","會員登錄F9","Pos Rich","其他功能","取消Esc"]};
 
-function L(){return {scr:"login"};}
+function L(k){return k?{scr:"login",ok:k}:{scr:"login"};}
 function M1(k){return {scr:"menu1",ok:k,say:'按 <b>'+k+'</b> 鍵'};}
 function M2(cat,k){return {scr:"menu2",cat:cat,ok:k,say:'按 <b>'+k+'</b> 鍵'};}
 function F(o){o.scr="func";return o;}
@@ -459,6 +459,16 @@ var FLOWS=[
  F({title:"收尾",say:'記住後按 <b>完成</b>',ok:"完成",btns:["完成"],cap:"店面寄貨聯要填寄貨數量並請顧客簽名；顧客寄貨聯可以不印，APP 就有提貨碼",
    pic:{k:"phone",title:"客人手機 · 提貨服務",lines:["提貨碼","▣▣▣ ▣ ▣▣▣","ER20180022521","","回國時出示此 QR Code 取貨"],btn:"提貨碼"}})]},
 /* ── 結帳 · 付款方式（來源：結帳 POS 機操作流程 1-10） ── */
+{id:"f22",cat:"補印",name:"提貨單補印",task:"客人要補一張單，用交易單號印出來",steps:[L("其他功能"),
+ F({noevr:true,title:"其他功能",say:'找到 <b>提貨單補印</b> 按下去（這一頁沒看到就用 下一頁／上一頁 翻）。',ok:"提貨單補印",btns:["上一頁","提貨單補印","補印提貨標籤","下一頁"],
+   cap:"旁邊的「補印提貨標籤」是補印標籤，不是補印單據，別按錯"}),
+ F({noevr:true,title:"提貨單補印",say:'在 <b>交易單號</b> 欄輸入那一筆的單號（單據上的 T/N），按 <b>補印</b>。',ok:"補印",btns:["補印","清除(C+BaK)","OpenKeypad","取消(Esc)"],
+   fields:[["交易單號","SA1700000000"]],
+   cap:"單號輸進去後，上面「交易明細」（品名／售價／數量／小計）跟下面「付款明細」（付款別／付款金額／匯率／本地幣值）會自動帶出來，先確認是不是那一筆再按補印"}),
+ F({noevr:true,title:"印出來的單",say:'核對無誤交給客人，按 <b>完成</b>',ok:"完成",btns:["完成"],
+   pic:{k:"paper",title:"補印的銷售單",lines:["everrich　SALES INVOICE","DATE：2026/11/14","C/NO：SA17026BI00000","T/N：SA1700000000","M/NO：SA-17　C：77777","品名　　　　　　　QTY　金額","DUNHILL SL ...　　1　　710","Total：　　　　　　　　710","VSA"]},
+   out:"印出來的是那一筆的銷售單（SALES INVOICE）。\n沒有打錯的話不用作廢，補印不會再產生一筆交易。"})]},
+
 {id:"p1",cat:"結帳・付款方式",name:"現金",task:"用現金收款",steps:[L(),
  F({title:"付款畫面",say:'按 <b>現金</b> 鍵',ok:"現金",btns:PAYKEYS}),
  F({title:"現金收款",say:'記住規定後按 <b>完成</b>',ok:"完成",btns:["完成"],cap:"1-10-01：現金一律唱收唱付",
@@ -1319,7 +1329,7 @@ function fCells2(cat,ok){
  var b=MENU2[cat]||[];return b.indexOf(ok)>=0?b:a;
 }
 function stepOf(){var s=G.fl.steps[G.fi],k,o;
- if(s.scr==="login")return {scr:"login",title:"\u65b0\u4ea4\u6613\u57fa\u672c\u8cc7\u6599",say:LOGIN.say,ok:LOGIN.ok};
+ if(s.scr==="login")return {scr:"login",title:"\u65b0\u4ea4\u6613\u57fa\u672c\u8cc7\u6599",say:s.ok?('\u6309 <b>'+s.ok+'</b> \u9375'):LOGIN.say,ok:s.ok||LOGIN.ok};
  if(s.scr==="menu1")return {scr:"menu1",title:"POS RICH \u529f\u80fd\u5217\u8868",say:s.say,ok:s.ok,cells:fCells1(s.ok)};
  if(s.scr==="menu2")return {scr:"menu2",cat:s.cat,title:s.cat,say:s.say,ok:s.ok,cells:fCells2(s.cat,s.ok)};
  if(s.btns&&s.btns.length===20&&s.btns[0]==="\u8fd4\u56de\u92b7\u552e"){
@@ -1350,7 +1360,8 @@ function fnHTML(){
   else if(/\u4f5c\u5ee2|\u53d6\u6d88|\u6e05\u9664|\u96e2\u958b/.test(b))c+=" warn";
   if(b===s.ok&&FHINT)c+=" hi";
   h+='<button class="'+c+'" onclick="fBtn('+i+')">'+esc(b)+'</button>';});
- return evrHTML(h+'</div></div></div>',1);
+ var __b=h+'</div></div></div>';
+ return s.noevr?('<div class="evr">'+__b+'</div>'):evrHTML(__b,1);
 }
 /* 流程 → 機器狀態 */
 function fSync(){
@@ -1374,7 +1385,7 @@ function fPayPrep(){
 }
 function fStart(id){
  var f=FLOWS.filter(function(x){return x.id===id})[0];if(!f)return;
- var sk=!!(G.logged&&f.steps[0]&&f.steps[0].scr==="login"&&f.steps.length>1);
+ var sk=!!(G.logged&&f.steps[0]&&f.steps[0].scr==="login"&&!f.steps[0].ok&&f.steps.length>1);
  if(!sk&&f.steps[0]&&f.steps[0].scr==="login")resetAll();
  G.t=null;G.fl=f;G.ferr=0;G.fmsg="";G.skip=sk;G.fi=sk?1:0;
  if(FOLLOW&&innerWidth<760){ZOOM=0.78;var z=document.getElementById("zfit");if(z)z.classList.remove("on");}
